@@ -49,6 +49,7 @@
                     android:padding="10dp"
                     android:text="Science"
                     android:textColor="#000"
+
                     android:textSize="25dp" />
 
                 <Button
@@ -57,10 +58,12 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
-                    android:background="@drawable/button_shaper_red"
+                    android:background="@drawable/button_shaper_aqua"
                     android:fontFamily="@font/ubuntu"
                     android:padding="10dp"
-                    android:text="Unfollow"
+                    android:onClick="func"
+                    android:clickable="true"
+                    android:text="Follow Us"
                     android:textAllCaps="false"
                     android:textColor="#fff" />
 
@@ -94,6 +97,8 @@
                     android:layout_marginRight="10dp"
                     android:background="@drawable/button_shaper_aqua"
                     android:fontFamily="@font/ubuntu"
+                    android:onClick="func"
+                    android:clickable="true"
                     android:padding="10dp"
                     android:text="Follow Us"
                     android:textAllCaps="false" />
@@ -128,7 +133,9 @@
                     android:layout_marginRight="10dp"
                     android:background="@drawable/button_shaper_aqua"
                     android:fontFamily="@font/ubuntu"
+                    android:onClick="func"
                     android:padding="10dp"
+                    android:clickable="true"
                     android:text="Follow Us"
                     android:textAllCaps="false" />
 
@@ -140,6 +147,7 @@
                 android:layout_margin="7dp"
                 android:background="@drawable/interest_shaper"
                 android:orientation="horizontal"
+
                 android:padding="5dp">
 
                 <TextView
@@ -160,10 +168,12 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
-                    android:background="@drawable/button_shaper_red"
+                    android:background="@drawable/button_shaper_aqua"
                     android:fontFamily="@font/ubuntu"
                     android:padding="10dp"
-                    android:text="Unfollow"
+                    android:onClick="func"
+                    android:text="Follow us"
+                    android:clickable="true"
                     android:textAllCaps="false"
                     android:textColor="#fff" />
 
@@ -195,9 +205,11 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
+                    android:onClick="func"
                     android:background="@drawable/button_shaper_aqua"
                     android:fontFamily="@font/ubuntu"
                     android:padding="10dp"
+                    android:clickable="true"
                     android:text="Follow Us"
                     android:textAllCaps="false" />
 
@@ -229,10 +241,12 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
-                    android:background="@drawable/button_shaper_red"
+                    android:onClick="func"
+                    android:background="@drawable/button_shaper_aqua"
                     android:fontFamily="@font/ubuntu"
                     android:padding="10dp"
-                    android:text="Unfollow"
+                    android:text="Follow us"
+                    android:clickable="true"
                     android:textAllCaps="false"
                     android:textColor="#fff" />
 
@@ -266,6 +280,8 @@
                     android:layout_marginRight="10dp"
                     android:background="@drawable/button_shaper_aqua"
                     android:fontFamily="@font/ubuntu"
+                    android:clickable="true"
+                    android:onClick="func"
                     android:padding="10dp"
                     android:text="Follow Us"
                     android:textAllCaps="false" />
@@ -298,9 +314,11 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
+                    android:onClick="func"
                     android:background="@drawable/button_shaper_aqua"
                     android:fontFamily="@font/ubuntu"
                     android:padding="10dp"
+                    android:clickable="true"
                     android:text="Follow Us"
                     android:textAllCaps="false" />
 
@@ -334,6 +352,8 @@
                     android:layout_marginRight="10dp"
                     android:background="@drawable/button_shaper_aqua"
                     android:fontFamily="@font/ubuntu"
+                    android:onClick="func"
+                    android:clickable="true"
                     android:padding="10dp"
                     android:text="Follow Us"
                     android:textAllCaps="false" />

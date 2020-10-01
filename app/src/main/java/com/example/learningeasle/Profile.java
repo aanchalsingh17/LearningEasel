@@ -9,7 +9,9 @@ import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -30,6 +32,8 @@ import com.squareup.picasso.Picasso;*/
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -44,7 +48,7 @@ public class Profile extends AppCompatActivity {
     String currentPhotoPath;
     Uri imageuri;
     ImageView image;
-
+    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +57,9 @@ public class Profile extends AppCompatActivity {
         register = findViewById(R.id.register_reg);
         capture = findViewById(R.id.capture);
         logout = findViewById(R.id.logout);
+
+
+
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,7 +79,7 @@ public class Profile extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), PickInterests.class);
                 startActivity(intent);
             }
         });

@@ -51,7 +51,7 @@ public class Login extends AppCompatActivity {
         fUser = fAuth_login.getCurrentUser();
         if(fUser!= null) {
             finish();
-            startActivity(new Intent(getApplicationContext(), Profile.class));
+            startActivity(new Intent(getApplicationContext(), PickInterests.class));
         }
 
 
@@ -163,7 +163,7 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            startActivity(new Intent(getApplicationContext(), PickInterests.class));
                             overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
 
                         } else if (task.getException() != null) {

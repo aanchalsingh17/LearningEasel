@@ -25,6 +25,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -39,6 +41,7 @@ public class Register extends AppCompatActivity {
     FirebaseAuth fAuth_reg;
     String userID;
     FirebaseUser fUser;
+    SharedPreferences sharedPreferences;
     //FirebaseFirestore fStore;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +59,7 @@ public class Register extends AppCompatActivity {
 
         if(fUser!= null) {
             finish();
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), PickInterests.class));
         }
         //fStore          = FirebaseFirestore.getInstance();
 
@@ -160,6 +163,26 @@ public class Register extends AppCompatActivity {
 //                                 fuser.updateProfile(request);
 
                                 // after registration redirect to main class
+//                                sharedPreferences=getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+//                                String folder = sharedPreferences.getString("email_Id", "");
+//                                int j=folder.length()-4;
+//                                final String username=folder.substring(0,j);
+                                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                                FirebaseUser user = firebaseAuth.getCurrentUser();
+                                final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                int j=email.length()-4;
+                                final String username=email.substring(0,j);
+                                final DatabaseReference myRef=database.getReference().child(username);
+                                myRef.child("Science").setValue("0");
+                                myRef.child("Medication").setValue("0");
+                                myRef.child("Computers").setValue("0");
+                                myRef.child("Business").setValue("0");
+                                myRef.child("Environment").setValue("0");
+                                myRef.child("Arts").setValue("0");
+                                myRef.child("Sports").setValue("0");
+                                myRef.child("Economics").setValue("0");
+                                myRef.child("Architecture").setValue("0");
+
                                 startActivity(new Intent(getApplicationContext(),Profile.class));
                                 overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 

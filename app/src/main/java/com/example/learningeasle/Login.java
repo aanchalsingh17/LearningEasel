@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -47,6 +49,10 @@ public class Login extends AppCompatActivity {
         createBtn_login = findViewById(R.id.create_login);
         forgot_password = findViewById(R.id.forgot_password);
         fUser = fAuth_login.getCurrentUser();
+        if(fUser!= null) {
+            finish();
+            startActivity(new Intent(getApplicationContext(), PickInterests.class));
+        }
 
 
         loginBtn_login.setOnClickListener(new View.OnClickListener() {
@@ -145,6 +151,10 @@ public class Login extends AppCompatActivity {
             // login function
 
             private void loginUser(String email, String password) {
+                SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor=preferences.edit();
+                editor.putString("email_Id",email);
+                editor.commit();
                 progressBar_login.setVisibility(View.VISIBLE);
 
                 // authenticate user
@@ -153,7 +163,7 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            startActivity(new Intent(getApplicationContext(), PickInterests.class));
                             overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
 
                         } else if (task.getException() != null) {

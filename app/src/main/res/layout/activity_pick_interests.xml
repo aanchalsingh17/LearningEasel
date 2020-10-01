@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PickInterests">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:textColor="#11568E"
+        android:fontFamily="@font/ubuntu"
+        android:text="Areas of Interest" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        android:background="#DCD2D2">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <RelativeLayout
+                android:layout_width="350dp"
+                android:layout_height="60dp"
+                android:layout_margin="7dp"
+                android:background="@drawable/interest_shaper"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableLeft="@drawable/science_img"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/ubuntu"
+                    android:padding="10dp"
+                    android:text="Science"
+                    android:textColor="#000"
+
+                    android:textSize="25dp" />
+
+                <Button
+                    android:id="@+id/science"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/button_shaper_aqua"
+                    android:fontFamily="@font/ubuntu"
+                    android:padding="10dp"
+                    android:onClick="func"
+                    android:clickable="true"
+                    android:text="Follow Us"
+                    android:textAllCaps="false"
+                    android:textColor="#fff" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="350dp"
+                android:layout_height="60dp"
+                android:layout_margin="7dp"
+                android:background="@drawable/interest_shaper"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableLeft="@drawable/medication_img"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/ubuntu"
+                    android:padding="10dp"
+                    android:text="Medication"
+                    android:textColor="#000"
+                    android:textSize="25dp" />
+
+                <Button
+                    android:id="@+id/medication"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/button_shaper_aqua"
+                    android:fontFamily="@font/ubuntu"
+                    android:onClick="func"
+                    android:clickable="true"
+                    android:padding="10dp"
+                    android:text="Follow Us"
+                    android:textAllCaps="false" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="350dp"
+                android:layout_height="60dp"
+                android:layout_margin="7dp"
+                android:background="@drawable/interest_shaper"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableLeft="@drawable/computers_img"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/ubuntu"
+                    android:padding="10dp"
+                    android:text="Computers"
+                    android:textColor="#000"
+                    android:textSize="25dp" />
+
+                <Button
+                    android:id="@+id/computers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/button_shaper_aqua"
+                    android:fontFamily="@font/ubuntu"
+                    android:onClick="func"
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:text="Follow Us"
+                    android:textAllCaps="false" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="350dp"
+                android:layout_height="60dp"
+                android:layout_margin="7dp"
+                android:background="@drawable/interest_shaper"
+                android:orientation="horizontal"
+
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableLeft="@drawable/business_img"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/ubuntu"
+                    android:padding="10dp"
+                    android:text="Business"
+                    android:textColor="#000"
+                    android:textSize="25dp" />
+
+                <Button
+                    android:id="@+id/business"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/button_shaper_aqua"
+                    android:fontFamily="@font/ubuntu"
+                    android:padding="10dp"
+                    android:onClick="func"
+                    android:text="Follow us"
+                    android:clickable="true"
+                    android:textAllCaps="false"
+                    android:textColor="#fff" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="350dp"
+                android:layout_height="60dp"
+                android:layout_margin="7dp"
+                android:background="@drawable/interest_shaper"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableLeft="@drawable/environment_img"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/ubuntu"
+                    android:padding="10dp"
+                    android:text="Environment"
+                    android:textColor="#000"
+                    android:textSize="25dp" />
+
+                <Button
+                    android:id="@+id/environment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:onClick="func"
+                    android:background="@drawable/button_shaper_aqua"
+                    android:fontFamily="@font/ubuntu"
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:text="Follow Us"
+                    android:textAllCaps="false" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="350dp"
+                android:layout_height="60dp"
+                android:layout_margin="7dp"
+                android:background="@drawable/interest_shaper"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableLeft="@drawable/arts_img"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/ubuntu"
+                    android:padding="10dp"
+                    android:text="Arts"
+                    android:textColor="#000"
+                    android:textSize="25dp" />
+
+                <Button
+                    android:id="@+id/arts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:onClick="func"
+                    android:background="@drawable/button_shaper_aqua"
+                    android:fontFamily="@font/ubuntu"
+                    android:padding="10dp"
+                    android:text="Follow us"
+                    android:clickable="true"
+                    android:textAllCaps="false"
+                    android:textColor="#fff" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="350dp"
+                android:layout_height="60dp"
+                android:layout_margin="7dp"
+                android:background="@drawable/interest_shaper"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableLeft="@drawable/sports_img"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/ubuntu"
+                    android:padding="10dp"
+                    android:text="Sports"
+                    android:textColor="#000"
+                    android:textSize="25dp" />
+
+                <Button
+                    android:id="@+id/sports"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/button_shaper_aqua"
+                    android:fontFamily="@font/ubuntu"
+                    android:clickable="true"
+                    android:onClick="func"
+                    android:padding="10dp"
+                    android:text="Follow Us"
+                    android:textAllCaps="false" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="350dp"
+                android:layout_height="60dp"
+                android:layout_margin="7dp"
+                android:background="@drawable/interest_shaper"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableLeft="@drawable/economics_img"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/ubuntu"
+                    android:padding="10dp"
+                    android:text="Economics"
+                    android:textColor="#000"
+                    android:textSize="25dp" />
+
+                <Button
+                    android:id="@+id/economics"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:onClick="func"
+                    android:background="@drawable/button_shaper_aqua"
+                    android:fontFamily="@font/ubuntu"
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:text="Follow Us"
+                    android:textAllCaps="false" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="350dp"
+                android:layout_height="60dp"
+                android:layout_margin="7dp"
+                android:background="@drawable/interest_shaper"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableLeft="@drawable/architecture_img"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/ubuntu"
+                    android:padding="10dp"
+                    android:text="Architecture"
+                    android:textColor="#000"
+                    android:textSize="25dp" />
+
+                <Button
+                    android:id="@+id/architecture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/button_shaper_aqua"
+                    android:fontFamily="@font/ubuntu"
+                    android:onClick="func"
+                    android:clickable="true"
+                    android:padding="10dp"
+                    android:text="Follow Us"
+                    android:textAllCaps="false" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</RelativeLayout>

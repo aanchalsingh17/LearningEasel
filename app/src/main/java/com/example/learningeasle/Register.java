@@ -3,7 +3,9 @@ package com.example.learningeasle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,6 +25,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -36,6 +40,8 @@ public class Register extends AppCompatActivity {
     ProgressBar progressBar_reg;
     FirebaseAuth fAuth_reg;
     String userID;
+    FirebaseUser fUser;
+    SharedPreferences sharedPreferences;
     //FirebaseFirestore fStore;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +55,12 @@ public class Register extends AppCompatActivity {
         loginBtn_reg    = findViewById(R.id.login_reg);
         progressBar_reg = findViewById(R.id.progressBar_reg);
         fAuth_reg       = FirebaseAuth.getInstance();
+        fUser=fAuth_reg.getCurrentUser();
+
+        if(fUser!= null) {
+            finish();
+            startActivity(new Intent(getApplicationContext(), PickInterests.class));
+        }
         //fStore          = FirebaseFirestore.getInstance();
 
         //if user is already logged in and user isn't anonymous
@@ -95,7 +107,10 @@ public class Register extends AppCompatActivity {
                     password_reg.setError("Password Must be >= 6 Characters");
                     return;
                 }
-
+                SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor=preferences.edit();
+                editor.putString("email_Id",email);
+                editor.commit();
                 progressBar_reg.setVisibility(View.VISIBLE);
 
                     fAuth_reg.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -126,6 +141,26 @@ public class Register extends AppCompatActivity {
 //
 
                                 // after registration redirect to main class
+//                                sharedPreferences=getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+//                                String folder = sharedPreferences.getString("email_Id", "");
+//                                int j=folder.length()-4;
+//                                final String username=folder.substring(0,j);
+                                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                                FirebaseUser user = firebaseAuth.getCurrentUser();
+                                final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                int j=email.length()-4;
+                                final String username=email.substring(0,j);
+                                final DatabaseReference myRef=database.getReference().child(username);
+                                myRef.child("Science").setValue("0");
+                                myRef.child("Medication").setValue("0");
+                                myRef.child("Computers").setValue("0");
+                                myRef.child("Business").setValue("0");
+                                myRef.child("Environment").setValue("0");
+                                myRef.child("Arts").setValue("0");
+                                myRef.child("Sports").setValue("0");
+                                myRef.child("Economics").setValue("0");
+                                myRef.child("Architecture").setValue("0");
+
                                 startActivity(new Intent(getApplicationContext(),Profile.class));
                                 overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 

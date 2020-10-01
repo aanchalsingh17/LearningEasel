@@ -49,10 +49,11 @@ public class Login extends AppCompatActivity {
         createBtn_login = findViewById(R.id.create_login);
         forgot_password = findViewById(R.id.forgot_password);
         fUser = fAuth_login.getCurrentUser();
-        if(fUser!= null) {
-            finish();
-            startActivity(new Intent(getApplicationContext(), PickInterests.class));
-        }
+//        if(fUser!= null) {
+//
+//            startActivity(new Intent(getApplicationContext(), PickInterests.class));
+//        finish();
+//        }
 
 
         loginBtn_login.setOnClickListener(new View.OnClickListener() {

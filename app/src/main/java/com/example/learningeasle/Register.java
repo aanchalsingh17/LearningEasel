@@ -57,10 +57,11 @@ public class Register extends AppCompatActivity {
         fAuth_reg       = FirebaseAuth.getInstance();
         fUser=fAuth_reg.getCurrentUser();
 
-        if(fUser!= null) {
-            finish();
-            startActivity(new Intent(getApplicationContext(), PickInterests.class));
-        }
+//        if(fUser!= null) {
+//
+//            startActivity(new Intent(getApplicationContext(), PickInterests.class));
+//        finish();
+//        }
         //fStore          = FirebaseFirestore.getInstance();
 
         //if user is already logged in and user isn't anonymous

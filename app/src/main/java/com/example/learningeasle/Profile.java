@@ -57,7 +57,7 @@ public class Profile extends AppCompatActivity {
         register = findViewById(R.id.register_reg);
         capture = findViewById(R.id.capture);
         logout = findViewById(R.id.logout);
-
+        image=findViewById(R.id.imageView);
 
 
         upload.setOnClickListener(new View.OnClickListener() {
@@ -143,7 +143,7 @@ public class Profile extends AppCompatActivity {
                 e.printStackTrace();
             }
             if (PhotoFile != null) {
-                imageuri = FileProvider.getUriForFile(this, "com.example.tagtodo.fileprovider", PhotoFile);
+                imageuri = FileProvider.getUriForFile(this, "com.example.learningeasle.fileprovider", PhotoFile);
                 TakePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageuri);
                 startActivityForResult(TakePictureIntent, CAMERA_REQUEST_CODE);
             }

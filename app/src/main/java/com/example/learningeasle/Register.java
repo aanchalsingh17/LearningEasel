@@ -122,30 +122,8 @@ public class Register extends AppCompatActivity {
                                 //Storing data in firestore
 
                                 userID = fAuth_reg.getCurrentUser().getUid();                                                           //user id stored
-                               /* DocumentReference documentReference = fStore.collection("users").document(userID);          // firestore cloud database
-                                Map<String, Object> user = new HashMap<>();                                                             //user data stored in HashMap
-                                user.put("fName",fullName);
-                                user.put("email",email);
-                                user.put("phone",phone);
 
-                                documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d("tag", "onSuccess: user Profile is created for "+ userID);
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.d("tag", "onFailure: " + e.toString());
-                                    }
-                                });*/
-
-
-//                                fuser = fAuth_reg.getCurrentUser();
-//                                UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
-//                                        .setDisplayName(fullName)
-//                                        .build();
-//                                 fuser.updateProfile(request);
+//
 
                                 // after registration redirect to main class
                                 startActivity(new Intent(getApplicationContext(),Profile.class));

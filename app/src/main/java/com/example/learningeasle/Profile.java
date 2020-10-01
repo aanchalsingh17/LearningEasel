@@ -171,7 +171,7 @@ public class Profile extends AppCompatActivity {
     }
 
 
-    private void uploadImageToFirebase(Uri imageuri) {
+    /*private void uploadImageToFirebase(Uri imageuri) {
         if (imageuri != null) {
 
              final StorageReference fileref = storagereference.child("Users/" + fUser.getUid()  + "/Images.jpeg");
@@ -202,7 +202,7 @@ public class Profile extends AppCompatActivity {
                 });
             }
             onBackPressed();
-        }
+        }*/
 
 
     }

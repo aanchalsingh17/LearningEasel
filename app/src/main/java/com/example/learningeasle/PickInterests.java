@@ -59,6 +59,8 @@ public class PickInterests extends AppCompatActivity {
                                     myRef.child("Science").setValue("0");
 //                                    btn=(Button)findViewById(R.id.science);
                                     btn.setBackgroundResource(R.drawable.button_shaper_aqua);
+
+
                                 }
                             }
 

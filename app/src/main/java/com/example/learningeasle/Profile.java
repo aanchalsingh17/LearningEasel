@@ -143,7 +143,7 @@ public class Profile extends AppCompatActivity {
                 e.printStackTrace();
             }
             if (PhotoFile != null) {
-                imageuri = FileProvider.getUriForFile(this, "com.example.tagtodo.fileprovider", PhotoFile);
+                imageuri = FileProvider.getUriForFile(this, "com.example.learningeasle.fileprovider", PhotoFile);
                 TakePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageuri);
                 startActivityForResult(TakePictureIntent, CAMERA_REQUEST_CODE);
             }

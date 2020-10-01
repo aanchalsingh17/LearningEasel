@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "381953661630",
+    "firebase_url": "https://learningeasle-e1329.firebaseio.com",
+    "project_id": "learningeasle-e1329",
+    "storage_bucket": "learningeasle-e1329.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:381953661630:android:814e1dbcf2152ccbd8dcef",
+        "android_client_info": {
+          "package_name": "com.example.learningeasle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "381953661630-0j32tcmvcjktv5g0m9uillnvdfm3rdjj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.learningeasle",
+            "certificate_hash": "8279427995446d87c0b9f5a31ea603b4aa8610f5"
+          }
+        },
+        {
+          "client_id": "381953661630-3s0csn95saqojjigolokonvmjs299iac.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDFaV2kshLGlRQx4GEQgOcqlxAMcE1MB0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "381953661630-3s0csn95saqojjigolokonvmjs299iac.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

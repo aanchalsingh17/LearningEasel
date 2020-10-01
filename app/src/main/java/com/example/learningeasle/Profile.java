@@ -21,12 +21,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
+/*import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Picasso;*/
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

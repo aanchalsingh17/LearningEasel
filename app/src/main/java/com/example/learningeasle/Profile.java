@@ -21,12 +21,18 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-/*import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;*/
+import com.squareup.picasso.Picasso;
+
+import com.google.firebase.storage.FirebaseStorage;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,11 +42,15 @@ import java.util.Date;
 
 public class Profile extends AppCompatActivity {
     Button upload, register, capture;
-    Integer GALLERY_REQUEST_CODE = 101;
-    Integer CAMERA_REQUEST_CODE = 102;
+    private static final int GALLERY_REQUEST_CODE = 101;
+    private static final int CAMERA_REQUEST_CODE = 102;
     String currentPhotoPath;
     Uri imageuri;
     ImageView image;
+    StorageReference storagereference;
+    FirebaseStorage storage;
+    FirebaseFirestore fStore;
+    FirebaseUser fUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +59,12 @@ public class Profile extends AppCompatActivity {
         upload = findViewById(R.id.upload);
         register = findViewById(R.id.register_reg);
         capture = findViewById(R.id.capture);
+        storage = FirebaseStorage.getInstance();
+       //use this storage reference to upload the image
+        storagereference = storage.getReference();
+        fUser = FirebaseAuth.getInstance().getCurrentUser();
+        fStore = FirebaseFirestore.getInstance();
+
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,8 +152,8 @@ public class Profile extends AppCompatActivity {
                 imageuri = data.getData();
                 //setting the image view to the user selected image using its URI
                 image.setImageURI(imageuri);
-                //uplaod iamge to firebase by calling the below method and passing the image uri as parameter
-                // uploadImageToFirebase(imageuri,);
+                //upload image to firebase by calling the below method and passing the image uri as parameter
+                uploadImageToFirebase(imageuri);
             }
 
         }
@@ -148,20 +164,16 @@ public class Profile extends AppCompatActivity {
                 imageuri = Uri.fromFile(f);
                 image.setImageURI(imageuri);
 
-                //uploadImageToFirebase(Uri.fromFile(f));
-//                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//                Uri contenturi = Uri.fromFile(f);
-//                mediaScanIntent.setData(contenturi);
-//                this.sendBroadcast(mediaScanIntent);
+                uploadImageToFirebase(Uri.fromFile(f));
             }
         }
     }
 
 
-   /* private void uploadImageToFirebase(Uri imageuri, DocumentReference docref) {
+    private void uploadImageToFirebase(Uri imageuri) {
         if (imageuri != null) {
-            String loc = docref.getId();
-             final StorageReference fileref = storagereference.child("Users/" + fUser.getUid() + "/" + loc + "/Images.jpeg");
+
+             final StorageReference fileref = storagereference.child("Users/" + fUser.getUid()  + "/Images.jpeg");
 
             Bitmap bmp = null;
             try {
@@ -182,7 +194,7 @@ public class Profile extends AppCompatActivity {
                         fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
-                                Picasso.get().load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(image);
+                               Picasso.get().load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(image);
                             }
                         });
                     }
@@ -192,5 +204,4 @@ public class Profile extends AppCompatActivity {
         }
 
 
-    }*/
-}
+    }

@@ -3,7 +3,9 @@ package com.example.learningeasle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -36,6 +38,7 @@ public class Register extends AppCompatActivity {
     ProgressBar progressBar_reg;
     FirebaseAuth fAuth_reg;
     String userID;
+    FirebaseUser fUser;
     //FirebaseFirestore fStore;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,12 @@ public class Register extends AppCompatActivity {
         loginBtn_reg    = findViewById(R.id.login_reg);
         progressBar_reg = findViewById(R.id.progressBar_reg);
         fAuth_reg       = FirebaseAuth.getInstance();
+        fUser=fAuth_reg.getCurrentUser();
+
+        if(fUser!= null) {
+            finish();
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        }
         //fStore          = FirebaseFirestore.getInstance();
 
         //if user is already logged in and user isn't anonymous
@@ -95,7 +104,10 @@ public class Register extends AppCompatActivity {
                     password_reg.setError("Password Must be >= 6 Characters");
                     return;
                 }
-
+                SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor=preferences.edit();
+                editor.putString("email_Id",email);
+                editor.commit();
                 progressBar_reg.setVisibility(View.VISIBLE);
 
                     fAuth_reg.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {

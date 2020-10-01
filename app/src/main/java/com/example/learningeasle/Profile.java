@@ -28,6 +28,9 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;*/
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Profile extends AppCompatActivity {
-    Button upload, register, capture;
+    Button upload, register, capture, logout;
     Integer GALLERY_REQUEST_CODE = 101;
     Integer CAMERA_REQUEST_CODE = 102;
     String currentPhotoPath;
@@ -49,6 +52,7 @@ public class Profile extends AppCompatActivity {
         upload = findViewById(R.id.upload);
         register = findViewById(R.id.register_reg);
         capture = findViewById(R.id.capture);
+        logout = findViewById(R.id.logout);
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,6 +73,18 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth fba;
+                fba=FirebaseAuth.getInstance();
+                FirebaseUser user =fba.getCurrentUser();
+                Intent intent = new Intent(getApplicationContext(),Register.class);
+                fba.signOut();
+                finish();
                 startActivity(intent);
             }
         });

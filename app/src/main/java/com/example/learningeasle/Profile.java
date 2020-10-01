@@ -60,6 +60,7 @@ public class Profile extends AppCompatActivity {
         register = findViewById(R.id.register_reg);
         capture = findViewById(R.id.capture);
         storage = FirebaseStorage.getInstance();
+        image = findViewById(R.id.imageView);
        //use this storage reference to upload the image
         storagereference = storage.getReference();
         fUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -153,7 +154,7 @@ public class Profile extends AppCompatActivity {
                 //setting the image view to the user selected image using its URI
                 image.setImageURI(imageuri);
                 //upload image to firebase by calling the below method and passing the image uri as parameter
-                uploadImageToFirebase(imageuri);
+                //uploadImageToFirebase(imageuri);
             }
 
         }
@@ -164,7 +165,7 @@ public class Profile extends AppCompatActivity {
                 imageuri = Uri.fromFile(f);
                 image.setImageURI(imageuri);
 
-                uploadImageToFirebase(Uri.fromFile(f));
+               // uploadImageToFirebase(Uri.fromFile(f));
             }
         }
     }

@@ -34,13 +34,14 @@ public class Login extends AppCompatActivity {
     TextView createBtn_login, forgot_password, anon_user_login;
     ProgressBar progressBar_login;
     FirebaseAuth fAuth_login;
-   // FirebaseFirestore fStore;
-    FirebaseUser fUser ;
+    // FirebaseFirestore fStore;
+    FirebaseUser fUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-     //   fStore = FirebaseFirestore.getInstance();
+        //   fStore = FirebaseFirestore.getInstance();
         email_login = findViewById(R.id.email_login);
         password_login = findViewById(R.id.password_login);
         progressBar_login = findViewById(R.id.progressBar_login);
@@ -49,11 +50,11 @@ public class Login extends AppCompatActivity {
         createBtn_login = findViewById(R.id.create_login);
         forgot_password = findViewById(R.id.forgot_password);
         fUser = fAuth_login.getCurrentUser();
-//        if(fUser!= null) {
-//
-//            startActivity(new Intent(getApplicationContext(), PickInterests.class));
-//        finish();
-//        }
+        if (fUser != null) {
+
+            startActivity(new Intent(getApplicationContext(), PickInterests.class));
+            finish();
+        }
 
 
         loginBtn_login.setOnClickListener(new View.OnClickListener() {
@@ -149,33 +150,33 @@ public class Login extends AppCompatActivity {
 
     }
 
-            // login function
+    // login function
 
-            private void loginUser(String email, String password) {
-                SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor=preferences.edit();
-                editor.putString("email_Id",email);
-                editor.commit();
-                progressBar_login.setVisibility(View.VISIBLE);
+    private void loginUser(String email, String password) {
+        SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("email_Id", email);
+        editor.commit();
+        progressBar_login.setVisibility(View.VISIBLE);
 
-                // authenticate user
-                fAuth_login.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), PickInterests.class));
-                            overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+        // authenticate user
+        fAuth_login.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(getApplicationContext(), PickInterests.class));
+                    overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
 
-                        } else if (task.getException() != null) {
-                            Toast.makeText(Login.this, "Error !" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            progressBar_login.setVisibility(View.GONE);
-                        }
-                    }
-                });
-
+                } else if (task.getException() != null) {
+                    Toast.makeText(Login.this, "Error !" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    progressBar_login.setVisibility(View.GONE);
+                }
             }
+        });
+
+    }
 
 
-        }
+}
 

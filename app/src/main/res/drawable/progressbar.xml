@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/progress"
+        android:top="16dp"
+        android:bottom="16dp">
+        <layer-list>
+            <item>
+                <rotate
+                    android:fromDegrees="-90"
+                    android:pivotX="50%"
+                    android:pivotY="50%"
+                    android:toDegrees="990" >
+
+                    <shape
+                        android:shape="ring"
+                        android:useLevel="false"
+                        android:dither="false"
+                        android:thickness="3dp"
+                        android:innerRadiusRatio="3"
+                        android:thicknessRatio="20">
+                        <gradient
+                            android:centerY="0.5"
+                            android:startColor="@color/progressBar1a"
+                            android:endColor="@color/progressBar1b"
+                            android:type="sweep"
+                            android:useLevel="false" />
+                    </shape>
+
+                </rotate>
+            </item>
+
+            <item>
+                <rotate
+                    android:fromDegrees="990"
+                    android:pivotX="50%"
+                    android:pivotY="50%"
+                    android:toDegrees="-90" >
+
+                    <shape
+                        android:shape="ring"
+                        android:useLevel="false"
+                        android:dither="false"
+                        android:thickness="3dp"
+                        android:innerRadiusRatio="5"
+                        android:thicknessRatio="20">
+                        <gradient
+                            android:centerY="0.5"
+                            android:startColor="@color/progressBar2a"
+                            android:endColor="@color/progressBar2b"
+                            android:type="sweep"
+                            android:useLevel="false" />
+                    </shape>
+
+                </rotate>
+            </item>
+
+        </layer-list>
+    </item>
+</layer-list>

@@ -57,11 +57,11 @@ public class Register extends AppCompatActivity {
         fAuth_reg       = FirebaseAuth.getInstance();
         fUser           =   fAuth_reg.getCurrentUser();
 
-       /* if(fUser!= null) {
+       if(fUser!= null) {
             finish();
-            startActivity(new Intent(getApplicationContext(), PickInterests.class));
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
-*/
+
 
 
         createBtn_reg.setOnClickListener(new View.OnClickListener() {

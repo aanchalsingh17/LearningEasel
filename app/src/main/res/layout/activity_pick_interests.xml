@@ -341,8 +341,19 @@
                     android:textAllCaps="false" />
 
             </RelativeLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/proceed"
+                android:background="@drawable/button_shaper_aqua"
+                android:fontFamily="@font/ubuntu"
+                android:padding="10dp"
+                android:text="Proceed"
+                android:layout_gravity="bottom"
+                />
 
         </LinearLayout>
+
 
     </ScrollView>
 

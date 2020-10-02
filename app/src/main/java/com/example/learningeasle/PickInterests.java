@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -36,7 +37,7 @@ public class PickInterests extends AppCompatActivity {
         String folder = sharedPreferences.getString("email_Id", "");
         int j = folder.length() - 4;
         final String username = folder.substring(0, j);
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser user = firebaseAuth.getCurrentUser();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef= database.getReference().child(username);
@@ -53,7 +54,15 @@ public class PickInterests extends AppCompatActivity {
 
         setColors();
 
-
+        Button proceed_button=findViewById(R.id.proceed);
+        proceed_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         btn_science.setOnClickListener(new View.OnClickListener() {
             @Override

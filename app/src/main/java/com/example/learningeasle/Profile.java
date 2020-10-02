@@ -49,7 +49,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Profile extends AppCompatActivity {
-    Button upload, register, capture, logout;
+    Button upload, register, capture, logout,go;
     Integer GALLERY_REQUEST_CODE = 101;
     Integer CAMERA_REQUEST_CODE = 102;
     String currentPhotoPath;
@@ -66,7 +66,7 @@ public class Profile extends AppCompatActivity {
         upload = findViewById(R.id.upload);
         register = findViewById(R.id.register_reg);
         capture = findViewById(R.id.capture);
-        logout = findViewById(R.id.logout);
+        go = findViewById(R.id.next);
         image=findViewById(R.id.imageView);
         fauth = FirebaseAuth.getInstance();
         fUser = fauth.getCurrentUser();
@@ -95,16 +95,13 @@ public class Profile extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        logout.setOnClickListener(new View.OnClickListener() {
+        go.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth fba;
-                fba=FirebaseAuth.getInstance();
-                FirebaseUser user =fba.getCurrentUser();
-                Intent intent = new Intent(getApplicationContext(),Register.class);
-                fba.signOut();
-                finish();
+
+                Intent intent = new Intent(getApplicationContext(),PickInterests.class);
                 startActivity(intent);
+                finish();
             }
         });
     }

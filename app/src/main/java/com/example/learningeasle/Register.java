@@ -60,6 +60,7 @@ public class Register extends AppCompatActivity {
        if(fUser!= null) {
             finish();
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            finish();
         }
 
         createBtn_reg.setOnClickListener(new View.OnClickListener() {

@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent1 = new Intent(getApplicationContext(),Register.class);
                             fba.signOut();
                             startActivity(intent1);
+                            finish();
                             break;
                     }
 

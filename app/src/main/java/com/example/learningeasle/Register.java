@@ -57,12 +57,12 @@ public class Register extends AppCompatActivity {
         fAuth_reg       = FirebaseAuth.getInstance();
         fUser           =   fAuth_reg.getCurrentUser();
 
-       /* if(fUser!= null) {
-            finish();
+      /* if(fUser!= null) {
+
             startActivity(new Intent(getApplicationContext(), PickInterests.class));
+           finish();
         }
 */
-
 
         createBtn_reg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,16 +131,26 @@ public class Register extends AppCompatActivity {
                                 //Storing data in firestore
 
                                 userID = fAuth_reg.getCurrentUser().getUid();                                                           //user id stored
-
+                               FirebaseUser user = fAuth_reg.getCurrentUser();
+                               String useremail = user.getEmail();
+                              // String uid = user.getUid();
+                               HashMap<Object,String> hashMap = new HashMap<>();
+                               hashMap.put("email",useremail);
+                               hashMap.put("uid",userID);
+                                hashMap.put("name","");
+                                hashMap.put("phone","");
+                                hashMap.put("image","");
 //
-
+                               FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                               DatabaseReference databaseReference = firebaseDatabase.getReference("Users");
+                               databaseReference.child(userID).setValue(hashMap);
                                 // after registration redirect to main class
 //                                sharedPreferences=getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 //                                String folder = sharedPreferences.getString("email_Id", "");
 //                                int j=folder.length()-4;
 //                                final String username=folder.substring(0,j);
-                               FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                                FirebaseUser user = firebaseAuth.getCurrentUser();
+                             //  FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                               // FirebaseUser user = firebaseAuth.getCurrentUser();
                                 final FirebaseDatabase database = FirebaseDatabase.getInstance();
                                 int j=email.length()-4;
                                 final String username=email.substring(0,j);

@@ -35,7 +35,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
 
 public class Login extends AppCompatActivity {
     EditText email_login, password_login;
@@ -48,7 +52,6 @@ public class Login extends AppCompatActivity {
     SignInButton signin;
     private static final int RC_SIGN_IN = 100;
     private GoogleSignInClient googleSignInClient;
-    String Tag = "LoginActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,10 +66,11 @@ public class Login extends AppCompatActivity {
         forgot_password = findViewById(R.id.forgot_password);
         signin = findViewById(R.id.googlesignin);
 
-       /* fUser = fAuth_login.getCurrentUser();
-        if(fUser!= null) {
-            finish();
+       fUser = fAuth_login.getCurrentUser();
+      /*  if(fUser!= null) {
+
             startActivity(new Intent(getApplicationContext(), PickInterests.class));
+            finish();
         }*/
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -191,7 +195,7 @@ public class Login extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> task) {
         try {
             GoogleSignInAccount account = task.getResult(ApiException.class);
-            Toast.makeText(Login.this,"Successfully Signed in",Toast.LENGTH_SHORT).show();
+            Toast.makeText(Login.this,"Signed in Successfully",Toast.LENGTH_SHORT).show();
             FirebaseGoogleAuth(account);
         }catch (ApiException e){
             Toast.makeText(Login.this,"Signed in Failed",Toast.LENGTH_SHORT).show();
@@ -219,7 +223,7 @@ public class Login extends AppCompatActivity {
     private void updateUI(FirebaseUser user) {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
         if(account != null){
-
+          //Retrieve account details later on in the app
         }
     }
     // login function
@@ -236,8 +240,24 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            FirebaseAuth fAuth_reg = FirebaseAuth.getInstance();
+
+                            FirebaseUser user = fAuth_reg.getCurrentUser();
+                            String userID = user.getUid();                                                           //user id stored
+
+                            String useremail = user.getEmail();
+                            HashMap<Object,String> hashMap = new HashMap<>();
+                            hashMap.put("email",useremail);
+                            hashMap.put("uid",userID);
+                            hashMap.put("name","");
+                            hashMap.put("phone","");
+                            hashMap.put("image","");
+//
+                            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                            DatabaseReference databaseReference = firebaseDatabase.getReference("Users");
+                            databaseReference.child(userID).setValue(hashMap);
                             Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), PickInterests.class));
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
 
                         } else if (task.getException() != null) {

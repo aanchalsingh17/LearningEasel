@@ -1,7 +1,6 @@
 package com.example.learningeasle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,21 +19,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class Login extends AppCompatActivity {
@@ -45,10 +36,6 @@ public class Login extends AppCompatActivity {
     FirebaseAuth fAuth_login;
    // FirebaseFirestore fStore;
     FirebaseUser fUser ;
-    SignInButton signin;
-    private static final int RC_SIGN_IN = 100;
-    private GoogleSignInClient googleSignInClient;
-    String Tag = "LoginActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,24 +48,12 @@ public class Login extends AppCompatActivity {
         loginBtn_login = findViewById(R.id.login_login);
         createBtn_login = findViewById(R.id.create_login);
         forgot_password = findViewById(R.id.forgot_password);
-        signin = findViewById(R.id.googlesignin);
-
        /* fUser = fAuth_login.getCurrentUser();
         if(fUser!= null) {
             finish();
             startActivity(new Intent(getApplicationContext(), PickInterests.class));
         }*/
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        googleSignInClient = GoogleSignIn.getClient(this,googleSignInOptions);
-        signin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signIn();
-            }
-        });
+
 
         loginBtn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,56 +148,7 @@ public class Login extends AppCompatActivity {
 
     }
 
-    private void signIn() {
-        Intent signinintent = googleSignInClient.getSignInIntent();
-        startActivityForResult(signinintent,RC_SIGN_IN);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == RC_SIGN_IN){
-               Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-               handleSignInResult(task);
-        }
-
-    }
-
-    private void handleSignInResult(Task<GoogleSignInAccount> task) {
-        try {
-            GoogleSignInAccount account = task.getResult(ApiException.class);
-            Toast.makeText(Login.this,"Successfully Signed in",Toast.LENGTH_SHORT).show();
-            FirebaseGoogleAuth(account);
-        }catch (ApiException e){
-            Toast.makeText(Login.this,"Signed in Failed",Toast.LENGTH_SHORT).show();
-            FirebaseGoogleAuth(null);
-        }
-    }
-
-    private void FirebaseGoogleAuth(GoogleSignInAccount account) {
-        AuthCredential authCredential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
-        fAuth_login.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    FirebaseUser user = fAuth_login.getCurrentUser();
-                    startActivity(new Intent(Login.this,PickInterests.class));
-                    updateUI(user);
-                }else{
-                    Toast.makeText(Login.this,"Failed",Toast.LENGTH_SHORT).show();
-                    updateUI(null);
-                }
-            }
-        });
-    }
-
-    private void updateUI(FirebaseUser user) {
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
-        if(account != null){
-
-        }
-    }
-    // login function
+            // login function
 
             private void loginUser(String email, String password) {
                /* SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);

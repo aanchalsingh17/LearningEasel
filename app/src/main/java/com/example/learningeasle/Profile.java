@@ -48,7 +48,7 @@ public class Profile extends AppCompatActivity {
     String currentPhotoPath;
     Uri imageuri;
     ImageView image;
-  //  SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +57,7 @@ public class Profile extends AppCompatActivity {
         register = findViewById(R.id.register_reg);
         capture = findViewById(R.id.capture);
         logout = findViewById(R.id.logout);
-       image = findViewById(R.id.imageView);
+        image=findViewById(R.id.imageView);
 
 
         upload.setOnClickListener(new View.OnClickListener() {
@@ -101,6 +101,7 @@ public class Profile extends AppCompatActivity {
         //check if permission is granted or not
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 101);
+            dispatchTakePictureIntent();
         } else {
             dispatchTakePictureIntent();
         }

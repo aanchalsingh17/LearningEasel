@@ -30,10 +30,17 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;*/
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -48,6 +55,9 @@ public class Profile extends AppCompatActivity {
     String currentPhotoPath;
     Uri imageuri;
     ImageView image;
+    FirebaseUser fUser;
+    FirebaseAuth fauth;
+    StorageReference storagereference;
     SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +68,9 @@ public class Profile extends AppCompatActivity {
         capture = findViewById(R.id.capture);
         logout = findViewById(R.id.logout);
         image=findViewById(R.id.imageView);
-
+        fauth = FirebaseAuth.getInstance();
+        fUser = fauth.getCurrentUser();
+        storagereference = FirebaseStorage.getInstance().getReference();
 
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,7 +173,7 @@ public class Profile extends AppCompatActivity {
                 //setting the image view to the user selected image using its URI
                 image.setImageURI(imageuri);
                 //uplaod iamge to firebase by calling the below method and passing the image uri as parameter
-                // uploadImageToFirebase(imageuri,);
+                uploadImageToFirebase(imageuri);
             }
 
         }
@@ -172,7 +184,7 @@ public class Profile extends AppCompatActivity {
                 imageuri = Uri.fromFile(f);
                 image.setImageURI(imageuri);
 
-                //uploadImageToFirebase(Uri.fromFile(f));
+                uploadImageToFirebase(Uri.fromFile(f));
 //                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 //                Uri contenturi = Uri.fromFile(f);
 //                mediaScanIntent.setData(contenturi);
@@ -182,10 +194,9 @@ public class Profile extends AppCompatActivity {
     }
 
 
-   /* private void uploadImageToFirebase(Uri imageuri, DocumentReference docref) {
+   private void uploadImageToFirebase(Uri imageuri) {
         if (imageuri != null) {
-            String loc = docref.getId();
-             final StorageReference fileref = storagereference.child("Users/" + fUser.getUid() + "/" + loc + "/Images.jpeg");
+             final StorageReference fileref = storagereference.child("Users/" + fUser.getUid() + "/Images.jpeg");
 
             Bitmap bmp = null;
             try {
@@ -212,9 +223,8 @@ public class Profile extends AppCompatActivity {
                     }
                 });
             }
-            onBackPressed();
+            //onBackPressed();
         }
 
 
-    }*/
-}
+    }

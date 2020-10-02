@@ -143,6 +143,7 @@
 
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -153,24 +154,34 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/create_login">
 
-            <TextView
-                android:id="@+id/forgot_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                <TextView
+                    android:id="@+id/forgot_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
 
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="15dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="15dp"
 
-                android:gravity="center|center_horizontal|center_vertical"
-                android:text="@string/forgot_password"
-                android:textAlignment="center"
-                android:textColor="@color/colorSecondary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="@string/forgot_password"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorSecondary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
 
         </LinearLayout>
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/googlesignin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.803" />
 
         <ProgressBar
             android:id="@+id/progressBar_login"

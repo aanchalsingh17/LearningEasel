@@ -31,7 +31,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class Login extends AppCompatActivity {
     EditText email_login, password_login;
     Button loginBtn_login;
-    TextView createBtn_login, forgot_password, anon_user_login;
+    TextView createBtn_login, forgot_password;
     ProgressBar progressBar_login;
     FirebaseAuth fAuth_login;
    // FirebaseFirestore fStore;
@@ -48,11 +48,11 @@ public class Login extends AppCompatActivity {
         loginBtn_login = findViewById(R.id.login_login);
         createBtn_login = findViewById(R.id.create_login);
         forgot_password = findViewById(R.id.forgot_password);
-        fUser = fAuth_login.getCurrentUser();
+       /* fUser = fAuth_login.getCurrentUser();
         if(fUser!= null) {
             finish();
             startActivity(new Intent(getApplicationContext(), PickInterests.class));
-        }
+        }*/
 
 
         loginBtn_login.setOnClickListener(new View.OnClickListener() {
@@ -151,11 +151,11 @@ public class Login extends AppCompatActivity {
             // login function
 
             private void loginUser(String email, String password) {
-                SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+               /* SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor=preferences.edit();
                 editor.putString("email_Id",email);
                 editor.commit();
-                progressBar_login.setVisibility(View.VISIBLE);
+                progressBar_login.setVisibility(View.VISIBLE);*/
 
                 // authenticate user
                 fAuth_login.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {

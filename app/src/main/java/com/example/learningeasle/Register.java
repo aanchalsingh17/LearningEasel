@@ -35,7 +35,7 @@ import java.util.Map;
 
 public class Register extends AppCompatActivity {
     EditText name_reg,email_reg, password_reg,phone_reg;
-    TextView loginBtn_reg,anon_user_reg;
+    TextView loginBtn_reg;
     Button createBtn_reg;
     ProgressBar progressBar_reg;
     FirebaseAuth fAuth_reg;
@@ -55,19 +55,13 @@ public class Register extends AppCompatActivity {
         loginBtn_reg    = findViewById(R.id.login_reg);
         progressBar_reg = findViewById(R.id.progressBar_reg);
         fAuth_reg       = FirebaseAuth.getInstance();
-        fUser=fAuth_reg.getCurrentUser();
+        fUser           =   fAuth_reg.getCurrentUser();
 
-        if(fUser!= null) {
+       /* if(fUser!= null) {
             finish();
             startActivity(new Intent(getApplicationContext(), PickInterests.class));
         }
-        //fStore          = FirebaseFirestore.getInstance();
-
-        //if user is already logged in and user isn't anonymous
-//        if(fAuth_reg.getCurrentUser() != null && (!fAuth_reg.getCurrentUser().isAnonymous())){
-//            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-//            finish();
-//        }
+*/
 
 
         createBtn_reg.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +101,7 @@ public class Register extends AppCompatActivity {
                     password_reg.setError("Password Must be >= 6 Characters");
                     return;
                 }
-                SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+               SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor=preferences.edit();
                 editor.putString("email_Id",email);
                 editor.commit();
@@ -145,7 +139,7 @@ public class Register extends AppCompatActivity {
 //                                String folder = sharedPreferences.getString("email_Id", "");
 //                                int j=folder.length()-4;
 //                                final String username=folder.substring(0,j);
-                                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                               FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                                 FirebaseUser user = firebaseAuth.getCurrentUser();
                                 final FirebaseDatabase database = FirebaseDatabase.getInstance();
                                 int j=email.length()-4;

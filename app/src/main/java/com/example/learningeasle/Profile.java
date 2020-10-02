@@ -48,7 +48,7 @@ public class Profile extends AppCompatActivity {
     String currentPhotoPath;
     Uri imageuri;
     ImageView image;
-    SharedPreferences sharedPreferences;
+  //  SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +57,7 @@ public class Profile extends AppCompatActivity {
         register = findViewById(R.id.register_reg);
         capture = findViewById(R.id.capture);
         logout = findViewById(R.id.logout);
-
+       image = findViewById(R.id.imageView);
 
 
         upload.setOnClickListener(new View.OnClickListener() {

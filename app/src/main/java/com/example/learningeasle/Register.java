@@ -62,7 +62,6 @@ public class Register extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
 
-
         createBtn_reg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

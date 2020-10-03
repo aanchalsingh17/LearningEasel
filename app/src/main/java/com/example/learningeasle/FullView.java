@@ -2,6 +2,7 @@ package com.example.learningeasle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -9,99 +10,116 @@ import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-/*import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;*/
-
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Profile extends AppCompatActivity {
-    Button upload, register, capture, logout,go;
+public class FullView extends AppCompatActivity  {
+   ImageView image;
+   FirebaseUser user;
+   StorageReference storageReference;
+   String userid;
+   Button remove,update;
     Integer GALLERY_REQUEST_CODE = 101;
     Integer CAMERA_REQUEST_CODE = 102;
     String currentPhotoPath;
     Uri imageuri;
-    ImageView image;
     FirebaseUser fUser;
-    FirebaseAuth fauth;
-    StorageReference storagereference;
-    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
-        upload = findViewById(R.id.upload);
-        register = findViewById(R.id.register_reg);
-        capture = findViewById(R.id.capture);
-        go = findViewById(R.id.next);
-        image=findViewById(R.id.imageView);
-        fauth = FirebaseAuth.getInstance();
-        fUser = fauth.getCurrentUser();
-        storagereference = FirebaseStorage.getInstance().getReference();
-
-        upload.setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.activity_full_view);
+        image = findViewById(R.id.fullview);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userid = user.getUid();
+        update = findViewById(R.id.change_photo);
+        remove = findViewById(R.id.delete_photo);
+        storageReference = FirebaseStorage.getInstance().getReference();
+        fUser = FirebaseAuth.getInstance().getCurrentUser();
+        final StorageReference fileref = storageReference.child("Users/" + userid + "/Images.jpeg");
+        fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
-            public void onClick(View v) {
-                Intent opengalleryintent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                //picking and extracting the data in the same intent
-                startActivityForResult(opengalleryintent, GALLERY_REQUEST_CODE);
+            public void onSuccess(Uri uri) {
+                Picasso.get().load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(image);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                image.setImageResource(R.drawable.user);
             }
         });
-        capture.setOnClickListener(new View.OnClickListener() {
+        update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //permission for opening the camera
-                askCameraPermission();
+              //  AlertDialog.Builder alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
+               // alertDialog.setIcon(R.drawable.ic_add_alert_black_24dp);
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(FullView.this);
+               alertDialog.setTitle("Select Mode");
+                String[] items = {"Capture", "Upload"};
+                int checkedItem = 0;
+                final int[] selectedAlert = new int[1];
+                alertDialog.setSingleChoiceItems(items, checkedItem, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                selectedAlert[0] = 0;
+                                break;
+                            case 1:
+                                selectedAlert[0] = 1;
+                                break;
+                        }
+                    }
+                });
+                if(selectedAlert[0]==0){
+                    Intent opengalleryintent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    //picking and extracting the data in the same intent
+                    startActivityForResult(opengalleryintent, GALLERY_REQUEST_CODE);
+                }else{
+                    askCameraPermission();
+                }
             }
         });
-        register.setOnClickListener(new View.OnClickListener() {
+        remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), PickInterests.class);
-                startActivity(intent);
-            }
-        });
-        go.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(getApplicationContext(),PickInterests.class);
-                startActivity(intent);
-                finish();
+                  image.setImageResource(R.drawable.user);
+                  fileref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                      @Override
+                      public void onSuccess(Void aVoid) {
+                          Toast.makeText(FullView.this,"Profile Image Deleted",Toast.LENGTH_SHORT).show();
+                      }
+                  }).addOnFailureListener(new OnFailureListener() {
+                      @Override
+                      public void onFailure(@NonNull Exception e) {
+                          Toast.makeText(FullView.this,"Failed : Retry",Toast.LENGTH_SHORT).show();
+                      }
+                  });
             }
         });
     }
@@ -189,49 +207,18 @@ public class Profile extends AppCompatActivity {
         }
     }
 
-
-    private void uploadImageToFirebase(Uri imageuri) {
-        if (imageuri != null) {
-            final StorageReference fileref = storagereference.child("Users/" + fUser.getUid() + "/Images.jpeg");
-
-           /* Bitmap bmp = null;
-            try {
-                bmp = MediaStore.Images.Media.getBitmap(getContentResolver(), imageuri);
-            } catch (IOException e) {
-                e.printStackTrace();
+    private void uploadImageToFirebase(Uri fromFile) {
+        final StorageReference fileref = storageReference.child("Users/" + fUser.getUid() + "/Images.jpeg");
+        fileref.putFile(imageuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.get().load(uri).into(image);
+                    }
+                });
             }
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            //Choose image quality factor
-            bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos);
-            byte[] fileInBytes = baos.toByteArray();
-
-            fileref.putBytes(fileInBytes).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    //Toast.makeText(AddNote.this, "voila", Toast.LENGTH_SHORT).show();
-                    fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Picasso.get().load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(image);
-                        }
-                    });
-                }
-            });*/
-           fileref.putFile(imageuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-               @Override
-               public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                   fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                       @Override
-                       public void onSuccess(Uri uri) {
-                           Picasso.get().load(uri).into(image);
-                       }
-                   });
-               }
-           });
-        }
-        //onBackPressed();
+        });
     }
-
-
     }

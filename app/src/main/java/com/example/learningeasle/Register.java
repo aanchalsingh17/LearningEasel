@@ -57,7 +57,7 @@ public class Register extends AppCompatActivity {
         fAuth_reg       = FirebaseAuth.getInstance();
         fUser           =   fAuth_reg.getCurrentUser();
 
-       if(fUser!= null) {
+        if(fUser!= null) {
             finish();
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
@@ -100,71 +100,71 @@ public class Register extends AppCompatActivity {
                     password_reg.setError("Password Must be >= 6 Characters");
                     return;
                 }
-               SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+                SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor=preferences.edit();
                 editor.putString("email_Id",email);
                 editor.commit();
                 progressBar_reg.setVisibility(View.VISIBLE);
 
-                    fAuth_reg.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(task.isSuccessful()){
-                                //send email verification link
-                                FirebaseUser fuser = fAuth_reg.getCurrentUser();
-                                fuser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Toast.makeText(Register.this, "Verification email has been sent.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.d("tag","onFailure : Email not sent "+ e.getMessage());
-                                    }
-                                });
+                fAuth_reg.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            //send email verification link
+                            FirebaseUser fuser = fAuth_reg.getCurrentUser();
+                            fuser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(Register.this, "Verification email has been sent.", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d("tag","onFailure : Email not sent "+ e.getMessage());
+                                }
+                            });
 
 
-                                Toast.makeText(Register.this, "User Created.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Register.this, "User Created.", Toast.LENGTH_SHORT).show();
 
-                                //Storing data in firestore
+                            //Storing data in firestore
 
-                                userID = fAuth_reg.getCurrentUser().getUid();                                                           //user id stored
+                            userID = fAuth_reg.getCurrentUser().getUid();                                                           //user id stored
 
 //
 
-                                // after registration redirect to main class
+                            // after registration redirect to main class
 //                                sharedPreferences=getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 //                                String folder = sharedPreferences.getString("email_Id", "");
 //                                int j=folder.length()-4;
 //                                final String username=folder.substring(0,j);
-                               FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                                FirebaseUser user = firebaseAuth.getCurrentUser();
-                                final FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                int j=email.length()-4;
-                                final String username=email.substring(0,j);
-                                final DatabaseReference myRef=database.getReference().child(username);
-                                myRef.child("Science").setValue("0");
-                                myRef.child("Medication").setValue("0");
-                                myRef.child("Computers").setValue("0");
-                                myRef.child("Business").setValue("0");
-                                myRef.child("Environment").setValue("0");
-                                myRef.child("Arts").setValue("0");
-                                myRef.child("Sports").setValue("0");
-                                myRef.child("Economics").setValue("0");
-                                myRef.child("Architecture").setValue("0");
+                            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                            FirebaseUser user = firebaseAuth.getCurrentUser();
+                            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            int j=email.length()-4;
+                            final String username=email.substring(0,j);
+                            final DatabaseReference myRef=database.getReference().child(username);
+                            myRef.child("Science").setValue("0");
+                            myRef.child("Medication").setValue("0");
+                            myRef.child("Computers").setValue("0");
+                            myRef.child("Business").setValue("0");
+                            myRef.child("Environment").setValue("0");
+                            myRef.child("Arts").setValue("0");
+                            myRef.child("Sports").setValue("0");
+                            myRef.child("Economics").setValue("0");
+                            myRef.child("Architecture").setValue("0");
 
-                                startActivity(new Intent(getApplicationContext(),Profile.class));
-                                overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
+                            startActivity(new Intent(getApplicationContext(),Profile.class));
+                            overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
 
 
-                            }else if(task.getException()!=null) {
-                                Toast.makeText(Register.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                progressBar_reg.setVisibility(View.GONE);
-                            }
+                        }else if(task.getException()!=null) {
+                            Toast.makeText(Register.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            progressBar_reg.setVisibility(View.GONE);
                         }
-                    });
-                }
+                    }
+                });
+            }
 
         });
 

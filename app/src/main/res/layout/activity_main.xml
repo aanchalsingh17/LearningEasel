@@ -21,7 +21,14 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/nav"
 
-        />
+        >
 
 
+    </ScrollView>
+
+    <ImageView
+        android:id="@+id/profileimage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/button_shaper_red" />
 </RelativeLayout>

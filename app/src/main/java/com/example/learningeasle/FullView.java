@@ -44,11 +44,8 @@ public class FullView extends AppCompatActivity  {
    FirebaseUser user;
    StorageReference storageReference;
    String userid;
-   Button remove,update;
-    Integer GALLERY_REQUEST_CODE = 101;
-    Integer CAMERA_REQUEST_CODE = 102;
-    String currentPhotoPath;
-    Uri imageuri;
+   Button remove;
+
     FirebaseUser fUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +74,7 @@ public class FullView extends AppCompatActivity  {
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                  image.setImageResource(R.drawable.user);
+                  image.setImageResource(R.drawable.ic_action_account);
                   fileref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                       @Override
                       public void onSuccess(Void aVoid) {

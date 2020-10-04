@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
                             break;
                         case R.id.profile:
-                            selectedfragment = new ProfileFragment();
+                           /* selectedfragment = new ProfileFragment();
                             if (getSupportFragmentManager().findFragmentByTag("P") == null) {
                                 getSupportFragmentManager().beginTransaction().add(R.id.scrollable, selectedfragment, "P").commit();
                                 if (getSupportFragmentManager().findFragmentByTag("U") != null)
@@ -70,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
                                     getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("H")).commit();
                                 }
                             }
-
+                             */
+                           startActivity(new Intent(MainActivity.this,EditProfile.class));
                             break;
                         case R.id.account:
                             selectedfragment = new UsersFragment();

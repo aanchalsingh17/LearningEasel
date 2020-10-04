@@ -30,8 +30,6 @@
         android:layout_below="@+id/nav"
 
         >
-
-
     </ScrollView>
 
     <ImageView

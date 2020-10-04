@@ -39,10 +39,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="33 min"
                     android:id="@+id/time"
+                    android:text="16sp"
                     android:autoLink="all"
-                    android:textSize="20sp"/>
+                    />
 
             </LinearLayout>
 

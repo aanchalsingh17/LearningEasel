@@ -23,7 +23,7 @@
         android:background="#87ceeb"
         app:menu="@menu/menu_nav" />
 
-    <ScrollView
+    <FrameLayout
         android:id="@+id/scrollable"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

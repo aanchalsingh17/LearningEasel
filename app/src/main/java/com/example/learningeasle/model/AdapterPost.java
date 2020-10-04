@@ -56,7 +56,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
         String pTime= DateFormat.format("dd/MM/yyyy hh:mm aa",calendar).toString();
 
 //        holder.uName.setText(uName);
-        holder.pTime.setText(pTimeStamp);
+        holder.pTime.setText(pTime);
         holder.pTitle.setText(pTitle);
         holder.pDesc.setText(pDescription);
 

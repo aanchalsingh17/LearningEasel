@@ -2,11 +2,28 @@ package com.example.learningeasle;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.example.learningeasle.model.AdapterPost;
+import com.example.learningeasle.model.modelpost;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -15,6 +32,10 @@ import android.view.ViewGroup;
  */
 public class HomeFragment extends Fragment {
 
+    FirebaseAuth firebaseAuth;
+    RecyclerView recyclerView;
+    List<modelpost> modelpostList;
+    AdapterPost adapterPost;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -59,6 +80,37 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        firebaseAuth = FirebaseAuth.getInstance();
+        recyclerView=view.findViewById(R.id.postsRecyclerview);
+        LinearLayoutManager layoutManager=new LinearLayoutManager(getActivity());
+        layoutManager.setStackFromEnd(true);
+        layoutManager.setReverseLayout(true);
+        recyclerView.setLayoutManager(layoutManager);
+        modelpostList=new ArrayList<>();
+        loadPosts();
+
+        return  view;
+    }
+
+    private void loadPosts() {
+        DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Posts");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                modelpostList.clear();
+                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+                    modelpost post=dataSnapshot.getValue(modelpost.class);
+                    modelpostList.add(post);
+                    adapterPost=new AdapterPost(getActivity(),modelpostList);
+                    recyclerView.setAdapter(adapterPost);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getActivity(),"Error Loading",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

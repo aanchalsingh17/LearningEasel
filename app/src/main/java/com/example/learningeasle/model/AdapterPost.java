@@ -15,6 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.learningeasle.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 
@@ -22,9 +27,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
+public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     Context context;
     List<modelpost> postList;
+    private String pName;
 
     public AdapterPost(Context context, List<modelpost> postList) {
         this.context = context;
@@ -34,28 +40,50 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(context).inflate(R.layout.row_post,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.row_post, parent, false);
         return new MyHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyHolder holder, int position) {
 //        String uId=postList.get(position).getuId();
 //        String uEmail=postList.get(position).getuEmail();
 //        String uName=postList.get(position).getuName();
 //        String uDp=postList.get(position).getuDp();
-        String pTitle=postList.get(position).getpTitle();
-        String pDescription=postList.get(position).getpDesc();
-        String pImage=postList.get(position).getpImage();
-        String pTimeStamp=postList.get(position).getpTime();
-        String pId=postList.get(position).getpId();
+        String pTitle = postList.get(position).getpTitle();
+        String pDescription = postList.get(position).getpDesc();
+        String pImage = postList.get(position).getpImage();
+        String pTimeStamp = postList.get(position).getpTime();
+        String pId = postList.get(position).getpId();
 
-        Calendar calendar=Calendar.getInstance(Locale.getDefault());
+
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        DocumentReference documentReference = firebaseFirestore.collection("users").document(pId);
+
+
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists()){
+                    pName=documentSnapshot.getString("fName");
+                    holder.uName.setText(pName);
+
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
 
-        String pTime= DateFormat.format("dd/MM/yyyy hh:mm aa",calendar).toString();
+        String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
 
-//        holder.uName.setText(uName);
+
+
         holder.pTime.setText(pTime);
         holder.pTitle.setText(pTitle);
         holder.pDesc.setText(pDescription);
@@ -67,10 +95,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
 //        {
 //
 //        }
-        if(pImage.equals("noImage")) {
+        if (pImage.equals("noImage")) {
             holder.pImage.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             try {
                 Picasso.get().load(pImage).placeholder(R.drawable.ic_default).into(holder.pImage);
             } catch (Exception e) {
@@ -80,25 +107,25 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
         holder.morebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context,"More",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "More", Toast.LENGTH_SHORT).show();
             }
         });
         holder.like_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context,"Like",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Like", Toast.LENGTH_SHORT).show();
             }
         });
         holder.comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context,"Comment",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Comment", Toast.LENGTH_SHORT).show();
             }
         });
         holder.share_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context,"Share",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Share", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -109,27 +136,27 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
         return postList.size();
     }
 
-     class MyHolder extends RecyclerView.ViewHolder{
+    class MyHolder extends RecyclerView.ViewHolder {
 
-         ImageView uDp;
-         ImageView pImage;
-        TextView uName,pTime,pTitle,pDesc,pTotalLikes;
+        ImageView uDp;
+        ImageView pImage;
+        TextView uName, pTime, pTitle, pDesc, pTotalLikes;
         ImageButton morebtn;
-        Button like_btn,share_btn,comment_btn;
+        Button like_btn, share_btn, comment_btn;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
 //            uDp=itemView.findViewById(R.id.uDp);
-            pImage=itemView.findViewById(R.id.pImage);
-//            uName=itemView.findViewById(R.id.uname);
-            pTime=itemView.findViewById(R.id.time);
-            pTitle=itemView.findViewById(R.id.ptitle);
-            pDesc=itemView.findViewById(R.id.pdesc);
-            pTotalLikes=itemView.findViewById(R.id.totallikes);
-            morebtn=(ImageButton) itemView.findViewById(R.id.more);
-            like_btn=itemView.findViewById(R.id.like);
-            share_btn=itemView.findViewById(R.id.share);
-            comment_btn=itemView.findViewById(R.id.comment);
+            pImage = itemView.findViewById(R.id.pImage);
+            uName=itemView.findViewById(R.id.uname);
+            pTime = itemView.findViewById(R.id.time);
+            pTitle = itemView.findViewById(R.id.ptitle);
+            pDesc = itemView.findViewById(R.id.pdesc);
+            pTotalLikes = itemView.findViewById(R.id.totallikes);
+            morebtn = (ImageButton) itemView.findViewById(R.id.more);
+            like_btn = itemView.findViewById(R.id.like);
+            share_btn = itemView.findViewById(R.id.share);
+            comment_btn = itemView.findViewById(R.id.comment);
         }
     }
 }

@@ -11,26 +11,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:elevation="8dp"
         android:background="#87ceeb"
+        android:elevation="8dp"
         app:menu="@menu/menu" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/menu_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:elevation="8dp"
         android:background="#87ceeb"
+        android:elevation="8dp"
         app:menu="@menu/menu_nav" />
 
     <FrameLayout
         android:id="@+id/scrollable"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/nav"
-
-        >
-    </ScrollView>
+        android:layout_below="@+id/nav" />
 
     <ImageView
         android:id="@+id/profileimage"

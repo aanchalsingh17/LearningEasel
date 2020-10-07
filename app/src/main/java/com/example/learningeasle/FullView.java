@@ -39,14 +39,15 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class FullView extends AppCompatActivity  {
-   ImageView image;
-   FirebaseUser user;
-   StorageReference storageReference;
-   String userid;
-   Button remove;
+public class FullView extends AppCompatActivity {
+    ImageView image;
+    FirebaseUser user;
+    StorageReference storageReference;
+    String userid;
+    Button remove;
 
     FirebaseUser fUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,27 +75,21 @@ public class FullView extends AppCompatActivity  {
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                  image.setImageResource(R.drawable.ic_action_account);
-                  fileref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                      @Override
-                      public void onSuccess(Void aVoid) {
-                          Toast.makeText(FullView.this,"Profile Image Deleted",Toast.LENGTH_SHORT).show();
-                      }
-                  }).addOnFailureListener(new OnFailureListener() {
-                      @Override
-                      public void onFailure(@NonNull Exception e) {
-                          Toast.makeText(FullView.this,"Failed : Retry",Toast.LENGTH_SHORT).show();
-                      }
-                  });
+                image.setImageResource(R.drawable.ic_action_account);
+                fileref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(FullView.this, "Profile Image Deleted", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(FullView.this, "Failed : Retry", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }
 
 
-
-
-
-
-
-
-    }
+}

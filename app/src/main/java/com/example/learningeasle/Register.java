@@ -60,7 +60,6 @@ public class Register extends AppCompatActivity {
         fStore          = FirebaseFirestore.getInstance();
 
         if(fUser!= null) {
-            finish();
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }
@@ -133,7 +132,7 @@ public class Register extends AppCompatActivity {
                             //Storing data in firestore
 
                             userID = fAuth_reg.getCurrentUser().getUid();                                                           //user id stored
-//user id stored
+
                             DocumentReference documentReference = fStore.collection("users").document(userID);          // firestore cloud database
                             Map<String, Object> user = new HashMap<>();                                                             //user data stored in HashMap
                             user.put("fName",fullName);

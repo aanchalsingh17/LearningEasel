@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.learningeasle.model.AdapterPost;
@@ -23,64 +24,40 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class HomeFragment extends Fragment {
 
     FirebaseAuth firebaseAuth;
     RecyclerView recyclerView;
     List<modelpost> modelpostList;
     AdapterPost adapterPost;
+    ProgressBar progressBar;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     public HomeFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        progressBar=view.findViewById(R.id.progressBar_home);
+//        progressBar.setVisibility(View.VISIBLE);
+
         firebaseAuth = FirebaseAuth.getInstance();
         recyclerView=view.findViewById(R.id.postsRecyclerview);
         LinearLayoutManager layoutManager=new LinearLayoutManager(getActivity());
@@ -88,7 +65,9 @@ public class HomeFragment extends Fragment {
         layoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(layoutManager);
         modelpostList=new ArrayList<>();
+
         loadPosts();
+
 
         return  view;
     }
@@ -100,7 +79,11 @@ public class HomeFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelpostList.clear();
                 for(DataSnapshot dataSnapshot:snapshot.getChildren()){
-                    modelpost post=dataSnapshot.getValue(modelpost.class);
+                    System.out.println("In onDataChange");
+                    HashMap<Object,String> hashMap= (HashMap<Object, String>) dataSnapshot.getValue();
+                    System.out.println(dataSnapshot+" = Datasnapshot");
+//                    modelpost post=dataSnapshot.getValue(modelpost.class);
+                    modelpost post=new modelpost(hashMap.get("pId"),hashMap.get("pImage"),hashMap.get("pTitle"),hashMap.get("pDesc"),hashMap.get("pTime"));
                     modelpostList.add(post);
                     adapterPost=new AdapterPost(getActivity(),modelpostList);
                     recyclerView.setAdapter(adapterPost);
@@ -112,5 +95,6 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(getActivity(),"Error Loading",Toast.LENGTH_SHORT).show();
             }
         });
+        progressBar.setVisibility(View.GONE);
     }
 }

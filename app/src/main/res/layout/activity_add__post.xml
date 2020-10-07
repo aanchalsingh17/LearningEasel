@@ -12,52 +12,51 @@
         android:orientation="vertical">
 
         <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter Title"
             android:id="@+id/title"
-            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="#D0CFCF"
-            android:singleLine="true"/>
+            android:hint="Enter Title"
+            android:padding="10dp"
+            android:singleLine="true" />
+
         <ImageView
+            android:id="@+id/img"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="200dp"
             android:background="#ADACAC"
-            android:id="@+id/img"/>
+            android:minHeight="200dp" />
+
         <EditText
+            android:id="@+id/desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Description"
-            android:id="@+id/desc"
-            android:padding="10dp"
             android:background="#D0CFCF"
-            android:minHeight="150dp"
+            android:gravity="start"
+            android:hint="Enter Description"
             android:inputType="textCapSentences|textMultiLine"
-            android:gravity="start" />
+            android:minHeight="150dp"
+            android:padding="10dp" />
 
         <ProgressBar
             android:id="@+id/progressBar_reg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
             android:layout_marginBottom="20dp"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:visibility="invisible" />
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <Button
+            android:id="@+id/post_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Post"
-            android:id="@+id/post_button"
             android:layout_gravity="center_horizontal"
-            android:textColor="#FFFFFF"
-            android:background="#34282C"/>
-
+            android:background="#34282C"
+            android:text="Post"
+            android:textColor="#FFFFFF" />
 
 
     </LinearLayout>

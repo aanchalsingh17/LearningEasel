@@ -1,14 +1,11 @@
 package com.example.learningeasle.model;
 
 public class modelpost {
-    String pId,pTitle,pDesc,pTime,pImage;
+    String pId, pTitle, pDesc, pTime, pImage;
 
-    public modelpost() {
-    }
-
-    public modelpost(String pId, String pImage,String pTitle, String pDesc, String pTime) {
+    public modelpost(String pId, String pImage, String pTitle, String pDesc, String pTime) {
         this.pId = pId;
-        this.pImage=pImage;
+        this.pImage = pImage;
         this.pTitle = pTitle;
         this.pDesc = pDesc;
         this.pTime = pTime;

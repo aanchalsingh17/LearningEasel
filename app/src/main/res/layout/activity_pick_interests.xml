@@ -7,20 +7,37 @@
     android:theme="@style/AppTheme2"
     tools:context=".PickInterests">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:textSize="30dp"
-        android:textColor="#11568E"
-        android:fontFamily="@font/ubuntu"
-        android:text="Areas of Interest" />
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/ubuntu"
+            android:layout_gravity="center"
+            android:text="Areas of Interest"
+            android:textColor="#11568E"
+            android:textSize="30dp" />
+
+        <Button
+            android:id="@+id/proceed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/button_shaper_aqua"
+            android:fontFamily="@font/ubuntu"
+            android:padding="10dp"
+            android:layout_margin="7dp"
+            android:text="Proceed" />
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="100dp"
         android:background="#DCD2D2">
 
         <LinearLayout
@@ -29,7 +46,7 @@
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="5dp">
+            android:padding="7dp">
 
             <RelativeLayout
                 android:layout_width="350dp"
@@ -341,16 +358,7 @@
                     android:textAllCaps="false" />
 
             </RelativeLayout>
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/proceed"
-                android:background="@drawable/button_shaper_aqua"
-                android:fontFamily="@font/ubuntu"
-                android:padding="10dp"
-                android:text="Proceed"
-                android:layout_gravity="bottom"
-                />
+
 
         </LinearLayout>
 

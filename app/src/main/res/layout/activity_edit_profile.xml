@@ -7,7 +7,7 @@
     tools:context=".EditProfile">
 
 
-   <!-- <com.mikhaellopez.circularimageview.CircularImageView
+   <!-- \<com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/image"
         android:layout_width="200dp"
         android:layout_height="200dp"
@@ -27,7 +27,8 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        tools:ignore="MissingConstraints">
 
         <com.mikhaellopez.circularimageview.CircularImageView
             android:id="@+id/image"
@@ -43,15 +44,14 @@
             app:layout_constraintHorizontal_bias="0.033"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.011" />
+            app:layout_constraintVertical_bias="0.011"
+            tools:ignore="MissingClass" />
         <ImageView
             android:id="@+id/iv_camera"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/cameraicon"
-            android:layout_gravity="bottom|right"
-
-            />
+            android:src="@drawable/ic_done"
+            android:layout_gravity="bottom|end"/>
     </FrameLayout>
 
     <TextView

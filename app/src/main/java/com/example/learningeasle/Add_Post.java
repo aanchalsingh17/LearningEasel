@@ -27,6 +27,8 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -104,7 +106,10 @@ public class Add_Post extends AppCompatActivity {
         pd=new ProgressDialog(this);
         pd.setMessage("Publishing Post..");
         pd.show();
-         final String timeStamp= String.valueOf(System.currentTimeMillis());
+        FirebaseAuth firebaseAuth=FirebaseAuth.getInstance();
+        final FirebaseUser firebaseUser=firebaseAuth.getCurrentUser();
+
+        final String timeStamp= String.valueOf(System.currentTimeMillis());
         String filePathAndName="Posts/"+"post_"+timeStamp;
         if(!uri.equals("noImage"))
         {
@@ -119,7 +124,7 @@ public class Add_Post extends AppCompatActivity {
                     if(uriTask.isSuccessful())
                     {
                         HashMap<Object,String>hashMap=new HashMap<>();
-                        hashMap.put("pId",timeStamp);
+                        hashMap.put("pId",firebaseUser.getUid());
                         hashMap.put("pTitle",title);
                         hashMap.put("pDesc",description);
                         hashMap.put("pImage",downloadUri);
@@ -161,7 +166,7 @@ public class Add_Post extends AppCompatActivity {
         else{
 //            System.out.println("................................");
             HashMap<Object,String>hashMap=new HashMap<>();
-            hashMap.put("pId",timeStamp);
+            hashMap.put("pId",firebaseUser.getUid());
             hashMap.put("pTitle",title);
             hashMap.put("pDesc",description);
             hashMap.put("pImage","noImage");

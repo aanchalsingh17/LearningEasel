@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -49,6 +50,7 @@ public class UpdateProfile extends AppCompatActivity {
     EditText username,userphone,useremail,userstatus;
     FirebaseFirestore fstore;
     FirebaseUser user;
+    TextView displayname,changeimage;
     StorageReference storageReference;
     Button update;
     String userId;
@@ -67,11 +69,12 @@ public class UpdateProfile extends AppCompatActivity {
         userstatus = findViewById(R.id.userstatus);
         fstore = FirebaseFirestore.getInstance();
         profileimage = findViewById(R.id.profile);
+        displayname = findViewById(R.id.displayname);
         storageReference = FirebaseStorage.getInstance().getReference();
         user = FirebaseAuth.getInstance().getCurrentUser();
         update = findViewById(R.id.update);
         userId = user.getUid();
-
+        changeimage = findViewById(R.id.changeimage);
         final DocumentReference docref = fstore.collection("users").document(userId);
         docref.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -80,6 +83,8 @@ public class UpdateProfile extends AppCompatActivity {
                 userphone.setText((CharSequence) documentSnapshot.get("phone"));
                 useremail.setText((CharSequence) documentSnapshot.get("email"));
                 userstatus.setText((CharSequence) documentSnapshot.get("status"));
+                String name = (String) documentSnapshot.get("fName");
+                displayname.setText(name);
             }
         });
         update.setOnClickListener(new View.OnClickListener() {
@@ -141,29 +146,28 @@ public class UpdateProfile extends AppCompatActivity {
                 profileimage.setImageResource(R.drawable.ic_action_account);
             }
         });
-        profileimage.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                String[] options = {"Camera", "Gallery"};
-                AlertDialog.Builder builder = new AlertDialog.Builder(UpdateProfile.this);
-                builder.setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (i == 0) {
-                            askCameraPermission();
-                        }
+       changeimage.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               String[] options = {"Camera", "Gallery"};
+               AlertDialog.Builder builder = new AlertDialog.Builder(UpdateProfile.this);
+               builder.setItems(options, new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialogInterface, int i) {
+                       if (i == 0) {
+                           askCameraPermission();
+                       }
 
-                        if (i == 1) {
-                            Intent opengalleryintent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            //picking and extracting the data in the same intent
-                            startActivityForResult(opengalleryintent, GALLERY_REQUEST_CODE);
-                        }
-                    }
-                });
-                builder.create().show();
-                return  true;
-            }
-        });
+                       if (i == 1) {
+                           Intent opengalleryintent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                           //picking and extracting the data in the same intent
+                           startActivityForResult(opengalleryintent, GALLERY_REQUEST_CODE);
+                       }
+                   }
+               });
+               builder.create().show();
+           }
+       });
     }
 
     private void askCameraPermission() {

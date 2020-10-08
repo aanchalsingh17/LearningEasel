@@ -1,17 +1,27 @@
 package com.example.learningeasle.model;
 
-public class modelpost {
-    String pId, pTitle, pDesc, pTime, pImage,uImage;
+import android.net.Uri;
 
-    public modelpost(String pId, String pImage, String pTitle, String pDesc, String pTime,String uImage) {
+public class modelpost {
+    String pId, pTitle, pDesc, pTime, pImage,uName,url;
+
+    public modelpost(String pId, String pImage, String pTitle, String pDesc, String pTime, String uName, String url) {
         this.pId = pId;
         this.pImage = pImage;
         this.pTitle = pTitle;
         this.pDesc = pDesc;
         this.pTime = pTime;
-        this.uImage=uImage;
+        this.uName=uName;
+        this.url=url;
     }
 
+    public String getuImage(){
+        return url;
+    }
+
+    public String getuName(){
+        return uName;
+    }
     public String getpImage() {
         return pImage;
     }

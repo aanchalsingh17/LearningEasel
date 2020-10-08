@@ -2,6 +2,7 @@ package com.example.learningeasle.model;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 
@@ -50,8 +54,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     public void onBindViewHolder(@NonNull final MyHolder holder, int position) {
 //        String uId=postList.get(position).getuId();
 //        String uEmail=postList.get(position).getuEmail();
-//        String uName=postList.get(position).getuName();
-//        String uDp=postList.get(position).getuDp();
+        String uName=postList.get(position).getuName();
+        String url=postList.get(position).getuImage();
         String pTitle = postList.get(position).getpTitle();
         String pDescription = postList.get(position).getpDesc();
         final String pImage = postList.get(position).getpImage();
@@ -59,53 +63,34 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String pId = postList.get(position).getpId();
 
 
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        DocumentReference documentReference = firebaseFirestore.collection("users").document(pId);
 
+        holder.uName.setText(uName);
 
-        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.exists()){
-                    pName=documentSnapshot.getString("fName");
-                    holder.uName.setText(pName);
-
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
-
+        if(url.equals("empty"))
+            holder.uDp.setImageResource(R.drawable.ic_action_account);
+        else
+            Picasso.get().load(url).into(holder.uDp);
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
 
         String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
 
 
+        if (pImage.equals("noImage")) {
+            holder.pImage.setVisibility(View.GONE);
+        } else {
+            try {
+
+                Picasso.get().load(pImage).placeholder(R.drawable.ic_default).fit().centerCrop().into(holder.pImage);
+            } catch (Exception e) {
+                System.out.println(e.toString()+"  error");
+            }
+        }
 
         holder.pTime.setText(pTime);
         holder.pTitle.setText(pTitle);
         holder.pDesc.setText(pDescription);
 
-//        try {
-////            Picasso.get().load(uDp).placeholder(R.drawable.ic_default).into(holder.uDp);
-//        }
-//        catch (Exception e)
-//        {
-//
-//        }
-        if (pImage.equals("noImage")) {
-            holder.pImage.setVisibility(View.GONE);
-        } else {
-            try {
-                Picasso.get().load(pImage).placeholder(R.drawable.ic_default).into(holder.pImage);
-            } catch (Exception e) {
-
-            }
-        }
         holder.morebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -157,7 +142,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
-//            uDp=itemView.findViewById(R.id.uDp);
+            uDp=itemView.findViewById(R.id.uDp);
             pImage = itemView.findViewById(R.id.pImage);
             uName=itemView.findViewById(R.id.uname);
             pTime = itemView.findViewById(R.id.time);

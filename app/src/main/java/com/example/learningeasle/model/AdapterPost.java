@@ -70,6 +70,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
             Picasso.get().load(url).into(holder.uDp);
+        System.out.println(url+" == url   "+uName);
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
 

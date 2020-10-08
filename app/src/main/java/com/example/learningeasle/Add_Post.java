@@ -108,9 +108,9 @@ public class Add_Post extends AppCompatActivity {
         pd.show();
         FirebaseAuth firebaseAuth=FirebaseAuth.getInstance();
         final FirebaseUser firebaseUser=firebaseAuth.getCurrentUser();
-
+       // String UserId = firebaseUser.getUid();
         final String timeStamp= String.valueOf(System.currentTimeMillis());
-        String filePathAndName="Posts/"+"post_"+timeStamp;
+        String filePathAndName="Posts/"+ "post_"+timeStamp;
         if(!uri.equals("noImage"))
         {
             // with image

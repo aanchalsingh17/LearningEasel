@@ -133,7 +133,7 @@ public class UpdateProfile extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(UpdateProfile.this, "Profile Updated", Toast.LENGTH_SHORT).show();
-                        Log.d("tag", "onSuccess: User Status Updated  ");
+                        Log.d("tag", "onSuccess: User Status Updated ");
                         finish();
                     }
                 }).addOnFailureListener(new OnFailureListener() {

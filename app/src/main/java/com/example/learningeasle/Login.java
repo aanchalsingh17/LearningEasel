@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -51,10 +53,11 @@ public class Login extends AppCompatActivity {
     FirebaseAuth fAuth_login;
     SignInButton signin;
     // FirebaseFirestore fStore;
-    FirebaseUser fUser ;
+    FirebaseUser fUser;
     FirebaseFirestore fStore;
     GoogleSignInClient mgooglesignin;
     private int RC_SIGN_IN = 101;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,23 +72,23 @@ public class Login extends AppCompatActivity {
         forgot_password = findViewById(R.id.forgot_password);
         fUser = fAuth_login.getCurrentUser();
         signin = findViewById(R.id.googlesignin);
-        fStore  = FirebaseFirestore.getInstance();
+        fStore = FirebaseFirestore.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).
                 requestIdToken(getString(R.string.default_web_client_id)).
                 requestEmail().build();
 
-        mgooglesignin = GoogleSignIn.getClient(this,gso);
+        mgooglesignin = GoogleSignIn.getClient(this, gso);
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signIn();
             }
         });
-        if(fUser!= null) {
+        if (fUser != null) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }
-        
+
         loginBtn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,6 +123,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), Register.class));
+                finish();
                 overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
 
             }
@@ -178,33 +182,35 @@ public class Login extends AppCompatActivity {
 
 
     }
-   //GoogleSignIn
+
+    //GoogleSignIn
     private void signIn() {
         Intent signinintent = mgooglesignin.getSignInIntent();
         startActivityForResult(signinintent, RC_SIGN_IN);
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == RC_SIGN_IN){
+        if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
         }
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> task) {
-        try{
+        try {
             GoogleSignInAccount account = task.getResult(ApiException.class);
-            Toast.makeText(Login.this,"Successfully Signed in",Toast.LENGTH_SHORT).show();
+            Toast.makeText(Login.this, "Successfully Signed in", Toast.LENGTH_SHORT).show();
             FirebaseGoogleAuth(account);
-        }catch (ApiException ae){
-            Toast.makeText(Login.this,"Failure",Toast.LENGTH_SHORT).show();
+        } catch (ApiException ae) {
+            Toast.makeText(Login.this, "Failure", Toast.LENGTH_SHORT).show();
             FirebaseGoogleAuth(null);
         }
     }
 
     private void FirebaseGoogleAuth(GoogleSignInAccount account) {
-        AuthCredential authCredential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
+        AuthCredential authCredential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         fAuth_login.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -217,13 +223,13 @@ public class Login extends AppCompatActivity {
 
     private void addUserInfo(FirebaseUser user) {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
-        if(account!=null){
+        if (account != null) {
             SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor=preferences.edit();
-            editor.putString("email_Id",account.getEmail());
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("email_Id", account.getEmail());
 
             editor.commit();
-            startActivity(new Intent(Login.this,PickInterests.class));
+            startActivity(new Intent(Login.this, PickInterests.class));
             finish();
            /* String name = account.getDisplayName();
             String email = account.getEmail();
@@ -248,30 +254,44 @@ public class Login extends AppCompatActivity {
     // login function
 
     private void loginUser(String email, String password) {
-                SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor=preferences.edit();
-                editor.putString("email_Id",email);
-                editor.commit();
-                progressBar_login.setVisibility(View.VISIBLE);
+        SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("email_Id", email);
+        editor.commit();
+        progressBar_login.setVisibility(View.VISIBLE);
+        hideKeyboard(Login.this);
 
         // authenticate user
         fAuth_login.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+
                 if (task.isSuccessful()) {
                     Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(getApplicationContext(),PickInterests.class));
+                    startActivity(new Intent(getApplicationContext(), PickInterests.class));
                     overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+                    finish();
 
                 } else if (task.getException() != null) {
                     Toast.makeText(Login.this, "Error !" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                    progressBar_login.setVisibility(View.GONE);
+
                 }
+                progressBar_login.setVisibility(View.GONE);
             }
         });
 
     }
 
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 
 
 }

@@ -174,6 +174,7 @@ public class Register extends AppCompatActivity {
 
                             startActivity(new Intent(getApplicationContext(),Profile.class));
                             overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
+                            finish();
 
 
                         }else if(task.getException()!=null) {
@@ -193,6 +194,7 @@ public class Register extends AppCompatActivity {
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),Login.class));
                 overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
+                finish();
 
             }
         });

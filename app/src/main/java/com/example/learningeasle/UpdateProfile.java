@@ -10,6 +10,7 @@ import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,12 +24,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.learningeasle.model.AdapterPost;
+import com.example.learningeasle.model.modelpost;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -46,9 +56,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UpdateProfile extends AppCompatActivity {
-    EditText username,userphone,useremail,userstatus;
+    EditText username, userphone, useremail, userstatus;
     FirebaseFirestore fstore;
     FirebaseUser user;
+    TextView displayname, changeimage;
     StorageReference storageReference;
     Button update;
     String userId;
@@ -57,6 +68,7 @@ public class UpdateProfile extends AppCompatActivity {
     String currentPhotoPath;
     private int CAMERA_REQUEST_CODE = 10002;
     private int GALLERY_REQUEST_CODE = 10001;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,11 +79,12 @@ public class UpdateProfile extends AppCompatActivity {
         userstatus = findViewById(R.id.userstatus);
         fstore = FirebaseFirestore.getInstance();
         profileimage = findViewById(R.id.profile);
+        displayname = findViewById(R.id.displayname);
         storageReference = FirebaseStorage.getInstance().getReference();
         user = FirebaseAuth.getInstance().getCurrentUser();
         update = findViewById(R.id.update);
         userId = user.getUid();
-
+        changeimage = findViewById(R.id.changeimage);
         final DocumentReference docref = fstore.collection("users").document(userId);
         docref.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -80,6 +93,8 @@ public class UpdateProfile extends AppCompatActivity {
                 userphone.setText((CharSequence) documentSnapshot.get("phone"));
                 useremail.setText((CharSequence) documentSnapshot.get("email"));
                 userstatus.setText((CharSequence) documentSnapshot.get("status"));
+                String name = (String) documentSnapshot.get("fName");
+                displayname.setText(name);
             }
         });
         update.setOnClickListener(new View.OnClickListener() {
@@ -90,35 +105,35 @@ public class UpdateProfile extends AppCompatActivity {
                 String phone = userphone.getText().toString().trim();
                 String status = userstatus.getText().toString().trim();
 
-                if(TextUtils.isEmpty(fullName)){
+                if (TextUtils.isEmpty(fullName)) {
                     username.setError("Username is Required.");
                     return;
                 }
 
-                if(TextUtils.isEmpty(email)){
+                if (TextUtils.isEmpty(email)) {
                     useremail.setError("Email is Required.");
                     return;
                 }
 
-                if(TextUtils.isEmpty(phone)){
+                if (TextUtils.isEmpty(phone)) {
                     userphone.setError("Phone Number is Required.");
                     return;
                 }
 
-                if(phone.length() <10){
+                if (phone.length() < 10) {
                     userphone.setError("Enter valid Phone Number");
                     return;
                 }
                 Map<String, Object> user = new HashMap<>();                                                             //user data stored in HashMap
-                user.put("fName",fullName);
-                user.put("email",email);
-                user.put("phone",phone);
-                user.put("status",status);
+                user.put("fName", fullName);
+                user.put("email", email);
+                user.put("phone", phone);
+                user.put("status", status);
                 docref.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(UpdateProfile.this,"Profile Updated",Toast.LENGTH_SHORT).show();
-                        Log.d("tag", "onSuccess: User Status Updated  ");
+                        Toast.makeText(UpdateProfile.this, "Profile Updated", Toast.LENGTH_SHORT).show();
+                        Log.d("tag", "onSuccess: User Status Updated ");
                         finish();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -141,9 +156,9 @@ public class UpdateProfile extends AppCompatActivity {
                 profileimage.setImageResource(R.drawable.ic_action_account);
             }
         });
-        profileimage.setOnLongClickListener(new View.OnLongClickListener() {
+        changeimage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public void onClick(View v) {
                 String[] options = {"Camera", "Gallery"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(UpdateProfile.this);
                 builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -161,7 +176,6 @@ public class UpdateProfile extends AppCompatActivity {
                     }
                 });
                 builder.create().show();
-                return  true;
             }
         });
     }
@@ -187,6 +201,7 @@ public class UpdateProfile extends AppCompatActivity {
             Toast.makeText(this, "Camera permission is required to use the camera", Toast.LENGTH_SHORT).show();
         }
     }
+
     private File createImageFile() throws IOException {
         //create n image file name
         String TimeStamp = new SimpleDateFormat("yyyyMMdd_HHmm").format(new Date());
@@ -217,6 +232,7 @@ public class UpdateProfile extends AppCompatActivity {
             }
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -243,7 +259,9 @@ public class UpdateProfile extends AppCompatActivity {
     }
 
 
-    private void uploadImageToFirebase(Uri imageuri) {
+    private void uploadImageToFirebase(final Uri imageuri) {
+
+
         final StorageReference fileref = storageReference.child("Users/" + userId + "/Images.jpeg");
         fileref.putFile(imageuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -252,9 +270,76 @@ public class UpdateProfile extends AppCompatActivity {
                     @Override
                     public void onSuccess(Uri uri) {
                         Picasso.get().load(uri).into(profileimage);
+                        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                        StorageReference reference = FirebaseStorage.getInstance().getReference();
+                        final String[] url = new String[1];
+
+                        StorageReference fileref1 = reference.child("Users/" + firebaseUser.getUid() + "/Images.jpeg");
+                        fileref1.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                url[0] = uri.toString();
+                                System.out.println(uri + " == uri");
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+
+                                ref.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                            final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
+                                            if (hashMap.get("pId").equals(firebaseUser.getUid())) {
+                                                hashMap.put("url", url[0]);
+                                                System.out.println(url[0] + " = imageuri");
+                                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                                                ref.child(dataSnapshot.getKey()).setValue(hashMap);
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+//                Toast.makeText(getActivity(),"Error Loading",Toast.LENGTH_SHORT).show();
+                                    }
+
+
+                                });
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                url[0] = "empty";
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+
+                                ref.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                            final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
+                                            if (hashMap.get("pId").equals(firebaseUser.getUid())) {
+                                                hashMap.put("url", url[0]);
+                                                System.out.println(url[0] + " = imageuri");
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+//                Toast.makeText(getActivity(),"Error Loading",Toast.LENGTH_SHORT).show();
+                                    }
+
+
+                                });
+
+                            }
+                        });
+
+
                     }
                 });
             }
         });
+
+
     }
 }

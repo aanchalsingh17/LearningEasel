@@ -73,6 +73,7 @@ public class HomeFragment extends Fragment {
 //        progressBar.setVisibility(View.VISIBLE);
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading...");
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
         firebaseAuth = FirebaseAuth.getInstance();
         recyclerView = view.findViewById(R.id.postsRecyclerview);

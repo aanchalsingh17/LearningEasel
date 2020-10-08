@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case R.id.profile:
                            selectedfragment = new ProfileFragment();
-                            if (getSupportFragmentManager().findFragmentByTag("P") == null) {
+                             if (getSupportFragmentManager().findFragmentByTag("P") == null) {
                                 getSupportFragmentManager().beginTransaction().add(R.id.scrollable, selectedfragment, "P").commit();
                                 if (getSupportFragmentManager().findFragmentByTag("U") != null)
                                     getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("U")).commit();
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (getSupportFragmentManager().findFragmentByTag("A") != null)
                                     getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("A")).commit();
                             }
-                          // startActivity(new Intent(MainActivity.this,EditProfile.class));
+                            //startActivity(new Intent(MainActivity.this,EditProfile.class));
                             break;
                         case R.id.account:
                             selectedfragment = new UsersFragment();

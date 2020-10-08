@@ -4,16 +4,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,16 +27,21 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 public class ProfileFragment extends Fragment {
-
     ImageView profile;
     FirebaseUser user;
     String userid;
     StorageReference reference;
-    TextView username,useremail,userstatus;
+    TextView username, useremail, userstatus;
     FirebaseFirestore fstore;
     String userID;
     FirebaseAuth fAuth;
     Activity context;
+    Button editprofile;
+    DrawerLayout drawerLayout;
+    RecyclerView postlist;
+    FirebaseFirestore fStore;
+    //FirestoreRecyclerAdapter<Layout,NoteViewHolder> noteAdapter;      //  Takes model class and viewholder
+    FirebaseStorage mFirebaseStorage;
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -56,12 +61,20 @@ public class ProfileFragment extends Fragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
         userid = user.getUid();//
         reference = FirebaseStorage.getInstance().getReference();
+        editprofile = view.findViewById(R.id.editprofile);
         username = view.findViewById(R.id.username);
         useremail = view.findViewById(R.id.email);
         userstatus = view.findViewById(R.id.status);
         fAuth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
+        editprofile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(context,UpdateProfile.class));
+            }
+        });
         setProfile();
+
         return view;
 
     }
@@ -82,7 +95,7 @@ public class ProfileFragment extends Fragment {
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(context,FullView.class));
+                startActivity(new Intent(context, FullView.class));
             }
         });
         userID = fAuth.getCurrentUser().getUid();                                                           //user id stored
@@ -92,12 +105,14 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 String name = (String) documentSnapshot.get("fName");
-                String  email = (String) documentSnapshot.get("email");
+                String email = (String) documentSnapshot.get("email");
                 String status = (String) documentSnapshot.get("status");
                 username.setText(name);
                 useremail.setText(email);
                 userstatus.setText(status);
             }
         });
+
+
     }
 }

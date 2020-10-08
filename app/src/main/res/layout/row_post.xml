@@ -1,116 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardBackgroundColor="@color/cardview_light_background"
     app:cardCornerRadius="4dp"
     app:cardElevation="3dp"
-    app:cardUseCompatPadding="true"
-    app:cardBackgroundColor="@color/cardview_light_background"
-    >
+    app:cardUseCompatPadding="true">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="5dp"
         android:orientation="vertical">
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
             <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/uDp"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/ic_pic"
-                android:id="@+id/uDp">
-            </de.hdodenhof.circleimageview.CircleImageView>
+                android:src="@drawable/ic_pic"></de.hdodenhof.circleimageview.CircleImageView>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/uname"
-                android:text="Name"
-                android:autoLink="all"
-                android:textSize="20sp"/>
+                android:layout_weight="1"
+                android:layout_margin="10dp"
+                android:orientation="vertical">
+
                 <TextView
+                    android:id="@+id/uname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/time"
-                    android:text="16sp"
                     android:autoLink="all"
-                    />
+                    android:textColor="#00d5ff"
+                    android:fontFamily="@font/ubuntu"
+                    android:text="Name"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoLink="all"
+                    android:fontFamily="@font/ubuntu"
+                    android:text="16sp" />
 
             </LinearLayout>
+            <ImageButton
+                android:id="@+id/more"
+                android:layout_width="38dp"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/ic_more" />
 
         </LinearLayout>
+
         <TextView
+            android:id="@+id/ptitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/ubuntu"
             android:text="Title"
-            android:textStyle="bold"
+            android:textColor="#000"
+            android:layout_marginTop="10dp"
             android:textSize="16sp"
-            android:id="@+id/ptitle"/>
+            android:layout_marginLeft="5dp"
+            android:textStyle="bold" />
+
         <TextView
+            android:id="@+id/pdesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Description about the post"
-            android:id="@+id/pdesc"/>
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="5dp"
+            android:fontFamily="@font/ubuntu"
+            android:textColor="#000"
+            android:text="Description about the post" />
+
         <ImageView
+            android:id="@+id/pImage"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:id="@+id/pImage"/>
+            android:layout_marginBottom="5dp"/>
+
         <TextView
+            android:id="@+id/totallikes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/totallikes"
-            android:text="1.2k likes"/>
+            android:fontFamily="@font/ubuntu"
+            android:layout_marginBottom="3dp"
+            android:layout_marginLeft="5dp"
+            android:text="1.2k likes" />
+
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"/>
+            android:layout_height="1dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:gravity="center">
+
             <Button
+                android:id="@+id/like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/like"
+                android:layout_weight="1"
                 android:drawableLeft="@drawable/ic_like"
                 android:drawablePadding="5dp"
-                android:text="LIKE"
-                android:layout_weight="1"/>
+                android:text="LIKE" />
+
             <Button
+                android:id="@+id/comment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:drawableLeft="@drawable/ic_comment"
                 android:drawablePadding="5dp"
-                android:id="@+id/comment"
-                android:text="COMMENT"
-                android:layout_weight="1"/>
+                android:text="COMMENT" />
+
             <Button
+                android:id="@+id/share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/share"
+                android:layout_weight="1"
                 android:drawableLeft="@drawable/ic_share"
                 android:drawablePadding="5dp"
-                android:text="SHARE"
-                android:layout_weight="1"/>
+                android:text="SHARE" />
 
 
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/more"
-            android:layout_width="38dp"
-            android:layout_height="wrap_content"
-            android:background="@null"
 
-            android:src="@drawable/ic_more" />
 
     </LinearLayout>
 

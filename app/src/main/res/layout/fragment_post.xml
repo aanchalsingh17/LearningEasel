@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#DCD2D2"
+    tools:context=".PostFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="7dp">
+
+        <EditText
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/ubuntu"
+            android:background="@drawable/interest_shaper"
+            android:hint="Add a title.."
+            android:textColor="#11568E"
+            android:textSize="15dp"
+            android:padding="10dp"
+            android:singleLine="true" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/desc"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/ubuntu"
+            android:background="@drawable/interest_shaper"
+            android:gravity="top"
+            android:hint="Description goes here.."
+            android:textColor="#11568E"
+            android:textSize="15dp"
+            android:padding="10dp"
+            android:inputType="textCapSentences|textMultiLine"
+            android:minHeight="120dp" />
+
+        <ImageView
+            android:id="@+id/img"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:background="@drawable/interest_shaper"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="15dp"
+
+            android:src="@drawable/ic_image"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar_addPost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:visibility="gone"
+            style="@style/MyProgressBarRectangle"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/post_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|end"
+            android:background="#34282C"
+            android:backgroundTint="@color/colorAccent"
+            android:text="Post"
+            android:layout_margin="10dp"
+
+            android:src="@drawable/ic_done"
+            android:textColor="#FFFFFF" />
+
+
+    </LinearLayout>
+
+</ScrollView>

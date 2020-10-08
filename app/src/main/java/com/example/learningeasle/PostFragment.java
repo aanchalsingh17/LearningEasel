@@ -1,12 +1,5 @@
 package com.example.learningeasle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -14,16 +7,24 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,18 +40,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
-import static java.lang.System.currentTimeMillis;
-import static java.lang.System.in;
+public  class PostFragment extends Fragment  implements View.OnClickListener {
 
-public class Add_Post extends AppCompatActivity {
+    View view;
     EditText et_title, et_desc;
     FloatingActionButton post_btn;
     ImageView img_post;
-    String pName,url;
+    String pName, url;
     Uri image_rui = null;
     ProgressDialog pd;
     ProgressBar progressBar;
@@ -62,49 +61,48 @@ public class Add_Post extends AppCompatActivity {
     String[] cameraPermissions;
     String[] storagePermissions;
 
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add__post);
-        et_title = findViewById(R.id.title);
-        et_desc = findViewById(R.id.desc);
-        post_btn = findViewById(R.id.post_button);
-        img_post = findViewById(R.id.img);
-        progressBar = findViewById(R.id.progressBar_addPost);
+    }
+
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_post, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        et_title = view.findViewById(R.id.title);
+        et_desc = view.findViewById(R.id.desc);
+        post_btn = view.findViewById(R.id.post_button);
+        img_post = view.findViewById(R.id.img);
+        progressBar = view.findViewById(R.id.progressBar_addPost);
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.
                 WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.
                 WRITE_EXTERNAL_STORAGE};
+//        imgclick(view);
+//        postclick(view);
+        trigger();
 
-        img_post.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Image_dialog();
-            }
-        });
+        // Inflate the layout for this fragment
 
-        post_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String title = et_title.getText().toString().trim();
-                String description = et_desc.getText().toString().trim();
-                if (TextUtils.isEmpty(title)) {
-                    Toast.makeText(getApplicationContext(), "Enter Title...", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (TextUtils.isEmpty(description)) {
-                    Toast.makeText(getApplicationContext(), "Enter Description...", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (image_rui != null) {
-                    // post with image
-                    Post_Data(title, description, String.valueOf(image_rui));
-                } else {
-//                     post without image
-                    Post_Data(title, description, "noImage");
-                }
-            }
-        });
+
+    }
+
+    private void trigger() {
+       System.out.println(this+"/////////////");
+post_btn.setOnClickListener(this);
+img_post.setOnClickListener(this);
+
 
     }
 
@@ -119,7 +117,7 @@ public class Add_Post extends AppCompatActivity {
         // String UserId = firebaseUser.getUid();
         final String timeStamp = String.valueOf(System.currentTimeMillis());
         String filePathAndName = "Posts/" + "post_" + timeStamp;
-        System.out.println(pName+" pName  url "+url);
+        System.out.println(pName + " pName  url " + url);
         if (!uri.equals("noImage")) {
             // with image
             StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
@@ -140,8 +138,8 @@ public class Add_Post extends AppCompatActivity {
                         hashMap.put("pTitle", title);
                         hashMap.put("pDesc", description);
                         hashMap.put("pTime", timeStamp);
-                        hashMap.put("pName",pName);
-                        hashMap.put("url",url);
+                        hashMap.put("pName", pName);
+                        hashMap.put("url", url);
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
                         ref.child(timeStamp).setValue(hashMap)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -149,15 +147,15 @@ public class Add_Post extends AppCompatActivity {
                                     public void onSuccess(Void aVoid) {
 //                                pd.dismiss();
                                         progressBar.setVisibility(View.GONE);
-                                        Toast.makeText(getApplicationContext(), "Post published!", Toast.LENGTH_SHORT)
+                                        Toast.makeText(getActivity(), "Post published!", Toast.LENGTH_SHORT)
                                                 .show();
                                         et_desc.setText("");
                                         et_title.setText("");
                                         img_post.setImageURI(null);
                                         image_rui = null;
-                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                        Intent intent = new Intent(getActivity(), MainActivity.class);
                                         startActivity(intent);
-                                        finish();
+
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -187,8 +185,8 @@ public class Add_Post extends AppCompatActivity {
             hashMap.put("pDesc", description);
 
             hashMap.put("pTime", timeStamp);
-            hashMap.put("pName",pName);
-            hashMap.put("url",url);
+            hashMap.put("pName", pName);
+            hashMap.put("url", url);
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
             ref.child(timeStamp).setValue(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -196,22 +194,22 @@ public class Add_Post extends AppCompatActivity {
                         public void onSuccess(Void aVoid) {
 //                            pd.dismiss();
                             progressBar.setVisibility(View.GONE);
-                            Toast.makeText(getApplicationContext(), "Post published!", Toast.LENGTH_SHORT)
+                            Toast.makeText(getActivity(), "Post published!", Toast.LENGTH_SHORT)
                                     .show();
                             et_desc.setText("");
                             et_title.setText("");
                             img_post.setImageURI(null);
                             image_rui = null;
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
                             startActivity(intent);
-                            finish();
+
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
 //                    pd.dismiss();
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getApplicationContext(), "Whyyy", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Whyyy", Toast.LENGTH_SHORT).show();
 
                 }
             });
@@ -221,7 +219,7 @@ public class Add_Post extends AppCompatActivity {
 
     private void Image_dialog() {
         String[] options = {"Camera", "Gallery"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(Add_Post.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -241,7 +239,7 @@ public class Add_Post extends AppCompatActivity {
             }
         });
         builder.create().show();
-        FirebaseUser firebaseUser=FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         String pId = firebaseUser.getUid();
 
 
@@ -252,8 +250,8 @@ public class Add_Post extends AppCompatActivity {
         documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.exists()){
-                    pName=documentSnapshot.getString("fName");
+                if (documentSnapshot.exists()) {
+                    pName = documentSnapshot.getString("fName");
 //                    holder.uName.setText(pName);
 
                 }
@@ -270,14 +268,14 @@ public class Add_Post extends AppCompatActivity {
         fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                url=uri.toString();
+                url = uri.toString();
 //                System.out.println(uri);
 
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                url="empty";
+                url = "empty";
 
             }
         });
@@ -288,7 +286,7 @@ public class Add_Post extends AppCompatActivity {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Images.Media.TITLE, "Temp Pick");
         contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp Desc");
-        image_rui = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+        image_rui = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, image_rui);
         startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
@@ -301,26 +299,26 @@ public class Add_Post extends AppCompatActivity {
     }
 
     private boolean checkStoragePermission() {
-        boolean reuslt = ContextCompat.checkSelfPermission(Add_Post.this, Manifest.permission.
+        boolean reuslt = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.
                 WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
         return reuslt;
     }
 
     private void requestStoragePermission() {
-        ActivityCompat.requestPermissions(Add_Post.this, storagePermissions,
+        ActivityCompat.requestPermissions(getActivity(), storagePermissions,
                 STORAGE_REQUEST_CODE);
     }
 
     private boolean checkCameraPermission() {
-        boolean result = ContextCompat.checkSelfPermission(Add_Post.this, Manifest.permission.
+        boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.
                 CAMERA) == (PackageManager.PERMISSION_GRANTED);
-        boolean result1 = ContextCompat.checkSelfPermission(Add_Post.this, Manifest.permission.
+        boolean result1 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.
                 WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
         return result && result1;
     }
 
     private void requestCameraPermission() {
-        ActivityCompat.requestPermissions(Add_Post.this, cameraPermissions,
+        ActivityCompat.requestPermissions(getActivity(), cameraPermissions,
                 CAMERA_REQUEST_CODE);
     }
 
@@ -335,7 +333,7 @@ public class Add_Post extends AppCompatActivity {
                     if (cameraAccepted && storageAccepted)
                         pickFromCamera();
                     else
-                        Toast.makeText(Add_Post.this, "Camera and Storage permissions are required...",
+                        Toast.makeText(getActivity(), "Camera and Storage permissions are required...",
                                 Toast.LENGTH_SHORT).show();
                 } else {
 
@@ -349,7 +347,7 @@ public class Add_Post extends AppCompatActivity {
                     if (storageAccepted)
                         pickFromGallery();
                     else
-                        Toast.makeText(Add_Post.this, "Storage permission is required...",
+                        Toast.makeText(getActivity(), "Storage permission is required...",
                                 Toast.LENGTH_SHORT).show();
                 }
             }
@@ -358,8 +356,8 @@ public class Add_Post extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (resultCode ==RESULT_OK) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode == -1) {
             if (requestCode == IMAGE_PICK_GALLERY_CODE) {
                 image_rui = data.getData();
                 img_post.setImageURI(image_rui);
@@ -369,5 +367,36 @@ public class Add_Post extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
 
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId())
+        {
+            case R.id.img:
+                Image_dialog();
+                break;
+            case R.id.post_button:
+                String title = et_title.getText().toString().trim();
+                String description = et_desc.getText().toString().trim();
+                if (TextUtils.isEmpty(title)) {
+                    Toast.makeText(getActivity(), "Enter Title...", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (TextUtils.isEmpty(description)) {
+                    Toast.makeText(getActivity(), "Enter Description...", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (image_rui != null) {
+                    // post with image
+                    Post_Data(title, description, String.valueOf(image_rui));
+                } else {
+//                     post without image
+                    Post_Data(title, description, "noImage");
+                }
+break;
+
+        }
     }
 }

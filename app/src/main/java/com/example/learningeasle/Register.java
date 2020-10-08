@@ -125,10 +125,7 @@ public class Register extends AppCompatActivity {
                                 }
                             });
 
-
-
                             Toast.makeText(Register.this, "User Created.", Toast.LENGTH_SHORT).show();
-
                             //Storing data in firestore
 
                             userID = fAuth_reg.getCurrentUser().getUid();                                                           //user id stored
@@ -155,6 +152,7 @@ public class Register extends AppCompatActivity {
 //                                String folder = sharedPreferences.getString("email_Id", "");
 //                                int j=folder.length()-4;
 //                                final String username=folder.substring(0,j);
+
                             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                             FirebaseUser users = firebaseAuth.getCurrentUser();
                             final FirebaseDatabase database = FirebaseDatabase.getInstance();

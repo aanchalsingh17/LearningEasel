@@ -77,6 +77,7 @@ public class EditProfile extends AppCompatActivity {
                 profile.setImageResource(R.drawable.ic_action_account);
             }
         });
+        System.out.println("@@"+profile);
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

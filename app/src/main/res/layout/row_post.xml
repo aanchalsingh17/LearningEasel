@@ -42,7 +42,6 @@
                     android:fontFamily="@font/ubuntu"
                     android:text="Name"
                     android:textSize="20sp" />
-
                 <TextView
                     android:id="@+id/time"
                     android:layout_width="wrap_content"

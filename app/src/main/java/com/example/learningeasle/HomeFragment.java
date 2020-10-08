@@ -96,9 +96,14 @@ public class HomeFragment extends Fragment {
                 modelpostList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
-
-                    modelpost post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
-                            hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"));
+                    modelpost post;
+                    if (hashMap.get("pLikes")==null) {
+                        post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
+                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), "0");
+                    } else {
+                        post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
+                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), hashMap.get("pLikes"));
+                    }
                     modelpostList.add(post);
 
                 }

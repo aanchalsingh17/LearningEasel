@@ -159,8 +159,6 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     private void trigger() {
         post_btn.setOnClickListener(this);
         img_post.setOnClickListener(this);
-
-
     }
 
     private void Post_Data(final String title, final String description, final String uri) {

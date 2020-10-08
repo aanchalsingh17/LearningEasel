@@ -3,16 +3,25 @@ package com.example.learningeasle.model;
 import android.net.Uri;
 
 public class modelpost {
-    String pId, pTitle, pDesc, pTime, pImage,uName,url;
+    String pId, pTitle, pDesc, pTime, pImage,uName,url,pLikes;
 
-    public modelpost(String pId, String pImage, String pTitle, String pDesc, String pTime, String uName, String url) {
+    public modelpost(String pId, String pImage, String pTitle, String pDesc, String pTime, String uName, String url,String pLikes) {
         this.pId = pId;
         this.pImage = pImage;
         this.pTitle = pTitle;
         this.pDesc = pDesc;
         this.pTime = pTime;
         this.uName=uName;
+        this.pLikes=pLikes;
         this.url=url;
+    }
+
+    public String getpLikes() {
+        return pLikes;
+    }
+
+    public void setpLikes(String pLikes) {
+        this.pLikes = pLikes;
     }
 
     public String getuImage(){

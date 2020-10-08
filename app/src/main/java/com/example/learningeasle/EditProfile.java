@@ -54,7 +54,7 @@ public class EditProfile extends AppCompatActivity {
         setContentView(R.layout.activity_edit_profile);
         profile = findViewById(R.id.image);
         user = FirebaseAuth.getInstance().getCurrentUser();
-        userid = user.getUid();
+        userid = user.getUid();//
         reference = FirebaseStorage.getInstance().getReference();
         username = findViewById(R.id.username);
         ivcamera = findViewById(R.id.iv_camera);

@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -217,7 +218,13 @@ public class Login extends AppCompatActivity {
     private void addUserInfo(FirebaseUser user) {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
         if(account!=null){
+            SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor=preferences.edit();
+            editor.putString("email_Id",account.getEmail());
+
+            editor.commit();
             startActivity(new Intent(Login.this,PickInterests.class));
+            finish();
            /* String name = account.getDisplayName();
             String email = account.getEmail();
             final String userID = fAuth_login.getCurrentUser().getUid();
@@ -241,11 +248,11 @@ public class Login extends AppCompatActivity {
     // login function
 
     private void loginUser(String email, String password) {
-               /* SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+                SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor=preferences.edit();
                 editor.putString("email_Id",email);
                 editor.commit();
-                progressBar_login.setVisibility(View.VISIBLE);*/
+                progressBar_login.setVisibility(View.VISIBLE);
 
         // authenticate user
         fAuth_login.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {

@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                             FirebaseAuth fba;
                             fba = FirebaseAuth.getInstance();
                             FirebaseUser user = fba.getCurrentUser();
-                            Intent intent1 = new Intent(getApplicationContext(), Register.class);
+                            Intent intent1 = new Intent(getApplicationContext(), Login.class);
                             fba.signOut();
                             startActivity(intent1);
                             finish();

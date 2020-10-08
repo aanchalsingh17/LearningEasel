@@ -79,11 +79,9 @@ public class HomeFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelpostList.clear();
                 for(DataSnapshot dataSnapshot:snapshot.getChildren()){
-                    System.out.println("In onDataChange");
                     HashMap<Object,String> hashMap= (HashMap<Object, String>) dataSnapshot.getValue();
-                    System.out.println(dataSnapshot+" = Datasnapshot");
 //                    modelpost post=dataSnapshot.getValue(modelpost.class);
-                    modelpost post=new modelpost(hashMap.get("pId"),hashMap.get("pImage"),hashMap.get("pTitle"),hashMap.get("pDesc"),hashMap.get("pTime"));
+                    modelpost post=new modelpost(hashMap.get("pId"),hashMap.get("pImage"),hashMap.get("pTitle"),hashMap.get("pDesc"),hashMap.get("pTime"),"");
                     modelpostList.add(post);
                     adapterPost=new AdapterPost(getActivity(),modelpostList);
                     recyclerView.setAdapter(adapterPost);
@@ -92,7 +90,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getActivity(),"Error Loading",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(),"Error Loading",Toast.LENGTH_SHORT).show();
             }
         });
         progressBar.setVisibility(View.GONE);

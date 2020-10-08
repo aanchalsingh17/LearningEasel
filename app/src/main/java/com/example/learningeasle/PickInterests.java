@@ -10,10 +10,15 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,12 +26,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.R.color.holo_red_dark;
 
 public class PickInterests extends AppCompatActivity {
     Button btn_science, btn_medication, btn_computers, btn_business, btn_environment, btn_arts, btn_sports, btn_economics, btn_arch;
     DatabaseReference myRef;
+    FirebaseAuth fAuth_reg;
+    String userID;
+    FirebaseUser fUser;
+    FirebaseFirestore fStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +49,79 @@ public class PickInterests extends AppCompatActivity {
 
         SharedPreferences sharedPreferences=getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         String folder = sharedPreferences.getString("email_Id", "");
+        System.out.println(folder+" =email");
         int j = folder.length() - 4;
-        final String username = folder.substring(0, j);
+        String username="";
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+        if (acct != null && acct.getEmail().equals(folder)) {
+            final String personName = acct.getDisplayName();
+            final String personEmail = acct.getEmail();
+            SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor=preferences.edit();
+            editor.putString("email_Id",personEmail);
+
+            editor.commit();
+            System.out.println(personEmail);
+            System.out.println(personName);
+            username=personEmail.substring(0,personEmail.length()-4);
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference myRef=database.getReference().child(username);
+
+            myRef.child("Science").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.getValue() == null){
+                        myRef.child("Science").setValue("0");
+                        myRef.child("Medication").setValue("0");
+                        myRef.child("Computers").setValue("0");
+                        myRef.child("Business").setValue("0");
+                        myRef.child("Environment").setValue("0");
+                        myRef.child("Arts").setValue("0");
+                        myRef.child("Sports").setValue("0");
+                        myRef.child("Economics").setValue("0");
+                        myRef.child("Architecture").setValue("0");
+
+                        fAuth_reg       = FirebaseAuth.getInstance();
+                        fUser           =   fAuth_reg.getCurrentUser();
+                        fStore          = FirebaseFirestore.getInstance();
+                        userID = fAuth_reg.getCurrentUser().getUid();                                                           //user id stored
+
+                        DocumentReference documentReference = fStore.collection("users").document(userID);          // firestore cloud database
+                        Map<String, Object> user = new HashMap<>();                                                             //user data stored in HashMap
+                        user.put("fName",personName);
+                        user.put("email",personEmail);
+                        user.put("phone","");
+
+                        documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d("tag", "onSuccess: user Profile is created for "+ userID);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d("tag", "onFailure: " + e.toString());
+                            }
+                        });
+                    }
+                    else{
+                        System.out.println("Here");
+                        setColors();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+
+
+
+        }
+        if(username.equals(""))
+            username=folder.substring(0,j);
         final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser user = firebaseAuth.getCurrentUser();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();

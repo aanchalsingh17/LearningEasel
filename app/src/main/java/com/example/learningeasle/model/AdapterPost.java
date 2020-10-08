@@ -70,7 +70,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
             Picasso.get().load(url).into(holder.uDp);
-        System.out.println(url+" == url   "+uName);
+        System.out.println(pDescription+"  ..  "+pImage);
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
 
@@ -78,14 +78,13 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
 
         if (pImage.equals("noImage")) {
+            System.out.println(pTitle+"  . "+pDescription);
             holder.pImage.setVisibility(View.GONE);
         } else {
             try {
-
+                holder.pImage.setVisibility(View.VISIBLE);
                 Picasso.get().load(pImage).placeholder(R.drawable.ic_default).fit().centerCrop().into(holder.pImage);
-            } catch (Exception e) {
-                System.out.println(e.toString()+"  error");
-            }
+            }catch (Exception e){}
         }
 
         holder.pTime.setText(pTime);

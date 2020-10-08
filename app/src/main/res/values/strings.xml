@@ -19,6 +19,21 @@
     <string name="menu_edit">Edit Profile</string>
     <string name="menu_follow">Following</string>
     <string name="menu_post">Post</string>
+    <string name="interest_prompt">Choose an Interest</string>
+
+
+    <string-array name="interests">
+        <item>Science</item>
+        <item>Medication</item>
+        <item>Computers</item>
+        <item>Business</item>
+        <item>Environment</item>
+        <item>Arts</item>
+        <item>Sports</item>
+        <item>Economics</item>
+        <item>Architecture</item>
+    </string-array>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

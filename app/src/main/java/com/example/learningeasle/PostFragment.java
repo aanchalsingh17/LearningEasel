@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -43,7 +44,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
 
-public  class PostFragment extends Fragment  implements View.OnClickListener {
+public class PostFragment extends Fragment implements View.OnClickListener {
 
     View view;
     EditText et_title, et_desc;
@@ -60,6 +61,7 @@ public  class PostFragment extends Fragment  implements View.OnClickListener {
 
     String[] cameraPermissions;
     String[] storagePermissions;
+    ProgressDialog progressDialog;
 
 
     @Override
@@ -89,6 +91,12 @@ public  class PostFragment extends Fragment  implements View.OnClickListener {
                 WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.
                 WRITE_EXTERNAL_STORAGE};
+        getUserDeatils();
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Please Wait...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
 //        imgclick(view);
 //        postclick(view);
         trigger();
@@ -98,10 +106,59 @@ public  class PostFragment extends Fragment  implements View.OnClickListener {
 
     }
 
+    public void getUserDeatils() {
+        String pId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        DocumentReference documentReference = firebaseFirestore.collection("users").document(pId);
+
+
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    pName = documentSnapshot.getString("fName");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    }, 3000);
+
+//                    holder.uName.setText(pName);
+
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+
+        StorageReference reference = FirebaseStorage.getInstance().getReference();
+        StorageReference fileref = reference.child("Users/" + pId + "/Images.jpeg");
+        fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                url = uri.toString();
+//                System.out.println(uri);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                url = "empty";
+
+            }
+        });
+
+    }
+
     private void trigger() {
-       System.out.println(this+"/////////////");
-post_btn.setOnClickListener(this);
-img_post.setOnClickListener(this);
+        post_btn.setOnClickListener(this);
+        img_post.setOnClickListener(this);
 
 
     }
@@ -117,7 +174,6 @@ img_post.setOnClickListener(this);
         // String UserId = firebaseUser.getUid();
         final String timeStamp = String.valueOf(System.currentTimeMillis());
         String filePathAndName = "Posts/" + "post_" + timeStamp;
-        System.out.println(pName + " pName  url " + url);
         if (!uri.equals("noImage")) {
             // with image
             StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
@@ -177,7 +233,8 @@ img_post.setOnClickListener(this);
                     });
 
         } else {
-//            System.out.println("................................");
+
+
             HashMap<Object, String> hashMap = new HashMap<>();
             hashMap.put("pId", firebaseUser.getUid());
             hashMap.put("pImage", "noImage");
@@ -372,8 +429,7 @@ img_post.setOnClickListener(this);
 
     @Override
     public void onClick(View view) {
-        switch (view.getId())
-        {
+        switch (view.getId()) {
             case R.id.img:
                 Image_dialog();
                 break;
@@ -395,7 +451,7 @@ img_post.setOnClickListener(this);
 //                     post without image
                     Post_Data(title, description, "noImage");
                 }
-break;
+                break;
 
         }
     }

@@ -21,7 +21,6 @@
         <activity android:name=".ViewImage"/>
         <activity android:name=".EditProfile" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".Add_Post" />
         <activity android:name=".PickInterests" />
         <activity android:name=".Profile" />
         <activity android:name=".Register" />

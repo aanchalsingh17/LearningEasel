@@ -49,7 +49,6 @@ public class PickInterests extends AppCompatActivity {
 
         SharedPreferences sharedPreferences=getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         String folder = sharedPreferences.getString("email_Id", "");
-        System.out.println(folder+" =email");
         int j = folder.length() - 4;
         String username="";
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
@@ -61,8 +60,6 @@ public class PickInterests extends AppCompatActivity {
             editor.putString("email_Id",personEmail);
 
             editor.commit();
-            System.out.println(personEmail);
-            System.out.println(personName);
             username=personEmail.substring(0,personEmail.length()-4);
             final FirebaseDatabase database = FirebaseDatabase.getInstance();
             final DatabaseReference myRef=database.getReference().child(username);
@@ -105,7 +102,6 @@ public class PickInterests extends AppCompatActivity {
                         });
                     }
                     else{
-                        System.out.println("Here");
                         setColors();
                     }
                 }

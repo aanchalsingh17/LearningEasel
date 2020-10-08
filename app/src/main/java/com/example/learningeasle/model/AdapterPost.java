@@ -1,6 +1,7 @@
 package com.example.learningeasle.model;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.learningeasle.R;
+import com.example.learningeasle.ViewImage;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -52,7 +54,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 //        String uDp=postList.get(position).getuDp();
         String pTitle = postList.get(position).getpTitle();
         String pDescription = postList.get(position).getpDesc();
-        String pImage = postList.get(position).getpImage();
+        final String pImage = postList.get(position).getpImage();
         String pTimeStamp = postList.get(position).getpTime();
         String pId = postList.get(position).getpId();
 
@@ -129,6 +131,15 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             }
         });
 
+        holder.pImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(context, ViewImage.class);
+                intent.putExtra("image",pImage);
+                context.startActivity(intent);
+
+            }
+        });
     }
 
     @Override

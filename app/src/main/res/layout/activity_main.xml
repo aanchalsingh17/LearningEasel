@@ -6,21 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/nav"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="#87ceeb"
-        android:elevation="8dp"
-        app:menu="@menu/menu" />
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/menu_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#87ceeb"
+        android:background="#EBF3F6"
         android:elevation="8dp"
         app:menu="@menu/menu_nav" />
 
@@ -28,11 +21,6 @@
         android:id="@+id/scrollable"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/nav" />
+        android:layout_above="@+id/menu_nav" />
 
-    <ImageView
-        android:id="@+id/profileimage"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        app:srcCompat="@drawable/button_shaper_red" />
 </RelativeLayout>

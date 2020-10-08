@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FullView"></activity>
+        <activity android:name=".UpdateProfile"></activity>
+        <activity android:name=".FullView" />
         <activity android:name=".EditProfile" />
         <activity android:name=".MainActivity" />
         <activity android:name=".Add_Post" />

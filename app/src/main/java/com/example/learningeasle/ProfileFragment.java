@@ -1,64 +1,103 @@
 package com.example.learningeasle;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
+
 public class ProfileFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    ImageView profile;
+    FirebaseUser user;
+    String userid;
+    StorageReference reference;
+    TextView username,useremail,userstatus;
+    FirebaseFirestore fstore;
+    String userID;
+    FirebaseAuth fAuth;
+    Activity context;
     public ProfileFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        context = getActivity();
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        profile = view.findViewById(R.id.image);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userid = user.getUid();//
+        reference = FirebaseStorage.getInstance().getReference();
+        username = view.findViewById(R.id.username);
+        useremail = view.findViewById(R.id.email);
+        userstatus = view.findViewById(R.id.status);
+        fAuth = FirebaseAuth.getInstance();
+        fstore = FirebaseFirestore.getInstance();
+        setProfile();
+        return view;
+
+    }
+
+    private void setProfile() {
+        StorageReference fileref = reference.child("Users/" + userid + "/Images.jpeg");
+        fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.get().load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(profile);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                profile.setImageResource(R.drawable.ic_action_account);
+            }
+        });
+        profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(context,FullView.class));
+            }
+        });
+        userID = fAuth.getCurrentUser().getUid();                                                           //user id stored
+
+        final DocumentReference documentReference = fstore.collection("users").document(userID);
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                String name = (String) documentSnapshot.get("fName");
+                String  email = (String) documentSnapshot.get("email");
+                String status = (String) documentSnapshot.get("status");
+                username.setText(name);
+                useremail.setText(email);
+                userstatus.setText(status);
+            }
+        });
     }
 }

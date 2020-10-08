@@ -10,4 +10,13 @@
     <item android:id="@+id/account"
         android:title="@string/menu_account"
         android:icon="@drawable/ic_action_account" />
+    <item android:id="@+id/post"
+        android:title="Add"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_name"/>
+    <item android:id="@+id/logout"
+
+        android:title="Logout"
+        android:icon="@drawable/ic_log_out"
+        android:enabled="true"/>
 </menu>

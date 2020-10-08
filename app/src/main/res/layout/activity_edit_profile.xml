@@ -24,10 +24,10 @@
         app:layout_constraintVertical_bias="0.011"
         android:background="@drawable/cameraicon" />-->
     <FrameLayout
+        android:id="@+id/frameLayout2"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp"
         tools:ignore="MissingConstraints">
 
         <com.mikhaellopez.circularimageview.CircularImageView
@@ -46,12 +46,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.011"
             tools:ignore="MissingClass" />
-        <ImageView
-            android:id="@+id/iv_camera"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_done"
-            android:layout_gravity="bottom|end"/>
     </FrameLayout>
 
     <TextView
@@ -64,8 +58,48 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.62"
+        app:layout_constraintHorizontal_bias="0.426"
+        app:layout_constraintStart_toEndOf="@+id/frameLayout2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.092" />
+
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.422"
+        app:layout_constraintStart_toEndOf="@+id/frameLayout2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.191" />
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.13"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.153" />
+        app:layout_constraintVertical_bias="0.338" />
+
+    <TextView
+        android:id="@+id/editprofile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EditProfile"
+        android:textColor="#100F0F"
+        android:textColorHighlight="#0C0101"
+        android:textColorHint="#050000"
+        android:textColorLink="#0C0000"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.203"
+        app:layout_constraintStart_toEndOf="@+id/status"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout2"
+        app:layout_constraintVertical_bias="0.08" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

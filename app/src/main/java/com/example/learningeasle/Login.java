@@ -225,24 +225,7 @@ public class Login extends AppCompatActivity {
             editor.commit();
             startActivity(new Intent(Login.this,PickInterests.class));
             finish();
-           /* String name = account.getDisplayName();
-            String email = account.getEmail();
-            final String userID = fAuth_login.getCurrentUser().getUid();
-            DocumentReference documentReference = fStore.collection("users").document(userID);          // firestore cloud database
-            Map<String, Object> userinfo = new HashMap<>();                                                             //user data stored in HashMap
-            userinfo.put("fName",name);
-            userinfo.put("email",email);
-            documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d("tag", "onSuccess: user Profile is created for "+ userID);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d("tag", "onFailure: " + e.toString());
-                }
-            });*/
+
         }
     }
     // login function

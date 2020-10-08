@@ -20,10 +20,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomNavigationView navigationView, navigationView1;
-        navigationView = findViewById(R.id.nav);
+        BottomNavigationView  navigationView1;
         navigationView1 = findViewById(R.id.menu_nav);
-        navigationView.setOnNavigationItemSelectedListener(listener);
         navigationView1.setOnNavigationItemSelectedListener(listener1);
         getSupportFragmentManager().beginTransaction().replace(R.id.scrollable, new HomeFragment(), "H").commit();
     }
@@ -52,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
                             break;
                         case R.id.profile:
-                           /* selectedfragment = new ProfileFragment();
+                           selectedfragment = new ProfileFragment();
                             if (getSupportFragmentManager().findFragmentByTag("P") == null) {
                                 getSupportFragmentManager().beginTransaction().add(R.id.scrollable, selectedfragment, "P").commit();
                                 if (getSupportFragmentManager().findFragmentByTag("U") != null)
@@ -70,8 +68,7 @@ public class MainActivity extends AppCompatActivity {
                                     getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("H")).commit();
                                 }
                             }
-                             */
-                           startActivity(new Intent(MainActivity.this,EditProfile.class));
+                          // startActivity(new Intent(MainActivity.this,EditProfile.class));
                             break;
                         case R.id.account:
                             selectedfragment = new UsersFragment();
@@ -90,18 +87,6 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             break;
-                    }
-
-                    return true;
-                }
-            };
-
-
-    private BottomNavigationView.OnNavigationItemSelectedListener listener =
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    switch (item.getItemId()) {
                         case R.id.post:
                             Intent intent = new Intent(getApplicationContext(), Add_Post.class);
                             startActivity(intent);
@@ -120,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             };
+
 
 
 

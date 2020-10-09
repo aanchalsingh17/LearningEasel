@@ -79,6 +79,8 @@ public class ProfileFragment extends Fragment {
 
     }
 
+
+
     private void setProfile() {
         StorageReference fileref = reference.child("Users/" + userid + "/Images.jpeg");
         fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {

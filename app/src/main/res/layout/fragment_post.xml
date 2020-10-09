@@ -44,17 +44,7 @@
             android:singleLine="true"
             android:textColor="#11568E"
             android:textSize="15dp" />
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/post_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_margin="10dp"
-            android:background="#34282C"
-            android:backgroundTint="@color/colorAccent"
-            android:src="@drawable/ic_done"
-            android:text="Post"
-            android:textColor="#FFFFFF" />
+
         <EditText
             android:id="@+id/desc"
             android:layout_width="match_parent"
@@ -91,6 +81,20 @@
 
 
 
+
     </LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/post_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="35dp"
+        android:background="#34282C"
+        android:backgroundTint="@color/colorAccent"
+        android:src="@drawable/ic_done"
+        android:text="Post"
+        android:textColor="#FFFFFF" />
 
 </RelativeLayout>

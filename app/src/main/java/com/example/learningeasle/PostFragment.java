@@ -238,7 +238,6 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             hashMap.put("pImage", "noImage");
             hashMap.put("pTitle", title);
             hashMap.put("pDesc", description);
-
             hashMap.put("pTime", timeStamp);
             hashMap.put("pName", pName);
             hashMap.put("url", url);

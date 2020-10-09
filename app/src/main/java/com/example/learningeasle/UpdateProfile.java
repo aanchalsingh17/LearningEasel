@@ -11,12 +11,14 @@ import androidx.core.content.FileProvider;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -63,8 +65,10 @@ public class UpdateProfile extends AppCompatActivity {
     StorageReference storageReference;
     Button update;
     String userId;
+    ProgressDialog progressDialog;
     ImageView profileimage;
     Uri imageuri;
+    Context context;
     String currentPhotoPath;
     private int CAMERA_REQUEST_CODE = 10002;
     private int GALLERY_REQUEST_CODE = 10001;
@@ -85,6 +89,7 @@ public class UpdateProfile extends AppCompatActivity {
         update = findViewById(R.id.update);
         userId = user.getUid();
         changeimage = findViewById(R.id.changeimage);
+        context=this;
         final DocumentReference docref = fstore.collection("users").document(userId);
         docref.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -180,6 +185,14 @@ public class UpdateProfile extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent=new Intent(this,MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     private void askCameraPermission() {
         //check if permission is granted or not
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -243,7 +256,20 @@ public class UpdateProfile extends AppCompatActivity {
                 //setting the image view to the user selected image using its URI
                 profileimage.setImageURI(imageuri);
                 //uplaod iamge to firebase by calling the below method and passing the image uri as parameter
+
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+
+//                    }
+//                },1000);
+
+                progressDialog=new ProgressDialog(context);
+                progressDialog.setMessage("Saving...");
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.show();
                 uploadImageToFirebase(imageuri);
+
             }
 
         }
@@ -252,6 +278,7 @@ public class UpdateProfile extends AppCompatActivity {
                 File f = new File(currentPhotoPath);
                 imageuri = Uri.fromFile(f);
                 profileimage.setImageURI(imageuri);
+
 
                 uploadImageToFirebase(Uri.fromFile(f));
             }
@@ -279,7 +306,6 @@ public class UpdateProfile extends AppCompatActivity {
                             @Override
                             public void onSuccess(Uri uri) {
                                 url[0] = uri.toString();
-                                System.out.println(uri + " == uri");
                                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
 
                                 ref.addValueEventListener(new ValueEventListener() {
@@ -289,9 +315,9 @@ public class UpdateProfile extends AppCompatActivity {
                                             final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
                                             if (hashMap.get("pId").equals(firebaseUser.getUid())) {
                                                 hashMap.put("url", url[0]);
-                                                System.out.println(url[0] + " = imageuri");
                                                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
                                                 ref.child(dataSnapshot.getKey()).setValue(hashMap);
+                                                progressDialog.dismiss();
                                             }
                                         }
                                     }
@@ -299,6 +325,7 @@ public class UpdateProfile extends AppCompatActivity {
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
 //                Toast.makeText(getActivity(),"Error Loading",Toast.LENGTH_SHORT).show();
+                                        progressDialog.dismiss();
                                     }
 
 
@@ -318,7 +345,7 @@ public class UpdateProfile extends AppCompatActivity {
                                             final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
                                             if (hashMap.get("pId").equals(firebaseUser.getUid())) {
                                                 hashMap.put("url", url[0]);
-                                                System.out.println(url[0] + " = imageuri");
+                                                progressDialog.dismiss();
                                             }
                                         }
                                     }
@@ -326,6 +353,7 @@ public class UpdateProfile extends AppCompatActivity {
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
 //                Toast.makeText(getActivity(),"Error Loading",Toast.LENGTH_SHORT).show();
+                                        progressDialog.dismiss();
                                     }
 
 

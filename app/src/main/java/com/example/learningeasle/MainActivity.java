@@ -20,10 +20,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomNavigationView  navigationView1;
+        BottomNavigationView navigationView1;
         navigationView1 = findViewById(R.id.menu_nav);
         navigationView1.setOnNavigationItemSelectedListener(listener1);
+
+
         getSupportFragmentManager().beginTransaction().replace(R.id.scrollable, new HomeFragment(), "H").commit();
+
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener listener1 =
@@ -54,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
                             break;
                         case R.id.profile:
-                           selectedfragment = new ProfileFragment();
-                             if (getSupportFragmentManager().findFragmentByTag("P") == null) {
+                            selectedfragment = new ProfileFragment();
+                            if (getSupportFragmentManager().findFragmentByTag("P") == null) {
                                 getSupportFragmentManager().beginTransaction().add(R.id.scrollable, selectedfragment, "P").commit();
                                 if (getSupportFragmentManager().findFragmentByTag("U") != null)
                                     getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("U")).commit();
@@ -134,8 +137,6 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             };
-
-
 
 
 }

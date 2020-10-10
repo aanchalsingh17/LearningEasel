@@ -33,8 +33,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -110,32 +113,29 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         String pId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        DocumentReference documentReference = firebaseFirestore.collection("users").document(pId);
-
-
-        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    pName = documentSnapshot.getString("fName");
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot db:snapshot.getChildren()) {
+                    HashMap<Object, String> hashMap = (HashMap<Object, String>) db.getValue();
+                    pName = hashMap.get("Name");
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             progressDialog.dismiss();
                         }
                     }, 3000);
-
-//                    holder.uName.setText(pName);
-
                 }
             }
-        }).addOnFailureListener(new OnFailureListener() {
+
             @Override
-            public void onFailure(@NonNull Exception e) {
+            public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
+
+
 
         StorageReference reference = FirebaseStorage.getInstance().getReference();
         StorageReference fileref = reference.child("Users/" + pId + "/Images.jpeg");

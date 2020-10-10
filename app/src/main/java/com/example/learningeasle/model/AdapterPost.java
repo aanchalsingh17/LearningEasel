@@ -45,15 +45,16 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     List<modelpost> postList;
     private String pName;
     private DatabaseReference likesRef;
-      DatabaseReference postsref;
-      String myId;
-  boolean processLike=false;
+    DatabaseReference postsref;
+    String myId;
+    boolean processLike = false;
+
     public AdapterPost(Context context, List<modelpost> postList) {
         this.context = context;
         this.postList = postList;
-        myId= FirebaseAuth.getInstance().getCurrentUser().getUid();
-        likesRef= FirebaseDatabase.getInstance().getReference().child("Likes");
-        postsref= FirebaseDatabase.getInstance().getReference().child("Posts");
+        myId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
+        postsref = FirebaseDatabase.getInstance().getReference().child("Posts");
     }
 
     @NonNull
@@ -67,24 +68,22 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     public void onBindViewHolder(@NonNull final MyHolder holder, final int position) {
 //        String uId=postList.get(position).getuId();
 //        String uEmail=postList.get(position).getuEmail();
-        String uName=postList.get(position).getuName();
-        String url=postList.get(position).getuImage();
+        String uName = postList.get(position).getuName();
+        String url = postList.get(position).getuImage();
         String pTitle = postList.get(position).getpTitle();
         String pDescription = postList.get(position).getpDesc();
         final String pImage = postList.get(position).getpImage();
         String pTimeStamp = postList.get(position).getpTime();
         final String pId = postList.get(position).getpId();
-        String pLikes=postList.get(position).getpLikes();
-
+        String pLikes = postList.get(position).getpLikes();
 
 
         holder.uName.setText(uName);
 
-        if(url==null)
+        if (url == null)
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
             Picasso.get().load(url).into(holder.uDp);
-        System.out.println(pDescription+"  ..  "+pImage);
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
 
@@ -92,21 +91,22 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
 
         if (pImage.equals("noImage")) {
-            System.out.println(pTitle+"  . "+pDescription);
+            System.out.println(pTitle + "  . " + pDescription);
             holder.pImage.setVisibility(View.GONE);
         } else {
             try {
                 holder.pImage.setVisibility(View.VISIBLE);
                 Picasso.get().load(pImage).placeholder(R.drawable.ic_default).fit().centerCrop().into(holder.pImage);
-            }catch (Exception e){}
+            } catch (Exception e) {
+            }
         }
 
         holder.pTime.setText(pTime);
         holder.pTitle.setText(pTitle);
         holder.pDesc.setText(pDescription);
-        holder.pTotalLikes.setText(pLikes +" Likes");
+        holder.pTotalLikes.setText(pLikes + " Likes");
 
-        setLikes(holder,pTimeStamp);
+        setLikes(holder, pTimeStamp);
 
         holder.morebtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,26 +119,25 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             public void onClick(View view) {
 //                Toast.makeText(context, "Like", Toast.LENGTH_SHORT).show();
                 final int pLikes;
-                String likes=postList.get(position).getpLikes();
-                if(likes==null)
-                    pLikes=0;
+                String likes = postList.get(position).getpLikes();
+                if (likes == null)
+                    pLikes = 0;
                 else
-                pLikes= Integer.parseInt(postList.get(position).getpLikes());
-                processLike=true;
-                final String stamp=postList.get(position).getpTime();
+                    pLikes = Integer.parseInt(postList.get(position).getpLikes());
+                processLike = true;
+                final String stamp = postList.get(position).getpTime();
                 likesRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if(processLike)
-                            if(snapshot.child(stamp).hasChild(myId)) {
-                                postsref.child(stamp).child("pLikes").setValue(""+(pLikes - 1));
+                        if (processLike)
+                            if (snapshot.child(stamp).hasChild(myId)) {
+                                postsref.child(stamp).child("pLikes").setValue("" + (pLikes - 1));
                                 likesRef.child(stamp).child(myId).removeValue();
-                                processLike=false;
-                            }
-                        else{
-                            postsref.child(stamp).child("pLikes").setValue(""+(pLikes+1));
-                            likesRef.child(stamp).child(myId).setValue("Liked");
-                            processLike=false;
+                                processLike = false;
+                            } else {
+                                postsref.child(stamp).child("pLikes").setValue("" + (pLikes + 1));
+                                likesRef.child(stamp).child(myId).setValue("Liked");
+                                processLike = false;
                             }
                     }
 
@@ -167,8 +166,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         holder.pImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(context, ViewImage.class);
-                intent.putExtra("image",pImage);
+                Intent intent = new Intent(context, ViewImage.class);
+                intent.putExtra("image", pImage);
                 context.startActivity(intent);
 
             }
@@ -179,14 +178,12 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         likesRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.child(pTimeStamp).hasChild(myId)){
-                 holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked,0,0,
-                         0);
-                 holder.like_btn.setText("Liked");
-                }
-                else
-                {
-                    holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like,0,0,
+                if (snapshot.child(pTimeStamp).hasChild(myId)) {
+                    holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0,
+                            0);
+                    holder.like_btn.setText("Liked");
+                } else {
+                    holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like, 0, 0,
                             0);
                     holder.like_btn.setText("Like");
                 }
@@ -214,9 +211,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
-            uDp=itemView.findViewById(R.id.uDp);
+            uDp = itemView.findViewById(R.id.uDp);
             pImage = itemView.findViewById(R.id.pImage);
-            uName=itemView.findViewById(R.id.uname);
+            uName = itemView.findViewById(R.id.uname);
             pTime = itemView.findViewById(R.id.time);
             pTitle = itemView.findViewById(R.id.ptitle);
             pDesc = itemView.findViewById(R.id.pdesc);

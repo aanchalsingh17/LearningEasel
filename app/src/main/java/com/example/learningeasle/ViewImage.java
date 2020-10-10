@@ -21,7 +21,7 @@ public class ViewImage extends AppCompatActivity {
             imageView.setImageResource(R.drawable.ic_pic);
         } else {
             try {
-                Picasso.get().load(image).fit().placeholder(R.drawable.ic_default).into(imageView);
+                Picasso.get().load(image).placeholder(R.drawable.ic_default).into(imageView);
             } catch (Exception e) {
 
             }

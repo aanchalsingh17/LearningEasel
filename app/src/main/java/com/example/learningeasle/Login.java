@@ -39,8 +39,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,6 +61,7 @@ public class Login extends AppCompatActivity {
     FirebaseUser fUser;
     FirebaseFirestore fStore;
     GoogleSignInClient mgooglesignin;
+    String url;
     private int RC_SIGN_IN = 101;
 
     @Override
@@ -251,7 +257,9 @@ public class Login extends AppCompatActivity {
 
                 if (task.isSuccessful()) {
                     Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(getApplicationContext(), PickInterests.class));
+                    //Uploading profile pic n name n uid in realtimedatabase  to show all the users in the users fragment;
+
+                    startActivity(new Intent(getApplicationContext(),PickInterests.class));
                     overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
                     finish();
 
@@ -259,6 +267,8 @@ public class Login extends AppCompatActivity {
                     Toast.makeText(Login.this, "Error !" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 
                 }
+
+
                 progressBar_login.setVisibility(View.GONE);
             }
         });

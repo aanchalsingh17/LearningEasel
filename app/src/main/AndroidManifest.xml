@@ -16,9 +16,9 @@
         android:supportsRtl="true"
         android:hardwareAccelerated="false"
         android:theme="@style/AppTheme">
-        <activity android:name=".UpdateProfile"></activity>
+        <activity android:name=".UpdateProfile" />
         <activity android:name=".FullView" />
-        <activity android:name=".ViewImage"/>
+        <activity android:name=".ViewImage" />
         <activity android:name=".EditProfile" />
         <activity android:name=".MainActivity" />
         <activity android:name=".PickInterests" />

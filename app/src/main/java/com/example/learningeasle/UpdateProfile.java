@@ -124,12 +124,25 @@ public class UpdateProfile extends AppCompatActivity {
                     userphone.setError("Enter valid Phone Number");
                     return;
                 }
-                Map<String, Object> user = new HashMap<>();                                                             //user data stored in HashMap
-                user.put("fName", fullName);
-                user.put("email", email);
-                user.put("phone", phone);
-                user.put("status", status);
-                docref.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                user.updateEmail(email).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //Email updated
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                         Log.e("tag","An Error Occured" + e);
+                        Toast.makeText(UpdateProfile.this,"Unable to update the email: Re-login  ",Toast.LENGTH_SHORT).show();
+                    }
+                });
+                Map<String, Object> userdata = new HashMap<>();                                                             //user data stored in HashMap
+                userdata.put("fName", fullName);
+                userdata.put("email", email);
+                userdata.put("phone", phone);
+                userdata.put("status", status);
+
+                docref.set(userdata).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(UpdateProfile.this, "Profile Updated", Toast.LENGTH_SHORT).show();
@@ -325,7 +338,7 @@ public class UpdateProfile extends AppCompatActivity {
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
-//                Toast.makeText(getActivity(),"Error Loading",Toast.LENGTH_SHORT).show();
+//                                   Toast.makeText(getActivity(),"Error Loading",Toast.LENGTH_SHORT).show();
                                     }
 
 

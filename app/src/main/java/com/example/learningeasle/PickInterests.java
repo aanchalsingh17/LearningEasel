@@ -403,7 +403,7 @@ public class PickInterests extends AppCompatActivity {
         myRef.child("Science").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String data = snapshot.getValue().toString();
+                String  data = snapshot.getValue().toString();
                 if (data.equals("1")) {
                     btn_science.setBackgroundResource(R.drawable.button_shaper_red);
                     btn_science.setText("Unfollow");
@@ -421,7 +421,7 @@ public class PickInterests extends AppCompatActivity {
         myRef.child("Medication").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String data = snapshot.getValue().toString();
+               String data = snapshot.getValue().toString();
                 if (data.equals("1")) {
                     btn_medication.setBackgroundResource(R.drawable.button_shaper_red);
                     btn_medication.setText("Unfollow");
@@ -456,7 +456,7 @@ public class PickInterests extends AppCompatActivity {
         myRef.child("Business").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String data = snapshot.getValue().toString();
+                String  data = snapshot.getValue().toString();
                 if (data.equals("1")) {
                     btn_business.setBackgroundResource(R.drawable.button_shaper_red);
                     btn_business.setText("Unfollow");
@@ -474,7 +474,7 @@ public class PickInterests extends AppCompatActivity {
         myRef.child("Environment").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String data = snapshot.getValue().toString();
+                String  data = snapshot.getValue().toString();
                 if (data.equals("1")) {
                     btn_environment.setBackgroundResource(R.drawable.button_shaper_red);
                     btn_environment.setText("Unfollow");
@@ -510,7 +510,7 @@ public class PickInterests extends AppCompatActivity {
         myRef.child("Sports").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String data = snapshot.getValue().toString();
+                String  data = snapshot.getValue().toString();
                 if (data.equals("1")) {
                     btn_sports.setBackgroundResource(R.drawable.button_shaper_red);
                     btn_sports.setText("Unfollow");

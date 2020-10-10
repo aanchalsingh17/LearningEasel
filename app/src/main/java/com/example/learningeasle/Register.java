@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -28,7 +29,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -111,8 +115,46 @@ public class Register extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            //send email verification link
+
+                            final String[] url = new String[1];
                             FirebaseUser fuser = fAuth_reg.getCurrentUser();
+                             final String Uid = fuser.getUid();
+                            StorageReference reference = FirebaseStorage.getInstance().getReference();
+                            StorageReference fileref = reference.child("Users/" + Uid + "/Images.jpeg");
+                            fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    url[0] = uri.toString();
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    url[0] = "empty";
+
+                                }
+                            });
+                            final HashMap<Object, String> hashMap = new HashMap<>();
+                            DocumentReference reference1 = FirebaseFirestore.getInstance().collection("users").document(Uid);
+                            reference1.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    String name = (String) documentSnapshot.get("fName");
+                                    String email = (String) documentSnapshot.get("email");
+                                    hashMap.put("Name",name);
+                                    hashMap.put("Id",Uid);
+                                    hashMap.put("Url", url[0]);
+                                    hashMap.put("email",email);
+                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+                                    ref.child(Uid).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+
+                                        }
+                                    });
+                                }
+                            });
+                            //send email verification link
                             fuser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {

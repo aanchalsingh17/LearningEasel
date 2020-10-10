@@ -134,26 +134,6 @@ public class Register extends AppCompatActivity {
 
                                 }
                             });
-                            final HashMap<Object, String> hashMap = new HashMap<>();
-                            DocumentReference reference1 = FirebaseFirestore.getInstance().collection("users").document(Uid);
-                            reference1.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    String name = (String) documentSnapshot.get("fName");
-                                    String email = (String) documentSnapshot.get("email");
-                                    hashMap.put("Name",name);
-                                    hashMap.put("Id",Uid);
-                                    hashMap.put("Url", url[0]);
-                                    hashMap.put("email",email);
-                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-                                    ref.child(Uid).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-
-                                        }
-                                    });
-                                }
-                            });
                             //send email verification link
                             fuser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -171,24 +151,21 @@ public class Register extends AppCompatActivity {
                             //Storing data in firestore
 
                             userID = fAuth_reg.getCurrentUser().getUid();                                                           //user id stored
+                            final HashMap<Object, String> hashMap = new HashMap<>();
+                                    hashMap.put("Name",fullName);
+                                    hashMap.put("Id",Uid);
+                                    hashMap.put("Url", url[0]);
+                                    hashMap.put("email",email);
+                                    hashMap.put("phone",phone);
+                                    hashMap.put("status","");
+                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+                                    ref.child(Uid).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
 
-                            DocumentReference documentReference = fStore.collection("users").document(userID);          // firestore cloud database
-                            Map<String, Object> user = new HashMap<>();                                                             //user data stored in HashMap
-                            user.put("fName",fullName);
-                            user.put("email",email);
-                            user.put("phone",phone);
-                            user.put("status","");
-                            documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d("tag", "onSuccess: user Profile is created for "+ userID);
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d("tag", "onFailure: " + e.toString());
-                                }
-                            });
+                                        }
+                                    });
+
                             // after registration redirect to main class
 //                                sharedPreferences=getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 //                                String folder = sharedPreferences.getString("email_Id", "");

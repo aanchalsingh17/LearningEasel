@@ -66,6 +66,7 @@ public class UpdateProfile extends AppCompatActivity {
     ImageView profileimage;
     Uri imageuri;
     String currentPhotoPath;
+    String url;
     private int CAMERA_REQUEST_CODE = 10002;
     private int GALLERY_REQUEST_CODE = 10001;
 
@@ -85,7 +86,7 @@ public class UpdateProfile extends AppCompatActivity {
         update = findViewById(R.id.update);
         userId = user.getUid();
         changeimage = findViewById(R.id.changeimage);
-        final DocumentReference docref = fstore.collection("users").document(userId);
+       /* final DocumentReference docref = fstore.collection("users").document(userId);
         docref.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -95,6 +96,29 @@ public class UpdateProfile extends AppCompatActivity {
                 userstatus.setText((CharSequence) documentSnapshot.get("status"));
                 String name = (String) documentSnapshot.get("fName");
                 displayname.setText(name);
+            }
+        });*/
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot db:snapshot.getChildren()){
+                    HashMap<Object,String> hashMap = (HashMap<Object, String>) db.getValue();
+                    if(hashMap.get("Id").equals(userId)){
+                        username.setText(hashMap.get("Name"));
+                        useremail.setText(hashMap.get("email"));
+                        userstatus.setText(hashMap.get("status"));
+                        userphone.setText(hashMap.get("phone"));
+                        displayname.setText(hashMap.get("Name"));
+                    }
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
         update.setOnClickListener(new View.OnClickListener() {
@@ -136,23 +160,36 @@ public class UpdateProfile extends AppCompatActivity {
                         Toast.makeText(UpdateProfile.this,"Unable to update the email: Re-login  ",Toast.LENGTH_SHORT).show();
                     }
                 });
-                Map<String, Object> userdata = new HashMap<>();                                                             //user data stored in HashMap
-                userdata.put("fName", fullName);
-                userdata.put("email", email);
-                userdata.put("phone", phone);
-                userdata.put("status", status);
-
-                docref.set(userdata).addOnSuccessListener(new OnSuccessListener<Void>() {
+                StorageReference reference = FirebaseStorage.getInstance().getReference();
+                StorageReference fileref = reference.child("Users/" + userId + "/Images.jpeg");
+                fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(UpdateProfile.this, "Profile Updated", Toast.LENGTH_SHORT).show();
-                        Log.d("tag", "onSuccess: User Status Updated ");
-                        finish();
+                    public void onSuccess(Uri uri) {
+                        url = uri.toString();
+//                System.out.println(uri);
+
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d("tag", "onFailure: " + e.toString());
+                        url = "empty";
+
+                    }
+                });
+
+                final HashMap<Object, String> hashMap = new HashMap<>();
+                hashMap.put("Name",fullName);
+                hashMap.put("Id",userId);
+                hashMap.put("Url",url);
+                hashMap.put("email",email);
+                hashMap.put("phone",phone);
+                hashMap.put("status",status);
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+                ref.child(userId).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(UpdateProfile.this, "Profile Updated", Toast.LENGTH_SHORT).show();
+                       // startActivity(new Intent(UpdateProfile.this,ProfileFragment.class));
                     }
                 });
             }

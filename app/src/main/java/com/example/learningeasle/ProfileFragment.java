@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.learningeasle.model.Adapter;
+import com.example.learningeasle.model.ModelUsers;
 import com.example.learningeasle.model.modelpost;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -172,19 +173,31 @@ public class ProfileFragment extends Fragment  {
             }
         });
         userID = fAuth.getCurrentUser().getUid();                                                           //user id stored
-
-        final DocumentReference documentReference = fstore.collection("users").document(userID);
-        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                String name = (String) documentSnapshot.get("fName");
-                String email = (String) documentSnapshot.get("email");
-                String status = (String) documentSnapshot.get("status");
-                username.setText(name);
-                useremail.setText(email);
-                userstatus.setText(status);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot db:snapshot.getChildren()){
+                    HashMap<Object,String> hashMap = (HashMap<Object, String>) db.getValue();
+                    if(hashMap.get("Id").equals(userID)){
+                        String name =  hashMap.get("Name");
+                        String email =  hashMap.get("email");
+                        String status =  hashMap.get("status");
+                        username.setText(name);
+                        useremail.setText(email);
+                        userstatus.setText(status);
+                    }
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
+
 
 
     }

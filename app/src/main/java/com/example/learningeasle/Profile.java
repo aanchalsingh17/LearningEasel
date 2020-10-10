@@ -19,9 +19,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -30,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Profile extends AppCompatActivity {
     Button upload, register, capture,go;
@@ -41,6 +49,7 @@ public class Profile extends AppCompatActivity {
     FirebaseUser fUser;
     FirebaseAuth fauth;
     StorageReference storagereference;
+    String url;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -200,6 +209,7 @@ public class Profile extends AppCompatActivity {
                     });
                 }
             });*/
+
            fileref.putFile(imageuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                @Override
                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -207,10 +217,32 @@ public class Profile extends AppCompatActivity {
                        @Override
                        public void onSuccess(Uri uri) {
                            Picasso.get().load(uri).into(image);
+                           url = uri.toString();
+                       }
+                   }).addOnFailureListener(new OnFailureListener() {
+                       @Override
+                       public void onFailure(@NonNull Exception e) {
+                           url = "empty";
                        }
                    });
                }
            });
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
+                        hashMap.put("Url",url);
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         }
         //onBackPressed();
     }

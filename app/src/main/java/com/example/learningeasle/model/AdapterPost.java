@@ -37,8 +37,11 @@ import com.squareup.picasso.Picasso;
 
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import kotlin.jvm.internal.Ref;
 
 public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     Context context;
@@ -66,9 +69,10 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final MyHolder holder, final int position) {
-//        String uId=postList.get(position).getuId();
+        //String uId=postList.get(position).getuId();
 //        String uEmail=postList.get(position).getuEmail();
-        String uName = postList.get(position).getuName();
+        String uName = postList.get(position).getpName();
+
         String url = postList.get(position).getuImage();
         String pTitle = postList.get(position).getpTitle();
         String pDescription = postList.get(position).getpDesc();
@@ -76,10 +80,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String pTimeStamp = postList.get(position).getpTime();
         final String pId = postList.get(position).getpId();
         String pLikes = postList.get(position).getpLikes();
-
-
         holder.uName.setText(uName);
-
         if (url == null)
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else

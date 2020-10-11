@@ -3,7 +3,7 @@ package com.example.learningeasle.model;
 import android.net.Uri;
 
 public class modelpost {
-    String pId, pTitle, pDesc, pTime, pImage,uName,url,pLikes;
+    String pId, pTitle, pDesc, pTime, pImage,pName,url,pLikes;
 
     public modelpost(String pId, String pImage, String pTitle, String pDesc, String pTime, String uName, String url,String pLikes) {
         this.pId = pId;
@@ -11,7 +11,7 @@ public class modelpost {
         this.pTitle = pTitle;
         this.pDesc = pDesc;
         this.pTime = pTime;
-        this.uName=uName;
+        this.pName=uName;
         this.pLikes=pLikes;
         this.url=url;
     }
@@ -28,8 +28,8 @@ public class modelpost {
         return url;
     }
 
-    public String getuName(){
-        return uName;
+    public String getpName(){
+        return pName;
     }
     public String getpImage() {
         return pImage;

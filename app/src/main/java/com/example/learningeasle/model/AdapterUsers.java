@@ -2,6 +2,7 @@ package com.example.learningeasle.model;
 
 import android.content.Context;
 import android.media.Image;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,14 +14,25 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.learningeasle.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
    Context context;
    List<ModelUsers> userList;
-
+   String Url = null;
     public AdapterUsers(Context context, List<ModelUsers> userList) {
         this.context = context;
         this.userList = userList;
@@ -34,17 +46,32 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UserHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final UserHolder holder, int position) {
           final String userName = userList.get(position).getName();
           final String email = userList.get(position).getEmail();
           final String url = userList.get(position).getUrl();
           final String Uid = userList.get(position).getId();
           holder.name.setText(userName);
           holder.email.setText(email);
-          if(url==null)
-            holder.profile.setImageResource(R.drawable.ic_action_account);
-          else
-            Picasso.get().load(url).into(holder.profile);
+       /*StorageReference fileref = FirebaseStorage.getInstance().getReference().child("Users/" + Uid + "/Images.jpeg");
+        fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.get().load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(holder.profile);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                holder.profile.setImageResource(R.drawable.ic_action_account);
+            }
+        });*/
+       if(url==null)
+           holder.profile.setImageResource(R.drawable.ic_action_account);
+       else
+           Picasso.get().load(url).into(holder.profile);
+
+
+
           holder.itemView.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {

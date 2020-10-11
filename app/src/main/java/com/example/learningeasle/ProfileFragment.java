@@ -32,8 +32,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -59,6 +57,7 @@ public class ProfileFragment extends Fragment  {
     List<modelpost> modelpostList;
     Adapter adapterPost;
     ImageView more;
+    String url = null;
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -154,7 +153,7 @@ public class ProfileFragment extends Fragment  {
     }
 
     private void setProfile() {
-        StorageReference fileref = reference.child("Users/" + userid + "/Images.jpeg");
+       StorageReference fileref = reference.child("Users/" + userid + "/Images.jpeg");
         fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
@@ -186,10 +185,15 @@ public class ProfileFragment extends Fragment  {
                         username.setText(name);
                         useremail.setText(email);
                         userstatus.setText(status);
+                        url  = hashMap.get("Url");
                     }
 
 
                 }
+           /*   if (url == null)
+                    profile.setImageResource(R.drawable.ic_action_account);
+                else
+                    Picasso.get().load(url).into(profile);*/
             }
 
             @Override

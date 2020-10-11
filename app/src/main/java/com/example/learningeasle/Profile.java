@@ -44,7 +44,7 @@ public class Profile extends AppCompatActivity {
     Integer GALLERY_REQUEST_CODE = 101;
     Integer CAMERA_REQUEST_CODE = 102;
     String currentPhotoPath;
-    Uri imageuri;
+    Uri imageuri = null;
     ImageView image;
     FirebaseUser fUser;
     FirebaseAuth fauth;
@@ -82,11 +82,45 @@ public class Profile extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final StorageReference fileref = storagereference.child("Users/" + fUser.getUid() + "/Images.jpeg");
+
+                        fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                url = uri.toString();
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                               url = "empty";
+                            }
+                        });
+                final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+                ref.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            final HashMap<String, Object> hashMap = (HashMap<String, Object>) dataSnapshot.getValue();
+                            if(hashMap.get("Id").equals(fUser.getUid())) {
+                                hashMap.put("Url", url);
+                                ref.child(fUser.getUid()).updateChildren(hashMap);
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
                 Intent intent = new Intent(getApplicationContext(), PickInterests.class);
                 startActivity(intent);
+
             }
         });
-        go.setOnClickListener(new View.OnClickListener() {
+      /*  go.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -94,7 +128,7 @@ public class Profile extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        });
+        });*/
     }
 
     private void askCameraPermission() {
@@ -171,7 +205,7 @@ public class Profile extends AppCompatActivity {
                 imageuri = Uri.fromFile(f);
                 image.setImageURI(imageuri);
 
-                uploadImageToFirebase(Uri.fromFile(f));
+               uploadImageToFirebase(Uri.fromFile(f));
 //                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 //                Uri contenturi = Uri.fromFile(f);
 //                mediaScanIntent.setData(contenturi);
@@ -185,30 +219,6 @@ public class Profile extends AppCompatActivity {
         if (imageuri != null) {
             final StorageReference fileref = storagereference.child("Users/" + fUser.getUid() + "/Images.jpeg");
 
-           /* Bitmap bmp = null;
-            try {
-                bmp = MediaStore.Images.Media.getBitmap(getContentResolver(), imageuri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            //Choose image quality factor
-            bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos);
-            byte[] fileInBytes = baos.toByteArray();
-
-            fileref.putBytes(fileInBytes).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    //Toast.makeText(AddNote.this, "voila", Toast.LENGTH_SHORT).show();
-                    fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Picasso.get().load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(image);
-                        }
-                    });
-                }
-            });*/
 
            fileref.putFile(imageuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                @Override
@@ -217,34 +227,18 @@ public class Profile extends AppCompatActivity {
                        @Override
                        public void onSuccess(Uri uri) {
                            Picasso.get().load(uri).into(image);
-                           url = uri.toString();
+
                        }
                    }).addOnFailureListener(new OnFailureListener() {
                        @Override
                        public void onFailure(@NonNull Exception e) {
-                           url = "empty";
+                           image.setImageResource(R.drawable.ic_action_account);
                        }
                    });
                }
            });
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-            ref.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
-                        hashMap.put("Url",url);
-                    }
 
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
         }
-        //onBackPressed();
     }
 
 

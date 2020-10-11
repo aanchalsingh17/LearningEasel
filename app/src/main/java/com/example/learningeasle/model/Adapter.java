@@ -70,7 +70,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final PostHolder holder, final int position) {
-        final String uName=postList.get(position).getuName();
+        final String uName=postList.get(position).getpName();
         final String url=postList.get(position).getuImage();
         final String pTitle = postList.get(position).getpTitle();
         final String pDescription = postList.get(position).getpDesc();

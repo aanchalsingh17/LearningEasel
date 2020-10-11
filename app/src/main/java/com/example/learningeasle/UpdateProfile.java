@@ -64,7 +64,7 @@ public class UpdateProfile extends AppCompatActivity {
     Button update;
     String userId;
     ImageView profileimage;
-    Uri imageuri;
+    Uri imageuri=null;
     String currentPhotoPath;
     String url;
     private int CAMERA_REQUEST_CODE = 10002;
@@ -86,18 +86,12 @@ public class UpdateProfile extends AppCompatActivity {
         update = findViewById(R.id.update);
         userId = user.getUid();
         changeimage = findViewById(R.id.changeimage);
-       /* final DocumentReference docref = fstore.collection("users").document(userId);
-        docref.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        StorageReference fileref = storageReference.child("Users/" + userId + "/Images.jpeg");
+        fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                username.setText((CharSequence) documentSnapshot.get("fName"));
-                userphone.setText((CharSequence) documentSnapshot.get("phone"));
-                useremail.setText((CharSequence) documentSnapshot.get("email"));
-                userstatus.setText((CharSequence) documentSnapshot.get("status"));
-                String name = (String) documentSnapshot.get("fName");
-                displayname.setText(name);
-            }
-        });*/
+            public void onSuccess(Uri uri) {
+                imageuri = uri; }
+        });
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -124,7 +118,7 @@ public class UpdateProfile extends AppCompatActivity {
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String fullName = username.getText().toString().trim();
+                final String fullName = username.getText().toString().trim();
                 String email = useremail.getText().toString().trim();
                 String phone = userphone.getText().toString().trim();
                 String status = userstatus.getText().toString().trim();
@@ -161,13 +155,13 @@ public class UpdateProfile extends AppCompatActivity {
                     }
                 });
                 StorageReference reference = FirebaseStorage.getInstance().getReference();
-                StorageReference fileref = reference.child("Users/" + userId + "/Images.jpeg");
-                fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                StorageReference fileref1 = reference.child("Users/" + userId + "/Images.jpeg");
+                fileref1.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
+
                         url = uri.toString();
 //                System.out.println(uri);
-
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -176,6 +170,7 @@ public class UpdateProfile extends AppCompatActivity {
 
                     }
                 });
+                uploadImageToFirebase(imageuri);
 
                 final HashMap<Object, String> hashMap = new HashMap<>();
                 hashMap.put("Name",fullName);
@@ -192,10 +187,30 @@ public class UpdateProfile extends AppCompatActivity {
                        // startActivity(new Intent(UpdateProfile.this,ProfileFragment.class));
                     }
                 });
+               final DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("Posts");
+                ref2.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot ds:snapshot.getChildren()){
+                            HashMap<Object,String> hashMap1 = (HashMap<Object, String>) ds.getValue();
+                            if(hashMap1.get("pId").equals(userId)){
+                                hashMap1.put("pName",fullName);
+                                ref2.child(hashMap1.get("pTime")).setValue(hashMap1);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+               finish();
+
             }
         });
-        StorageReference fileref = storageReference.child("Users/" + userId + "/Images.jpeg");
-        fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        StorageReference fileref2 = storageReference.child("Users/" + userId + "/Images.jpeg");
+        fileref2.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 Picasso.get().load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(profileimage);
@@ -293,7 +308,7 @@ public class UpdateProfile extends AppCompatActivity {
                 //setting the image view to the user selected image using its URI
                 profileimage.setImageURI(imageuri);
                 //uplaod iamge to firebase by calling the below method and passing the image uri as parameter
-                uploadImageToFirebase(imageuri);
+
             }
 
         }
@@ -303,7 +318,7 @@ public class UpdateProfile extends AppCompatActivity {
                 imageuri = Uri.fromFile(f);
                 profileimage.setImageURI(imageuri);
 
-                uploadImageToFirebase(Uri.fromFile(f));
+
             }
         }
     }

@@ -110,7 +110,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     }
 
     public void getUserDeatils() {
-        String pId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final String pId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
@@ -119,13 +119,15 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot db:snapshot.getChildren()) {
                     HashMap<Object, String> hashMap = (HashMap<Object, String>) db.getValue();
-                    pName = hashMap.get("Name");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressDialog.dismiss();
-                        }
-                    }, 3000);
+                    if (hashMap.get("Id").equals(pId)) {
+                        pName = hashMap.get("Name");
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                            }
+                        }, 3000);
+                    }
                 }
             }
 

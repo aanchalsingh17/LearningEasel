@@ -66,7 +66,7 @@ public class UsersFragment extends Fragment {
                 usersList.clear();
                 for(DataSnapshot db:snapshot.getChildren()){
                     HashMap<Object,String> hashMap = (HashMap<Object, String>) db.getValue();
-                    ModelUsers users = new ModelUsers(hashMap.get("Id"),hashMap.get("Name"),hashMap.get("Url"),hashMap.get("email"));
+                    ModelUsers users = new ModelUsers(hashMap.get("Id"),hashMap.get("Name"),hashMap.get("Url"),hashMap.get("email"),hashMap.get("phone"),hashMap.get("status"));
                     if(!hashMap.get("Id").equals(fuser.getUid()))
                     usersList.add(users);
 

@@ -154,7 +154,7 @@ public class Register extends AppCompatActivity {
                             final HashMap<Object, String> hashMap = new HashMap<>();
                                     hashMap.put("Name",fullName);
                                     hashMap.put("Id",Uid);
-                                    hashMap.put("Url", url[0]);
+                                    hashMap.put("Url", "empty");
                                     hashMap.put("email",email);
                                     hashMap.put("phone",phone);
                                     hashMap.put("status","");

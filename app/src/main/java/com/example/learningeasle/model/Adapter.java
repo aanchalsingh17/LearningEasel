@@ -82,12 +82,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
 
 
-        holder.uName.setText(uName);
+        holder.pName.setText(uName);
 
-        if(url=="empty")
-            holder.uDp.setImageResource(R.drawable.ic_action_account);
+        if(url.equals("empty"))
+            holder.url.setImageResource(R.drawable.ic_action_account);
         else
-            Picasso.get().load(url).into(holder.uDp);
+            Picasso.get().load(url).into(holder.url);
         System.out.println(pDescription+"  ..  "+pImage);
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
@@ -275,17 +275,17 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
     public class PostHolder extends RecyclerView.ViewHolder {
 
-        ImageView uDp;
+        ImageView url;
         ImageView pImage;
-        TextView uName, pTime, pTitle, pDesc, pTotalLikes;
+        TextView pName, pTime, pTitle, pDesc, pTotalLikes;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
 
         public PostHolder(@NonNull View itemView) {
             super(itemView);
-            uDp=itemView.findViewById(R.id.uDp);
+            url=itemView.findViewById(R.id.uDp);
             pImage = itemView.findViewById(R.id.pImage);
-            uName=itemView.findViewById(R.id.uname);
+            pName=itemView.findViewById(R.id.uname);
             pTime = itemView.findViewById(R.id.time);
             pTitle = itemView.findViewById(R.id.ptitle);
             pDesc = itemView.findViewById(R.id.pdesc);

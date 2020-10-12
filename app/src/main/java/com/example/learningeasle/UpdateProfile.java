@@ -118,7 +118,7 @@ public class UpdateProfile extends AppCompatActivity {
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadImageToFirebase(imageuri);
+                uploadImageToFirebase(url);
 
             }
         });
@@ -221,34 +221,15 @@ public class UpdateProfile extends AppCompatActivity {
                 imageuri = Uri.fromFile(f);
                 url = imageuri.toString();
                 profileimage.setImageURI(imageuri);
-                //uploadImageToFirebase(imageuri);
-
             }
         }
     }
 
-    private void uploadImageToFirebase(final Uri image_uri) {
-        if (image_uri != null) {
-            final StorageReference fileref = storageReference.child("Users/" + userId + "/Images.jpeg");
-            fileref.putFile(image_uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Picasso.get().load(uri).into(profileimage);
-                            // url = uri.toString();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            profileimage.setImageResource(R.drawable.ic_action_account);
-                            // url = "empty";
-                        }
-                    });
-                }
-            });
-        }
+    private void uploadImageToFirebase(final String url) {
+      if(url=="empty"){
+          profileimage.setImageResource(R.drawable.ic_action_account);
+      }else
+          Picasso.get().load(url).into(profileimage);
         final String name = username.getText().toString().trim();
         String email = useremail.getText().toString().trim();
         String phone = userphone.getText().toString().trim();
@@ -271,7 +252,7 @@ public class UpdateProfile extends AppCompatActivity {
                     if (hashMap.get("pId").equals(userId)) {
                         hashMap.put("pName", name);
                         hashMap.put("url", url);
-                        databaseReference.child((String) hashMap.get("pTime")).updateChildren(hashMap);
+                        databaseReference.child((String) hashMap.get("pTime")).setValue(hashMap);
                     }
                 }
             }
@@ -282,6 +263,7 @@ public class UpdateProfile extends AppCompatActivity {
             }
         });
 
-
+       Toast.makeText(this,"Profile Updated",Toast.LENGTH_SHORT).show();
+       finish();
     }
 }

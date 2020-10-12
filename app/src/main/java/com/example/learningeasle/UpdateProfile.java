@@ -252,7 +252,7 @@ public class UpdateProfile extends AppCompatActivity {
                     if (hashMap.get("pId").equals(userId)) {
                         hashMap.put("pName", name);
                         hashMap.put("url", url);
-                        databaseReference.child((String) hashMap.get("pTime")).setValue(hashMap);
+                        databaseReference.child((String) hashMap.get("pTime")).updateChildren(hashMap);
                     }
                 }
             }

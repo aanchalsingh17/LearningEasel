@@ -106,6 +106,24 @@ public class FullView extends AppCompatActivity {
 
                     }
                 });
+                final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot ds:snapshot.getChildren()) {
+                            HashMap<String, Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                            if(hashMap.get("pId").equals(userid)){
+                                hashMap.put("Url","empty");
+                                reference.child(ds.getKey()).updateChildren(hashMap);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
             }
         });

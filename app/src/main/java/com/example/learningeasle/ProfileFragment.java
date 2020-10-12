@@ -201,10 +201,7 @@ public class ProfileFragment extends Fragment  {
 
 
                 }
-           /*   if (url == null)
-                    profile.setImageResource(R.drawable.ic_action_account);
-                else
-                    Picasso.get().load(url).into(profile);*/
+
             }
 
             @Override

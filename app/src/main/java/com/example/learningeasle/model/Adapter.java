@@ -84,7 +84,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
         holder.uName.setText(uName);
 
-        if(url==null)
+        if(url=="empty")
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
             Picasso.get().load(url).into(holder.uDp);
@@ -136,7 +136,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                                 }
 
                                 if (i == 1) {
-                                   String imagePath = "Posts" + "post_"+ pTimeStamp;
+                                   String imagePath = "Posts/" + "post_"+ pTimeStamp;
                                     if (pImage == "noImage") {
 
                                         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Posts" + pTimeStamp);

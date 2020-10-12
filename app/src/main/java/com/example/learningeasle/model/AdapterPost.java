@@ -81,7 +81,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         final String pId = postList.get(position).getpId();
         String pLikes = postList.get(position).getpLikes();
         holder.uName.setText(uName);
-        if (url == null)
+        if (url.equals("empty"))
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
             Picasso.get().load(url).into(holder.uDp);

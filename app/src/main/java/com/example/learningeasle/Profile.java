@@ -40,7 +40,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Profile extends AppCompatActivity {
-    Button upload, register, capture,go;
+    Button upload, register, capture;
     Integer GALLERY_REQUEST_CODE = 101;
     Integer CAMERA_REQUEST_CODE = 102;
     String currentPhotoPath;
@@ -49,7 +49,7 @@ public class Profile extends AppCompatActivity {
     FirebaseUser fUser;
     FirebaseAuth fauth;
     StorageReference storagereference;
-    String url;
+    String url = "empty";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +57,6 @@ public class Profile extends AppCompatActivity {
         upload = findViewById(R.id.upload);
         register = findViewById(R.id.register_reg);
         capture = findViewById(R.id.capture);
-        go = findViewById(R.id.next);
         image=findViewById(R.id.imageView);
         fauth = FirebaseAuth.getInstance();
         fUser = fauth.getCurrentUser();
@@ -82,20 +81,6 @@ public class Profile extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final StorageReference fileref = storagereference.child("Users/" + fUser.getUid() + "/Images.jpeg");
-
-                        fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                url = uri.toString();
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                               url = "empty";
-                            }
-                        });
                 final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
                 ref.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -105,6 +90,10 @@ public class Profile extends AppCompatActivity {
                             if(hashMap.get("Id").equals(fUser.getUid())) {
                                 hashMap.put("Url", url);
                                 ref.child(fUser.getUid()).updateChildren(hashMap);
+                                if(url=="empty")
+                                    image.setImageResource(R.drawable.ic_action_account);
+                                else
+                                    Picasso.get().load(url).into(image);
                             }
                         }
 
@@ -115,20 +104,13 @@ public class Profile extends AppCompatActivity {
 
                     }
                 });
+
                 Intent intent = new Intent(getApplicationContext(), PickInterests.class);
                 startActivity(intent);
 
             }
         });
-      /*  go.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Intent intent = new Intent(getApplicationContext(),PickInterests.class);
-                startActivity(intent);
-                finish();
-            }
-        });*/
     }
 
     private void askCameraPermission() {
@@ -193,8 +175,9 @@ public class Profile extends AppCompatActivity {
                 imageuri = data.getData();
                 //setting the image view to the user selected image using its URI
                 image.setImageURI(imageuri);
+                url = imageuri.toString();
                 //uplaod iamge to firebase by calling the below method and passing the image uri as parameter
-                uploadImageToFirebase(imageuri);
+                ///url= imageuri.toString();
             }
 
         }
@@ -204,8 +187,8 @@ public class Profile extends AppCompatActivity {
                 File f = new File(currentPhotoPath);
                 imageuri = Uri.fromFile(f);
                 image.setImageURI(imageuri);
-
-               uploadImageToFirebase(Uri.fromFile(f));
+                url = imageuri.toString();
+               //  url = imageuri.toString();
 //                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 //                Uri contenturi = Uri.fromFile(f);
 //                mediaScanIntent.setData(contenturi);
@@ -227,12 +210,14 @@ public class Profile extends AppCompatActivity {
                        @Override
                        public void onSuccess(Uri uri) {
                            Picasso.get().load(uri).into(image);
+                           url = uri.toString();
 
                        }
                    }).addOnFailureListener(new OnFailureListener() {
                        @Override
                        public void onFailure(@NonNull Exception e) {
                            image.setImageResource(R.drawable.ic_action_account);
+                           url = "empty";
                        }
                    });
                }

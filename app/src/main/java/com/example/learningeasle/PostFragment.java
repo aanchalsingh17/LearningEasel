@@ -53,7 +53,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     EditText et_title, et_desc;
     FloatingActionButton post_btn;
     ImageView img_post;
-    String pName, url;
+    String pName, url="empty";
     Uri image_rui = null;
     ProgressDialog pd;
     ProgressBar progressBar;
@@ -121,6 +121,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                     HashMap<Object, String> hashMap = (HashMap<Object, String>) db.getValue();
                     if (hashMap.get("Id").equals(pId)) {
                         pName = hashMap.get("Name");
+                        url = hashMap.get("Url");
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -139,7 +140,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
 
 
-        StorageReference reference = FirebaseStorage.getInstance().getReference();
+        /*StorageReference reference = FirebaseStorage.getInstance().getReference();
         StorageReference fileref = reference.child("Users/" + pId + "/Images.jpeg");
         fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -154,7 +155,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 url = "empty";
 
             }
-        });
+        });*/
 
     }
 
@@ -295,47 +296,24 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             }
         });
         builder.create().show();
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        String pId = firebaseUser.getUid();
+       DatabaseReference db = FirebaseDatabase.getInstance().getReference("Users");
+       db.addValueEventListener(new ValueEventListener() {
+           @Override
+           public void onDataChange(@NonNull DataSnapshot snapshot) {
+               for(DataSnapshot ds:snapshot.getChildren()){
+                   HashMap<String ,Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                   if(hashMap.get("Id").equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                       pName = (String) hashMap.get("Name");
+                       url = (String) hashMap.get("Url");
+                   }
+               }
+           }
 
+           @Override
+           public void onCancelled(@NonNull DatabaseError error) {
 
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        DocumentReference documentReference = firebaseFirestore.collection("users").document(pId);
-
-
-        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    pName = documentSnapshot.getString("fName");
-//                    holder.uName.setText(pName);
-
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
-
-        StorageReference reference = FirebaseStorage.getInstance().getReference();
-        StorageReference fileref = reference.child("Users/" + pId + "/Images.jpeg");
-        fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                url = uri.toString();
-//                System.out.println(uri);
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                url = "empty";
-
-            }
-        });
-
+           }
+       });
     }
 
     private void pickFromCamera() {

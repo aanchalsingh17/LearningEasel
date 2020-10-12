@@ -53,21 +53,9 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
           final String Uid = userList.get(position).getId();
           holder.name.setText(userName);
           holder.email.setText(email);
-       /*StorageReference fileref = FirebaseStorage.getInstance().getReference().child("Users/" + Uid + "/Images.jpeg");
-        fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Picasso.get().load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(holder.profile);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                holder.profile.setImageResource(R.drawable.ic_action_account);
-            }
-        });*/
-       if(url==null)
+         if(url=="empty")
            holder.profile.setImageResource(R.drawable.ic_action_account);
-       else
+         else
            Picasso.get().load(url).into(holder.profile);
 
 

@@ -153,18 +153,29 @@ public class ProfileFragment extends Fragment  {
     }
 
     private void setProfile() {
-       StorageReference fileref = reference.child("Users/" + userid + "/Images.jpeg");
-        fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Picasso.get().load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(profile);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                profile.setImageResource(R.drawable.ic_action_account);
-            }
-        });
+        profile.setImageResource(R.drawable.ic_action_account);
+      DatabaseReference db = FirebaseDatabase.getInstance().getReference("Users");
+      db.addValueEventListener(new ValueEventListener() {
+          @Override
+          public void onDataChange(@NonNull DataSnapshot snapshot) {
+              for(DataSnapshot ds:snapshot.getChildren()){
+                  HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                  if(hashMap.get("Id").equals(userid)){
+                      String url = (String) hashMap.get("Url");
+                      if(url.equals("empty"))
+                          profile.setImageResource(R.drawable.ic_action_account);
+                      else
+                      Picasso.get().load(url).into(profile);
+
+                  }
+              }
+          }
+
+          @Override
+          public void onCancelled(@NonNull DatabaseError error) {
+
+          }
+      });
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

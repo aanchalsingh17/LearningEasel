@@ -28,6 +28,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -38,6 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 public class FullView extends AppCompatActivity {
     ImageView image;
@@ -57,36 +63,50 @@ public class FullView extends AppCompatActivity {
         userid = user.getUid();
         //update = findViewById(R.id.change_photo);
         remove = findViewById(R.id.delete_photo);
-        storageReference = FirebaseStorage.getInstance().getReference();
-        fUser = FirebaseAuth.getInstance().getCurrentUser();
-        final StorageReference fileref = storageReference.child("Users/" + userid + "/Images.jpeg");
-        fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference("Users");
+        db.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onSuccess(Uri uri) {
-                Picasso.get().load(uri).networkPolicy(NetworkPolicy.OFFLINE).into(image);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds:snapshot.getChildren()){
+                    HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                    if(hashMap.get("Id").equals(userid)){
+                        if(hashMap.get("Url").equals("empty")){
+                            image.setImageResource(R.drawable.ic_action_account);
+                        }else{
+                            Picasso.get().load((String) hashMap.get("Url")).into(image);
+                        }
+                    }
+                }
             }
-        }).addOnFailureListener(new OnFailureListener() {
+
             @Override
-            public void onFailure(@NonNull Exception e) {
-                image.setImageResource(R.drawable.ic_action_account);
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
-
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 image.setImageResource(R.drawable.ic_action_account);
-                fileref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                final DatabaseReference db = FirebaseDatabase.getInstance().getReference("Users");
+                db.addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(FullView.this, "Profile Image Deleted", Toast.LENGTH_SHORT).show();
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot ds:snapshot.getChildren()){
+                            HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                            if(hashMap.get("Id").equals(userid)){
+                               hashMap.put("Url","empty");
+                               db.child(userid).updateChildren(hashMap);
+                            }
+                        }
                     }
-                }).addOnFailureListener(new OnFailureListener() {
+
                     @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(FullView.this, "Failed : Retry", Toast.LENGTH_SHORT).show();
+                    public void onCancelled(@NonNull DatabaseError error) {
+
                     }
                 });
+
             }
         });
     }

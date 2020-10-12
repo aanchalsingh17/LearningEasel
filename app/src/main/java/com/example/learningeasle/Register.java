@@ -115,25 +115,8 @@ public class Register extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-
-                            final String[] url = new String[1];
                             FirebaseUser fuser = fAuth_reg.getCurrentUser();
                              final String Uid = fuser.getUid();
-                            StorageReference reference = FirebaseStorage.getInstance().getReference();
-                            StorageReference fileref = reference.child("Users/" + Uid + "/Images.jpeg");
-                            fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    url[0] = uri.toString();
-
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    url[0] = "empty";
-
-                                }
-                            });
                             //send email verification link
                             fuser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override

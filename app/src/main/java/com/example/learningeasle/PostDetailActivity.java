@@ -104,15 +104,15 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
         setLikes();
-        
-        loadComments();
-    }
-
-    private void loadComments() {
         LinearLayoutManager layoutManager=new LinearLayoutManager(
                 getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         commentList=new ArrayList<>();
+        loadComments();
+    }
+
+    private void loadComments() {
+
         DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Posts").child(postId).
                 child("Comments");
         ref.addValueEventListener(new ValueEventListener() {
@@ -120,19 +120,21 @@ public class PostDetailActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 commentList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    final HashMap<String, String> hashMap = (HashMap<String, String>) dataSnapshot.getValue();
+                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
                     ModelComment modelComment;
 
                     modelComment=new ModelComment(hashMap.get("cId"),hashMap.get("comment"),hashMap.get("timeStamp"),
                             hashMap.get("uId"),
                             hashMap.get("uDp"),hashMap.get("uName"));
-                    System.out.println(modelComment+",.,.,.,..,.,.,.,.");
+
                     commentList.add(modelComment);
 
 
-                    adapterComments=new AdapterComments(getApplicationContext(),commentList);
-                    recyclerView.setAdapter(adapterComments);
+
                 }
+                System.out.println(commentList+",.,.,.,..,.,.,.,.");
+                adapterComments=new AdapterComments(getApplicationContext(),commentList);
+                recyclerView.setAdapter(adapterComments);
             }
 
             @Override
@@ -213,7 +215,7 @@ public class PostDetailActivity extends AppCompatActivity {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts")
                 .child(postId).child("Comments");
 
-        HashMap<String, String> hashMap = new HashMap<>();
+        HashMap<Object, String> hashMap = new HashMap<>();
         hashMap.put("cId", timeStamp);
         hashMap.put("comment", comment);
         hashMap.put("timeStamp", timeStamp);
@@ -225,7 +227,7 @@ public class PostDetailActivity extends AppCompatActivity {
         ref.child(timeStamp).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+//                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
 
                 Toast.makeText(getApplicationContext(), "Comment Added!!", Toast.LENGTH_SHORT)

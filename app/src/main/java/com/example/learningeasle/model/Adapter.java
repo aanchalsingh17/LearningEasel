@@ -3,6 +3,9 @@ package com.example.learningeasle.model;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -18,6 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,6 +43,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -228,7 +234,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         holder.share_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Share", Toast.LENGTH_SHORT).show();
+                BitmapDrawable bitmapDrawable= (BitmapDrawable) holder.pImage.getDrawable();
+                if(bitmapDrawable == null){
+                    shareTextOnly(pTitle,pDescription);
+                }
+                else{
+                    Bitmap bitmap=bitmapDrawable.getBitmap();
+                    shareImageAndText(pTitle,pDescription,bitmap);
+                }
             }
         });
 
@@ -241,6 +254,43 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
             }
         });
+    }
+
+    private void shareImageAndText(String pTitle, String pDescription, Bitmap bitmap) {
+        String shareBody=pTitle+"\n"+pDescription;
+        Uri uri=saveImageInCache(bitmap);
+        Intent shareIntent=new Intent(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM,uri);
+        shareIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT,"Subject Here");
+        shareIntent.setType("image/png");
+        context.startActivity(Intent.createChooser(shareIntent,"Share Via"));
+    }
+
+    private Uri saveImageInCache(Bitmap bitmap) {
+        File imageFolder=new File(context.getCacheDir(),"images");
+        Uri uri=null;
+        try{
+            imageFolder.mkdirs();
+            File file=new File(imageFolder,"shared_image.png");
+            FileOutputStream stream=new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG,90,stream);
+            stream.flush();
+            stream.close();
+            uri= FileProvider.getUriForFile(context,"com.example.learningeasle.fileprovider",file);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return uri;
+    }
+
+    private void shareTextOnly(String pTitle, String pDescription) {
+        String shareBody=pTitle+"\n"+pDescription;
+        Intent shareIntent=new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT,"Subject Here"); // for sharing via email
+        shareIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
+        context.startActivity(Intent.createChooser(shareIntent,"Share Via"));
     }
 
     private void setLikes(final PostHolder holder, final String pTimeStamp) {

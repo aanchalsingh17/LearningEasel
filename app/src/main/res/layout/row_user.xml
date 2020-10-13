@@ -44,6 +44,7 @@
               android:paddingTop="5dp"
               android:text="Email"
               android:textSize="10sp"
+              android:singleLine="true"
               android:textColor="@color/cardview_dark_background"
               android:textStyle="italic"/>
       </LinearLayout>

@@ -2,6 +2,8 @@ package com.example.learningeasle.model;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.text.format.DateFormat;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.learningeasle.R;
@@ -36,6 +39,8 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -74,8 +79,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String uName = postList.get(position).getpName();
 
         String url = postList.get(position).getuImage();
-        String pTitle = postList.get(position).getpTitle();
-        String pDescription = postList.get(position).getpDesc();
+        final String pTitle = postList.get(position).getpTitle();
+        final String pDescription = postList.get(position).getpDesc();
         final String pImage = postList.get(position).getpImage();
         String pTimeStamp = postList.get(position).getpTime();
         final String pId = postList.get(position).getpId();
@@ -160,7 +165,14 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         holder.share_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Share", Toast.LENGTH_SHORT).show();
+                BitmapDrawable bitmapDrawable= (BitmapDrawable) holder.pImage.getDrawable();
+                if(bitmapDrawable == null){
+                    shareTextOnly(pTitle,pDescription);
+                }
+                else{
+                    Bitmap bitmap=bitmapDrawable.getBitmap();
+                    shareImageAndText(pTitle,pDescription,bitmap);
+                }
             }
         });
 
@@ -173,6 +185,43 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
             }
         });
+    }
+
+    private void shareImageAndText(String pTitle, String pDescription, Bitmap bitmap) {
+        String shareBody=pTitle+"\n"+pDescription;
+        Uri uri=saveImageInCache(bitmap);
+        Intent shareIntent=new Intent(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM,uri);
+        shareIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT,"Subject Here");
+        shareIntent.setType("image/png");
+        context.startActivity(Intent.createChooser(shareIntent,"Share Via"));
+    }
+
+    private Uri saveImageInCache(Bitmap bitmap) {
+        File imageFolder=new File(context.getCacheDir(),"images");
+        Uri uri=null;
+        try{
+            imageFolder.mkdirs();
+            File file=new File(imageFolder,"shared_image.png");
+            FileOutputStream stream=new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG,90,stream);
+            stream.flush();
+            stream.close();
+            uri= FileProvider.getUriForFile(context,"com.example.learningeasle.fileprovider",file);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return uri;
+    }
+
+    private void shareTextOnly(String pTitle, String pDescription) {
+        String shareBody=pTitle+"\n"+pDescription;
+        Intent shareIntent=new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT,"Subject Here"); // for sharing via email
+        shareIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
+        context.startActivity(Intent.createChooser(shareIntent,"Share Via"));
     }
 
     private void setLikes(final MyHolder holder, final String pTimeStamp) {

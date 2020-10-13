@@ -139,12 +139,10 @@ public class ProfileFragment extends Fragment  {
 
                 adapterPost = new Adapter(getActivity(), modelpostList);
                 postlist.setAdapter(adapterPost);
-
                 }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         } );
 

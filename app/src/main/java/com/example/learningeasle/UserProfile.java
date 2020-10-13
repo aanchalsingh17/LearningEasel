@@ -35,7 +35,6 @@ public class UserProfile extends AppCompatActivity {
     StorageReference reference;
     TextView username, useremail, userstatus;
     FirebaseFirestore fstore;
-    Activity context;
     RecyclerView recyclerView;
     List<modelpost> modelpostList;
     AdapterPost adapterPost;
@@ -76,11 +75,11 @@ public class UserProfile extends AppCompatActivity {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
                                 hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), hashMap.get("pLikes"));
                     }
-                    if (post != null)
+                    if(post!=null)
                         modelpostList.add(post);
                 }
 
-                adapterPost = new AdapterPost(context, modelpostList);
+                adapterPost = new AdapterPost(UserProfile.this, modelpostList);
                 recyclerView.setAdapter(adapterPost);
             }
             @Override

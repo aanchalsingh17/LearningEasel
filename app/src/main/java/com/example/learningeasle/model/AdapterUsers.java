@@ -1,6 +1,7 @@
 package com.example.learningeasle.model;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.Image;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.learningeasle.R;
+import com.example.learningeasle.UserProfile;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -53,7 +55,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
           final String Uid = userList.get(position).getId();
           holder.name.setText(userName);
           holder.email.setText(email);
-         if(url=="empty")
+         if(url.equals("empty"))
            holder.profile.setImageResource(R.drawable.ic_action_account);
          else
            Picasso.get().load(url).into(holder.profile);
@@ -63,7 +65,9 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
           holder.itemView.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
-                  Toast.makeText(context,"Account Clicked" + userName,Toast.LENGTH_SHORT).show();
+                  Intent intent = new Intent(context, UserProfile.class);
+                  intent.putExtra("Id",Uid);
+                  context.startActivity(intent);
               }
           });
     }

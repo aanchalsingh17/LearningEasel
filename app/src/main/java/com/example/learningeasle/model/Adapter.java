@@ -51,7 +51,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
     DatabaseReference postsref;
     String myId;
     boolean processLike=false;
-    private EditClick editClick;
     public Adapter(Context context, List<modelpost> postList) {
         this.context = context;
         this.postList = postList;
@@ -64,7 +63,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
     @NonNull
     @Override
     public Adapter.PostHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.post_view_layout, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.row_post, parent, false);
         return new PostHolder(view);
     }
 
@@ -295,9 +294,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             share_btn = itemView.findViewById(R.id.share);
             comment_btn = itemView.findViewById(R.id.comment);
         }
-    }
-    public interface EditClick{
-        void onEditClicked(View view,int position);
     }
 
 }

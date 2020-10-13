@@ -87,6 +87,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         final String pTimeStamp = postList.get(position).getpTime();
         final String pId = postList.get(position).getpId();
         final String pLikes=postList.get(position).getpLikes();
+        String pComments=postList.get(position).getpComments();
 
 
 
@@ -103,7 +104,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
         String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
 
-
+        if(pComments==null)
+            pComments="0";
+        holder.pTotalComment.setText(pComments + " Comments");
         if (pImage.equals("noImage")){
             System.out.println(pTitle+"  . "+pDescription);
             holder.pImage.setVisibility(View.GONE);
@@ -348,7 +351,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
         ImageView url;
         ImageView pImage;
-        TextView pName, pTime, pTitle, pDesc, pTotalLikes;
+        TextView pName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
 
@@ -359,6 +362,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             pName=itemView.findViewById(R.id.uname);
             pTime = itemView.findViewById(R.id.time);
             pTitle = itemView.findViewById(R.id.ptitle);
+            pTotalComment=itemView.findViewById(R.id.totalcomments);
             pDesc = itemView.findViewById(R.id.pdesc);
             pTotalLikes = itemView.findViewById(R.id.totallikes);
             morebtn = (ImageButton) itemView.findViewById(R.id.more);

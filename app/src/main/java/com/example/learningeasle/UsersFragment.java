@@ -2,12 +2,14 @@ package com.example.learningeasle;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -116,8 +118,8 @@ public class UsersFragment extends Fragment {
             }
         });
 
-    }
 
+    }
     private void getAllUsers() {
             //current user;
        final FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
@@ -144,6 +146,29 @@ public class UsersFragment extends Fragment {
         });
 
     }
+//On BackPress load all teh users
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        if(getView() == null){
+            return;
+        }
 
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
+                    // handle back button's click listener
+                    getAllUsers();
+
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
 }

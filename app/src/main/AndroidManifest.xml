@@ -20,6 +20,7 @@
         <activity android:name=".UpdateProfile" />
         <activity android:name=".FullView" />
         <activity android:name=".ViewImage" />
+        <activity android:name=".PostDetailActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".PickInterests" />
         <activity android:name=".Profile" />
@@ -41,11 +42,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
-        
         <provider
             android:authorities="com.example.learningeasle.fileprovider"
             android:name="androidx.core.content.FileProvider"
@@ -55,6 +51,9 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/paths"/>
         </provider>
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

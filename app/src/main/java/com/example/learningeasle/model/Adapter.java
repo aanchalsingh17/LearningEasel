@@ -26,6 +26,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.learningeasle.PostDetailActivity;
 import com.example.learningeasle.PostFragment;
 import com.example.learningeasle.ProfileFragment;
 import com.example.learningeasle.R;
@@ -184,7 +185,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         holder.comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Comment", Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(context, PostDetailActivity.class);
+                intent.putExtra("postId",pTimeStamp);
+                context.startActivity(intent);
             }
         });
         holder.share_btn.setOnClickListener(new View.OnClickListener() {

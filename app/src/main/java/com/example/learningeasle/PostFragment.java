@@ -195,6 +195,8 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                         hashMap.put("pTime", timeStamp);
                         hashMap.put("pName", pName);
                         hashMap.put("url", url);
+                        hashMap.put("pLikes","0");
+                        hashMap.put("pComments","0");
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
                         ref.child(timeStamp).setValue(hashMap)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -242,6 +244,8 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             hashMap.put("pTime", timeStamp);
             hashMap.put("pName", pName);
             hashMap.put("url", url);
+            hashMap.put("pLikes","0");
+            hashMap.put("pComments","0");
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
             ref.child(timeStamp).setValue(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {

@@ -17,14 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.learningeasle.ProfileFragment;
+import com.example.learningeasle.PostDetailActivity;
 import com.example.learningeasle.R;
-import com.example.learningeasle.UserProfile;
 import com.example.learningeasle.ViewImage;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -59,7 +56,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     private DatabaseReference likesRef;
     DatabaseReference postsref;
     String myId;
-    View view;
     boolean processLike = false;
 
     public AdapterPost(Context context, List<modelpost> postList) {
@@ -73,7 +69,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_post, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_post, parent, false);
         return new MyHolder(view);
     }
 
@@ -87,27 +83,11 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         final String pTitle = postList.get(position).getpTitle();
         final String pDescription = postList.get(position).getpDesc();
         final String pImage = postList.get(position).getpImage();
-        String pTimeStamp = postList.get(position).getpTime();
+        final String pTimeStamp = postList.get(position).getpTime();
         final String pId = postList.get(position).getpId();
+        String pComments=postList.get(position).getpComments();
         String pLikes = postList.get(position).getpLikes();
         holder.uName.setText(uName);
-        holder.uName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(pId)) {
-                   Intent intent = new Intent(context, UserProfile.class);
-                    intent.putExtra("Id", pId);
-                    context.startActivity(intent);
-                }else{
-                   /* AppCompatActivity activity = (AppCompatActivity) view.getContext();
-                    Fragment myFragment = new ProfileFragment();
-                    activity.getSupportFragmentManager().beginTransaction().replace(R.id.home, myFragment).addToBackStack(null).commit();*/
-                   Toast.makeText(context,"Go to your Profile",Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
         if (url.equals("empty"))
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
@@ -133,6 +113,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         holder.pTitle.setText(pTitle);
         holder.pDesc.setText(pDescription);
         holder.pTotalLikes.setText(pLikes + " Likes");
+        if(pComments==null)
+            pComments="0";
+        holder.pTotalComment.setText(pComments + " Comments");
 
         setLikes(holder, pTimeStamp);
 
@@ -181,7 +164,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         holder.comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Comment", Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(context, PostDetailActivity.class);
+                intent.putExtra("postId",pTimeStamp);
+                context.startActivity(intent);
             }
         });
         holder.share_btn.setOnClickListener(new View.OnClickListener() {
@@ -245,7 +230,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         shareIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
         context.startActivity(Intent.createChooser(shareIntent,"Share Via"));
     }
-
     private void setLikes(final MyHolder holder, final String pTimeStamp) {
         likesRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -277,7 +261,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
         ImageView uDp;
         ImageView pImage;
-        TextView uName, pTime, pTitle, pDesc, pTotalLikes;
+        TextView uName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
 
@@ -286,6 +270,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             uDp = itemView.findViewById(R.id.uDp);
             pImage = itemView.findViewById(R.id.pImage);
             uName = itemView.findViewById(R.id.uname);
+            pTotalComment=itemView.findViewById(R.id.totalcomments);
             pTime = itemView.findViewById(R.id.time);
             pTitle = itemView.findViewById(R.id.ptitle);
             pDesc = itemView.findViewById(R.id.pdesc);
@@ -296,4 +281,5 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             comment_btn = itemView.findViewById(R.id.comment);
         }
     }
+
 }

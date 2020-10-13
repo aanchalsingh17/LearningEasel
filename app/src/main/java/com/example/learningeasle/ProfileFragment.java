@@ -90,7 +90,9 @@ public class ProfileFragment extends Fragment  {
         layoutManager.setReverseLayout(true);
         postlist.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
-        editprofile.setOnClickListener(new View.OnClickListener() {
+        editprofile.setOnClickListener(
+
+                new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(context,UpdateProfile.class));
@@ -111,12 +113,12 @@ public class ProfileFragment extends Fragment  {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
                     modelpost post=null;
-                    if (hashMap.get("pLikes")==null&&hashMap.get("pId").equals(userID)) {
+                    if (hashMap.get("pLikes")==null &&hashMap.get("pId").equals(userID)) {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
-                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), "0");
+                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), "0",hashMap.get("pComments"));
                     } else if(hashMap.get("pId").equals(userID)){
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
-                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), hashMap.get("pLikes"));
+                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), hashMap.get("pLikes"),hashMap.get("pComments"));
                     }
                     if(post!=null)
                     modelpostList.add(post);

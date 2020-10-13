@@ -98,21 +98,6 @@ public class ProfileFragment extends Fragment  {
         });
         loadPosts();
         setProfile();
-        /*Adapter.EditClick editClick = new Adapter.EditClick() {
-            @Override
-            public void onEditClicked(String Name, String url, String Title, String Description, String Image, String Timestamp, String Likes) {
-                PostFragment postFragment = new PostFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("Name",Name);
-                bundle.putString("url",url);
-                bundle.putString("Title",Title);
-                bundle.putString("Description",Description);
-                bundle.putString("Image",Image);
-                bundle.putString("TimeStamp",Timestamp);
-                bundle.putString("Likes",Likes);
-                postFragment.setArguments(bundle);
-            }
-        };*/
         return view;
 
     }

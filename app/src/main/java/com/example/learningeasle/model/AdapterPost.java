@@ -100,10 +100,10 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                     intent.putExtra("Id", pId);
                     context.startActivity(intent);
                 }else{
-                    /*AppCompatActivity activity = (AppCompatActivity) view.getContext();
+                   /* AppCompatActivity activity = (AppCompatActivity) view.getContext();
                     Fragment myFragment = new ProfileFragment();
-                    activity.getSupportFragmentManager().beginTransaction().replace(R.id.postsRecyclerview, myFragment).addToBackStack(null).commit();*/
-                    Toast.makeText(context,"Go to Profile to view your profile",Toast.LENGTH_SHORT).show();
+                    activity.getSupportFragmentManager().beginTransaction().replace(R.id.home, myFragment).addToBackStack(null).commit();*/
+                   Toast.makeText(context,"Go to your Profile",Toast.LENGTH_SHORT).show();
                 }
 
             }

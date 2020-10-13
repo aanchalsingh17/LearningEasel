@@ -116,7 +116,6 @@ public class UsersFragment extends Fragment {
             }
         });
 
-
     }
     private void getAllUsers() {
             //current user;

@@ -127,7 +127,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                     pLikes = Integer.parseInt(postList.get(position).getpLikes());
                 processLike = true;
                 final String stamp = postList.get(position).getpTime();
-                likesRef.addValueEventListener(new ValueEventListener() {
+                likesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (processLike)

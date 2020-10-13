@@ -131,7 +131,6 @@ public class UsersFragment extends Fragment {
                     ModelUsers users = new ModelUsers(hashMap.get("Id"),hashMap.get("Name"),hashMap.get("Url"),hashMap.get("email"),hashMap.get("phone"),hashMap.get("status"));
                     if(!hashMap.get("Id").equals(fuser.getUid()))
                     usersList.add(users);
-
                 }
                 adapterUsers = new AdapterUsers(getActivity(),usersList);
                 users.setAdapter(adapterUsers);

@@ -2,8 +2,6 @@ package com.example.learningeasle.model;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.text.format.DateFormat;
@@ -17,14 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.learningeasle.ProfileFragment;
 import com.example.learningeasle.R;
-import com.example.learningeasle.UserProfile;
 import com.example.learningeasle.ViewImage;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,8 +36,6 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +50,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     private DatabaseReference likesRef;
     DatabaseReference postsref;
     String myId;
-    View view;
     boolean processLike = false;
 
     public AdapterPost(Context context, List<modelpost> postList) {
@@ -73,7 +63,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_post, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_post, parent, false);
         return new MyHolder(view);
     }
 
@@ -84,30 +74,13 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String uName = postList.get(position).getpName();
 
         String url = postList.get(position).getuImage();
-        final String pTitle = postList.get(position).getpTitle();
-        final String pDescription = postList.get(position).getpDesc();
+        String pTitle = postList.get(position).getpTitle();
+        String pDescription = postList.get(position).getpDesc();
         final String pImage = postList.get(position).getpImage();
         String pTimeStamp = postList.get(position).getpTime();
         final String pId = postList.get(position).getpId();
         String pLikes = postList.get(position).getpLikes();
         holder.uName.setText(uName);
-        holder.uName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(pId)) {
-                   Intent intent = new Intent(context, UserProfile.class);
-                    intent.putExtra("Id", pId);
-                    context.startActivity(intent);
-                }else{
-                    /*AppCompatActivity activity = (AppCompatActivity) view.getContext();
-                    Fragment myFragment = new ProfileFragment();
-                    activity.getSupportFragmentManager().beginTransaction().replace(R.id.postsRecyclerview, myFragment).addToBackStack(null).commit();*/
-                    Toast.makeText(context,"Go to Profile to view your profile",Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
         if (url.equals("empty"))
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
@@ -187,14 +160,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         holder.share_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BitmapDrawable bitmapDrawable= (BitmapDrawable) holder.pImage.getDrawable();
-                if(bitmapDrawable == null){
-                    shareTextOnly(pTitle,pDescription);
-                }
-                else{
-                    Bitmap bitmap=bitmapDrawable.getBitmap();
-                    shareImageAndText(pTitle,pDescription,bitmap);
-                }
+                Toast.makeText(context, "Share", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -207,43 +173,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
             }
         });
-    }
-
-    private void shareImageAndText(String pTitle, String pDescription, Bitmap bitmap) {
-        String shareBody=pTitle+"\n"+pDescription;
-        Uri uri=saveImageInCache(bitmap);
-        Intent shareIntent=new Intent(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_STREAM,uri);
-        shareIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT,"Subject Here");
-        shareIntent.setType("image/png");
-        context.startActivity(Intent.createChooser(shareIntent,"Share Via"));
-    }
-
-    private Uri saveImageInCache(Bitmap bitmap) {
-        File imageFolder=new File(context.getCacheDir(),"images");
-        Uri uri=null;
-        try{
-            imageFolder.mkdirs();
-            File file=new File(imageFolder,"shared_image.png");
-            FileOutputStream stream=new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG,90,stream);
-            stream.flush();
-            stream.close();
-            uri= FileProvider.getUriForFile(context,"com.example.learningeasle.fileprovider",file);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return uri;
-    }
-
-    private void shareTextOnly(String pTitle, String pDescription) {
-        String shareBody=pTitle+"\n"+pDescription;
-        Intent shareIntent=new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT,"Subject Here"); // for sharing via email
-        shareIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
-        context.startActivity(Intent.createChooser(shareIntent,"Share Via"));
     }
 
     private void setLikes(final MyHolder holder, final String pTimeStamp) {

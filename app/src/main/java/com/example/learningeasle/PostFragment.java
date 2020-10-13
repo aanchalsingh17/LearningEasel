@@ -94,7 +94,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.
                 WRITE_EXTERNAL_STORAGE};
-        getUserDeatils();
+        getUserDetails();
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Please Wait...");
         progressDialog.setCanceledOnTouchOutside(false);
@@ -109,7 +109,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    public void getUserDeatils() {
+    public void getUserDetails() {
         final String pId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
@@ -184,8 +184,6 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                     Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
                     while (!uriTask.isSuccessful()) ;
                     String downloadUri = uriTask.getResult().toString();
-                    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-                    DocumentReference documentReference = firebaseFirestore.collection("users").document(firebaseUser.getUid());
 
 
                     if (uriTask.isSuccessful()) {

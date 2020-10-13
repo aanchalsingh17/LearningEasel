@@ -9,11 +9,13 @@ import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
@@ -33,6 +35,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -48,8 +51,10 @@ public class Profile extends AppCompatActivity {
     ImageView image;
     FirebaseUser fUser;
     FirebaseAuth fauth;
+    ProgressDialog progressDialog;
     StorageReference storagereference;
     String url = "empty";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,10 +62,11 @@ public class Profile extends AppCompatActivity {
         upload = findViewById(R.id.upload);
         register = findViewById(R.id.register_reg);
         capture = findViewById(R.id.capture);
-        image=findViewById(R.id.imageView);
+        image = findViewById(R.id.imageView);
         fauth = FirebaseAuth.getInstance();
         fUser = fauth.getCurrentUser();
         storagereference = FirebaseStorage.getInstance().getReference();
+
 
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,10 +93,10 @@ public class Profile extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             final HashMap<String, Object> hashMap = (HashMap<String, Object>) dataSnapshot.getValue();
-                            if(hashMap.get("Id").equals(fUser.getUid())) {
+                            if (hashMap.get("Id").equals(fUser.getUid())) {
                                 hashMap.put("Url", url);
                                 ref.child(fUser.getUid()).updateChildren(hashMap);
-                                if(url=="empty")
+                                if (url.equals("empty"))
                                     image.setImageResource(R.drawable.ic_action_account);
                                 else
                                     Picasso.get().load(url).into(image);
@@ -175,7 +181,7 @@ public class Profile extends AppCompatActivity {
                 imageuri = data.getData();
                 //setting the image view to the user selected image using its URI
                 image.setImageURI(imageuri);
-                url = imageuri.toString();
+                uploadImageToFirebase(imageuri);
                 //uplaod iamge to firebase by calling the below method and passing the image uri as parameter
                 ///url= imageuri.toString();
             }
@@ -187,8 +193,8 @@ public class Profile extends AppCompatActivity {
                 File f = new File(currentPhotoPath);
                 imageuri = Uri.fromFile(f);
                 image.setImageURI(imageuri);
-                url = imageuri.toString();
-               //  url = imageuri.toString();
+                uploadImageToFirebase(imageuri);
+                //  url = imageuri.toString();
 //                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 //                Uri contenturi = Uri.fromFile(f);
 //                mediaScanIntent.setData(contenturi);
@@ -199,32 +205,41 @@ public class Profile extends AppCompatActivity {
 
 
     private void uploadImageToFirebase(Uri imageuri) {
+
         if (imageuri != null) {
+            progressDialog = new ProgressDialog(Profile.this);
+            progressDialog.setMessage("Saving...");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+
             final StorageReference fileref = storagereference.child("Users/" + fUser.getUid() + "/Images.jpeg");
 
 
-           fileref.putFile(imageuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-               @Override
-               public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                   fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                       @Override
-                       public void onSuccess(Uri uri) {
-                           Picasso.get().load(uri).into(image);
-                           url = uri.toString();
+            fileref.putFile(imageuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Picasso.get().load(uri).into(image);
+                            System.out.println("url in profile " + uri);
+                            url = uri.toString();
+                            progressDialog.dismiss();
 
-                       }
-                   }).addOnFailureListener(new OnFailureListener() {
-                       @Override
-                       public void onFailure(@NonNull Exception e) {
-                           image.setImageResource(R.drawable.ic_action_account);
-                           url = "empty";
-                       }
-                   });
-               }
-           });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            image.setImageResource(R.drawable.ic_action_account);
+                            url = "empty";
+                            progressDialog.dismiss();
+                        }
+                    });
+                }
+            });
 
         }
     }
 
 
-    }
+}

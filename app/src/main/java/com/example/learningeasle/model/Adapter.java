@@ -136,7 +136,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
                                 if (i == 1) {
                                    String imagePath = "Posts/" + "post_"+ pTimeStamp;
-                                    if (pImage == "noImage") {
+                                    if (pImage.equals("noImage")) {
 
                                         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Posts" + pTimeStamp);
                                         databaseReference.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {

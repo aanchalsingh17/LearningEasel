@@ -14,6 +14,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -57,7 +58,6 @@ import java.util.Map;
 
 public class UpdateProfile extends AppCompatActivity {
     EditText username, userphone, useremail, userstatus;
-    FirebaseFirestore fstore;
     FirebaseUser user;
     TextView displayname, changeimage;
     StorageReference storageReference;
@@ -67,6 +67,7 @@ public class UpdateProfile extends AppCompatActivity {
     Uri imageuri = null;
     String currentPhotoPath;
     String url;
+    ProgressDialog progressDialog;
     private int CAMERA_REQUEST_CODE = 10002;
     private int GALLERY_REQUEST_CODE = 10001;
 
@@ -78,7 +79,6 @@ public class UpdateProfile extends AppCompatActivity {
         userphone = findViewById(R.id.userphone);
         useremail = findViewById(R.id.useremail);
         userstatus = findViewById(R.id.userstatus);
-        fstore = FirebaseFirestore.getInstance();
         profileimage = findViewById(R.id.profile);
         displayname = findViewById(R.id.displayname);
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -86,6 +86,7 @@ public class UpdateProfile extends AppCompatActivity {
         update = findViewById(R.id.update);
         userId = user.getUid();
         changeimage = findViewById(R.id.changeimage);
+        disableEditText(useremail);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -118,8 +119,7 @@ public class UpdateProfile extends AppCompatActivity {
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadImageToFirebase(imageuri);
-
+                updateDetails("details");
             }
         });
         changeimage.setOnClickListener(new View.OnClickListener() {
@@ -144,6 +144,22 @@ public class UpdateProfile extends AppCompatActivity {
                 builder.create().show();
             }
         });
+    }
+
+
+    private void disableEditText(EditText editText) {
+        editText.setFocusable(false);
+        editText.setEnabled(false);
+        editText.setCursorVisible(false);
+        editText.setKeyListener(null);
+        editText.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 
     private void askCameraPermission() {
@@ -206,11 +222,10 @@ public class UpdateProfile extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 assert data != null;
                 imageuri = data.getData();
-                url = imageuri.toString();
                 //setting the image view to the user selected image using its URI
                 profileimage.setImageURI(imageuri);
                 //uplaod iamge to firebase by calling the below method and passing the image uri as parameter
-                // uploadImageToFirebase(imageuri);
+                uploadImageToFirebase(imageuri);
 
             }
 
@@ -219,16 +234,21 @@ public class UpdateProfile extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 File f = new File(currentPhotoPath);
                 imageuri = Uri.fromFile(f);
-                url = imageuri.toString();
+
+
                 profileimage.setImageURI(imageuri);
-                //uploadImageToFirebase(imageuri);
+                uploadImageToFirebase(imageuri);
 
             }
         }
     }
 
     private void uploadImageToFirebase(final Uri image_uri) {
-      /*  if (image_uri != null) {
+        if (image_uri != null) {
+            progressDialog = new ProgressDialog(UpdateProfile.this);
+            progressDialog.setMessage("Saving...");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
             final StorageReference fileref = storageReference.child("Users/" + userId + "/Images.jpeg");
             fileref.putFile(image_uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -237,23 +257,36 @@ public class UpdateProfile extends AppCompatActivity {
                         @Override
                         public void onSuccess(Uri uri) {
                             Picasso.get().load(uri).into(profileimage);
-                            // url = uri.toString();
+                            url = uri.toString();
+                            progressDialog.dismiss();
+                            updateDetails("image");
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             profileimage.setImageResource(R.drawable.ic_action_account);
-                            // url = "empty";
+                            url = "empty";
+                            progressDialog.dismiss();
+                            updateDetails("image");
+
                         }
                     });
                 }
             });
-        }*/
-      if(url=="empty"){
-          profileimage.setImageResource(R.drawable.ic_action_account);
-      }
-      else
-          Picasso.get().load(url).into(profileimage);
+        }
+    }
+
+    public void updateDetails(final String type) {
+        if(type.equals("details")){
+            progressDialog = new ProgressDialog(UpdateProfile.this);
+            progressDialog.setMessage("Updating...");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+        }
+        if (url.equals("empty")) {
+            profileimage.setImageResource(R.drawable.ic_action_account);
+        } else
+            Picasso.get().load(url).into(profileimage);
         final String name = username.getText().toString().trim();
         String email = useremail.getText().toString().trim();
         String phone = userphone.getText().toString().trim();
@@ -276,7 +309,9 @@ public class UpdateProfile extends AppCompatActivity {
                     if (hashMap.get("pId").equals(userId)) {
                         hashMap.put("pName", name);
                         hashMap.put("url", url);
-                        databaseReference.child((String) hashMap.get("pTime")).updateChildren(hashMap);
+                        databaseReference.child(ds.getKey()).updateChildren(hashMap);
+                        if(type.equals("details"))
+                            progressDialog.dismiss();
                     }
                 }
             }
@@ -286,7 +321,5 @@ public class UpdateProfile extends AppCompatActivity {
 
             }
         });
-
-
     }
 }

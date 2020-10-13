@@ -131,7 +131,6 @@ public class Register extends AppCompatActivity {
                             });
 
                             Toast.makeText(Register.this, "User Created.", Toast.LENGTH_SHORT).show();
-                            //Storing data in firestore
 
                             userID = fAuth_reg.getCurrentUser().getUid();                                                           //user id stored
                             final HashMap<Object, String> hashMap = new HashMap<>();

@@ -28,6 +28,7 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -89,4 +90,5 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
             email = itemView.findViewById(R.id.email);
         }
     }
+
 }

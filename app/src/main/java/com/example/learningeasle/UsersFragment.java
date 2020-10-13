@@ -7,9 +7,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import com.example.learningeasle.model.AdapterUsers;
 import com.example.learningeasle.model.ModelUsers;
@@ -34,6 +39,7 @@ public class UsersFragment extends Fragment {
   RecyclerView users;
   AdapterUsers adapterUsers;
   List<ModelUsers> usersList;
+    View view;
     public UsersFragment() {
         // Required empty public constructor
     }
@@ -45,15 +51,71 @@ public class UsersFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_users, container, false);
+        view = inflater.inflate(R.layout.fragment_users, container, false);
         users = view.findViewById(R.id.usersrecyclerview);
         users.setHasFixedSize(true);
         users.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         usersList = new ArrayList<>();
-
+        setHasOptionsMenu(true);
         getAllUsers();
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.search_menu,menu);
+        MenuItem menuItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if(!TextUtils.isEmpty(query.trim())){
+                    searchUsers(query);
+                }
+                else
+                    getAllUsers();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(!TextUtils.isEmpty(newText.trim()))
+                    searchUsers(newText);
+                else
+                    getAllUsers();
+                return false;
+            }
+        });
+        //super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void searchUsers(final String newText) {
+        final FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                usersList.clear();
+                for(DataSnapshot db:snapshot.getChildren()){
+                    HashMap<Object,String> hashMap = (HashMap<Object, String>) db.getValue();
+                    ModelUsers users = new ModelUsers(hashMap.get("Id"),hashMap.get("Name"),hashMap.get("Url"),hashMap.get("email"),hashMap.get("phone"),hashMap.get("status"));
+                    if(!hashMap.get("Id").equals(fuser.getUid())) {
+                        if(users.getName().toLowerCase().contains(newText)|| users.getEmail().toLowerCase().contains(newText))
+                            usersList.add(users);
+                    }
+
+                }
+                adapterUsers = new AdapterUsers(getActivity(),usersList);
+                adapterUsers.notifyDataSetChanged();
+                users.setAdapter(adapterUsers);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
     private void getAllUsers() {
@@ -80,5 +142,8 @@ public class UsersFragment extends Fragment {
 
             }
         });
+
     }
+
+
 }

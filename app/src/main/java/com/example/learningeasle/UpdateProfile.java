@@ -301,7 +301,7 @@ public class UpdateProfile extends AppCompatActivity {
         hashmap.put("status", status);
         db.child(userId).updateChildren(hashmap);
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Posts");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {

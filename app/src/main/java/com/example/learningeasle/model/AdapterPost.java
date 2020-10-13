@@ -17,10 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.learningeasle.ProfileFragment;
 import com.example.learningeasle.R;
+import com.example.learningeasle.UserProfile;
 import com.example.learningeasle.ViewImage;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -55,6 +59,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     private DatabaseReference likesRef;
     DatabaseReference postsref;
     String myId;
+    View view;
     boolean processLike = false;
 
     public AdapterPost(Context context, List<modelpost> postList) {
@@ -68,7 +73,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_post, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_post, parent, false);
         return new MyHolder(view);
     }
 
@@ -86,6 +91,23 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         final String pId = postList.get(position).getpId();
         String pLikes = postList.get(position).getpLikes();
         holder.uName.setText(uName);
+        holder.uName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(pId)) {
+                   Intent intent = new Intent(context, UserProfile.class);
+                    intent.putExtra("Id", pId);
+                    context.startActivity(intent);
+                }else{
+                    /*AppCompatActivity activity = (AppCompatActivity) view.getContext();
+                    Fragment myFragment = new ProfileFragment();
+                    activity.getSupportFragmentManager().beginTransaction().replace(R.id.postsRecyclerview, myFragment).addToBackStack(null).commit();*/
+                    Toast.makeText(context,"Go to Profile to view your profile",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
         if (url.equals("empty"))
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else

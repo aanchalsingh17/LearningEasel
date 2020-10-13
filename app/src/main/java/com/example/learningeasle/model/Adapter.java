@@ -1,5 +1,6 @@
 package com.example.learningeasle.model;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,6 +37,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -46,6 +48,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -141,45 +144,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                                 }
 
                                 if (i == 1) {
-                                   String imagePath = "Posts/" + "post_"+ pTimeStamp;
-                                    if (pImage.equals("noImage")) {
-
-                                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Posts" + pTimeStamp);
-                                        databaseReference.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Toast.makeText(context, "Post Deleted", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.e("tag", "Error" + e);
-                                            }
-                                        });
-
-                                    }else{
-                                        StorageReference reference = FirebaseStorage.getInstance().getReference().child(imagePath);
-                                        reference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Toast.makeText( context,"Image Deleted Successfully", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-
-                                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Posts" + pTimeStamp);
-                                        databaseReference.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Toast.makeText(context, "Post Deleted", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.e("tag", "Error" + e);
-                                            }
-                                        });
-
-                                    }
+                                  beginDelete(pId,pImage,pTimeStamp);
                                 }
 
                             }
@@ -254,6 +219,65 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
             }
         });
+    }
+
+    private void beginDelete(final String pId, String pImage, final String pTimeStamp) {
+        if(pImage.equals("noImage")){
+            final ProgressDialog pd = new ProgressDialog(context);
+            pd.setMessage("Deleting....");
+            Query query = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
+            query.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot ds:snapshot.getChildren()){
+                        HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                        if(hashMap.get("pTime").equals(pTimeStamp))
+                        ds.getRef().removeValue();
+                    }
+                    Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
+                    pd.dismiss();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }else{
+            final ProgressDialog pd = new ProgressDialog(context);
+            pd.setMessage("Deleting....");
+
+            StorageReference picref = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
+            picref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Query query = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
+                    query.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for(DataSnapshot ds:snapshot.getChildren()){
+                                HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                                if(hashMap.get("pTime").equals(pTimeStamp))
+                                ds.getRef().removeValue();
+                            }
+                            Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
+                            pd.dismiss();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    pd.dismiss();
+                    Toast.makeText(context,"Unable to delete Post",Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private void shareImageAndText(String pTitle, String pDescription, Bitmap bitmap) {

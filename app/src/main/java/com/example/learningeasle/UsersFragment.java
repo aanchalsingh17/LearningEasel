@@ -1,5 +1,6 @@
 package com.example.learningeasle;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -143,29 +144,5 @@ public class UsersFragment extends Fragment {
         });
 
     }
-//On BackPress load all teh users
-    @Override
-    public void onResume() {
-        super.onResume();
 
-        if(getView() == null){
-            return;
-        }
-
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
-                    // handle back button's click listener
-                    getAllUsers();
-
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
 }

@@ -103,10 +103,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
 
 
-        if (pImage.equals("noImage")) {
+        if (pImage.equals("noImage")){
             System.out.println(pTitle+"  . "+pDescription);
             holder.pImage.setVisibility(View.GONE);
-        } else {
+        } else{
             try {
                 holder.pImage.setVisibility(View.VISIBLE);
                 Picasso.get().load(pImage).placeholder(R.drawable.ic_default).fit().centerCrop().into(holder.pImage);
@@ -144,7 +144,65 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                                 }
 
                                 if (i == 1) {
-                                  beginDelete(pId,pImage,pTimeStamp);
+                                   // beginDelete(pId,pImage,pTimeStamp);
+                                    if(pImage.equals("noImage")){
+                                        final ProgressDialog pd = new ProgressDialog(context);
+                                        pd.setMessage("Deleting....");
+                                        Query query = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
+                                        query.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                for(DataSnapshot ds:snapshot.getChildren()){
+                                                    HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                                                    if(hashMap.get("pTime").equals(pTimeStamp)) {
+                                                        ds.getRef().removeValue();
+                                                        Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+
+                                                pd.dismiss();
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                    }else{
+                                        final ProgressDialog pd = new ProgressDialog(context);
+                                        pd.setMessage("Deleting....");
+
+                                        StorageReference picref = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
+                                        picref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Query query = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
+                                                query.addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                        for(DataSnapshot ds:snapshot.getChildren()){
+                                                            HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                                                            if(hashMap.get("pTime").equals(pTimeStamp))
+                                                                ds.getRef().removeValue();
+                                                            Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
+                                                        }
+                                                        pd.dismiss();
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                    }
+                                                });
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                pd.dismiss();
+                                                Toast.makeText(context,"Unable to delete Post",Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
                                 }
 
                             }
@@ -222,62 +280,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
     }
 
     private void beginDelete(final String pId, String pImage, final String pTimeStamp) {
-        if(pImage.equals("noImage")){
-            final ProgressDialog pd = new ProgressDialog(context);
-            pd.setMessage("Deleting....");
-            Query query = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
-            query.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for(DataSnapshot ds:snapshot.getChildren()){
-                        HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
-                        if(hashMap.get("pTime").equals(pTimeStamp))
-                        ds.getRef().removeValue();
-                    }
-                    Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
-                    pd.dismiss();
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        }else{
-            final ProgressDialog pd = new ProgressDialog(context);
-            pd.setMessage("Deleting....");
-
-            StorageReference picref = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
-            picref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Query query = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
-                    query.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            for(DataSnapshot ds:snapshot.getChildren()){
-                                HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
-                                if(hashMap.get("pTime").equals(pTimeStamp))
-                                ds.getRef().removeValue();
-                            }
-                            Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
-                            pd.dismiss();
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    pd.dismiss();
-                    Toast.makeText(context,"Unable to delete Post",Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
     }
 
     private void shareImageAndText(String pTitle, String pDescription, Bitmap bitmap) {

@@ -45,7 +45,7 @@
                 android:id="@+id/username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="230dp"
+                android:layout_marginLeft="210dp"
                 android:singleLine="true"
                 android:layout_marginTop="@android:dimen/app_icon_size"
                 android:textColor="#120101"
@@ -65,7 +65,7 @@
                 android:singleLine="true"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="110dp"
-                android:layout_marginLeft="230dp"
+                android:layout_marginLeft="210dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.388"
@@ -107,6 +107,15 @@
 
 
             </FrameLayout>
+
+            <Button
+                android:id="@+id/follow"
+                android:layout_marginTop="170dp"
+                android:layout_marginStart="200dp"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:background="@drawable/follow_button"
+                android:text="Follow" />
         </FrameLayout>
 
 

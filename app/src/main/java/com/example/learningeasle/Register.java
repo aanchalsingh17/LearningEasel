@@ -140,6 +140,8 @@ public class Register extends AppCompatActivity {
                                     hashMap.put("email",email);
                                     hashMap.put("phone",phone);
                                     hashMap.put("status","");
+                                    hashMap.put("Followers","");
+                                    hashMap.put("Following","");
                                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
                                     ref.child(Uid).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override

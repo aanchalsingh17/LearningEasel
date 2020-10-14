@@ -47,6 +47,14 @@
               android:singleLine="true"
               android:textColor="@color/cardview_dark_background"
               android:textStyle="italic"/>
+          <Button
+              android:id="@+id/follow"
+              android:layout_marginTop="5dp"
+              android:layout_marginStart="170dp"
+              android:layout_width="150dp"
+              android:layout_height="40dp"
+              android:background="@drawable/follow_button"
+              android:text="Follow" />
       </LinearLayout>
   </LinearLayout>
 </androidx.cardview.widget.CardView>

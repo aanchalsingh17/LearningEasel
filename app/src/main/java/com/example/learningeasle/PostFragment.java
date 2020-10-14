@@ -28,6 +28,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -252,14 +253,20 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                                     public void onSuccess(Void aVoid) {
 //                                pd.dismiss();
                                         progressBar.setVisibility(View.GONE);
+                                        if(edit.equals("EditPost"))
+                                            Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
+                                                    .show();
+                                        else
                                         Toast.makeText(getActivity(), "Post published!", Toast.LENGTH_SHORT)
                                                 .show();
                                         et_desc.setText("");
                                         et_title.setText("");
                                         img_post.setImageURI(null);
                                         image_rui = null;
-                                        Intent intent = new Intent(getActivity(), MainActivity.class);
-                                        startActivity(intent);
+
+                                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                                            startActivity(intent);
+
 
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
@@ -280,6 +287,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 //                            pd.dismiss();
                         }
                     });
+
 
         } else {
 
@@ -302,6 +310,10 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                         public void onSuccess(Void aVoid) {
 //                            pd.dismiss();
                             progressBar.setVisibility(View.GONE);
+                            if(edit.equals("EditPost"))
+                                Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
+                                        .show();
+                            else
                             Toast.makeText(getActivity(), "Post published!", Toast.LENGTH_SHORT)
                                     .show();
                             et_desc.setText("");
@@ -477,6 +489,9 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                     Post_Data(title, description, String.valueOf(image_rui));
                 } else {
 //                     post without image
+                    if(edit.equals("EditPost")&&url!="noImage")
+                        Post_Data(title,description,image);
+                    else
                     Post_Data(title, description, "noImage");
                 }
                 break;

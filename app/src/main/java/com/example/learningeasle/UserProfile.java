@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ public class UserProfile extends AppCompatActivity {
     RecyclerView recyclerView;
     List<modelpost> modelpostList;
     AdapterPost adapterPost;
+    Button follow;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +52,7 @@ public class UserProfile extends AppCompatActivity {
         userstatus = findViewById(R.id.status);
         fstore = FirebaseFirestore.getInstance();
         recyclerView = findViewById(R.id.posts);
+        follow = findViewById(R.id.follow);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
@@ -57,6 +60,41 @@ public class UserProfile extends AppCompatActivity {
         modelpostList = new ArrayList<>();
         loadprofile();
         loadposts();
+        follow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                 final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(Id);
+                 reference.child("Following").addValueEventListener(new ValueEventListener() {
+                     boolean found = false;
+                     @Override
+
+                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                         for(DataSnapshot ds:snapshot.getChildren()){
+                             String  uid = (String) ds.getValue();
+                             if(uid.equals(Id)){
+                                 found = true;
+
+                             }
+                         }
+                         if(found) {
+                             follow.setText("Follow");
+                             follow.setBackgroundColor(R.drawable.follow_button);
+                              reference.child("Following").child(Id).setValue(Id);
+                         }
+                         else {
+                             follow.setText("Following");
+                             follow.setBackgroundColor(R.drawable.following);
+                             reference.child("Following").child(Id).removeValue();
+                         }
+                     }
+
+                     @Override
+                     public void onCancelled(@NonNull DatabaseError error) {
+
+                     }
+                 });
+            }
+        });
     }
 
     private void loadposts() {

@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     Fragment selectedfragment = null;
+                    Bundle bundle = new Bundle();
                     switch (item.getItemId()) {
                         case R.id.home:
                             selectedfragment = new HomeFragment();
@@ -105,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case R.id.post:
                             selectedfragment = new PostFragment();
+                            bundle.putString("Edit","AddPost");
+                            selectedfragment.setArguments(bundle);
                             if (getSupportFragmentManager().findFragmentByTag("A") == null) {
                                 getSupportFragmentManager().beginTransaction().add(R.id.scrollable, selectedfragment, "A").commit();
                                 if (getSupportFragmentManager().findFragmentByTag("P") != null)

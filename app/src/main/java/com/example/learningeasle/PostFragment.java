@@ -44,6 +44,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
@@ -57,6 +58,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     Uri image_rui = null;
     ProgressDialog pd;
     ProgressBar progressBar;
+    String edit,id,time,title,des,image;
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
     private static final int IMAGE_PICK_CAMERA_CODE = 300;
@@ -76,9 +78,18 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
+        edit = getArguments().getString("Edit");
+        if(edit.equals("EditPost")) {
+            id = getArguments().getString("Id");
+            time = getArguments().getString("pTime");
+            title = getArguments().getString("Title");
+            des = getArguments().getString("Des");
+            image = getArguments().getString("Url");
+        }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_post, container, false);
+
+
     }
 
     @Override
@@ -99,7 +110,12 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         progressDialog.setMessage("Please Wait...");
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
-
+        if(edit.equals("EditPost")){
+            et_title.setText(title);
+            et_desc.setText(des);
+            if(!image.equals("noImage"))
+                Picasso.get().load(image).into(img_post);
+        }
 //        imgclick(view);
 //        postclick(view);
         trigger();
@@ -138,25 +154,6 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-
-
-        /*StorageReference reference = FirebaseStorage.getInstance().getReference();
-        StorageReference fileref = reference.child("Users/" + pId + "/Images.jpeg");
-        fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                url = uri.toString();
-//                System.out.println(uri);
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                url = "empty";
-
-            }
-        });*/
-
     }
 
     private void trigger() {
@@ -173,7 +170,11 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         // String UserId = firebaseUser.getUid();
-        final String timeStamp = String.valueOf(System.currentTimeMillis());
+        final String timeStamp;
+        if(edit.equals("EditPost"))
+            timeStamp = time;
+        else
+            timeStamp= String.valueOf(System.currentTimeMillis());
         String filePathAndName = "Posts/" + "post_" + timeStamp;
         if (!uri.equals("noImage")) {
             // with image

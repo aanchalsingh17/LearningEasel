@@ -8,6 +8,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +45,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ProfileFragment extends Fragment  {
+public class ProfileFragment extends Fragment {
     ImageView profile;
     FirebaseUser user;
     String userid;
@@ -58,6 +61,7 @@ public class ProfileFragment extends Fragment  {
     Adapter adapterPost;
     ImageView more;
     String url = null;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -93,11 +97,11 @@ public class ProfileFragment extends Fragment  {
         editprofile.setOnClickListener(
 
                 new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(context,UpdateProfile.class));
-            }
-        });
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(context, UpdateProfile.class));
+                    }
+                });
         loadPosts();
         setProfile();
         return view;
@@ -112,55 +116,54 @@ public class ProfileFragment extends Fragment  {
                 modelpostList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
-                    modelpost post=null;
-                    if (hashMap.get("pLikes")==null &&hashMap.get("pId").equals(userID)) {
+                    modelpost post = null;
+                    if (hashMap.get("pLikes") == null && hashMap.get("pId").equals(userID)) {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
-                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), "0",hashMap.get("pComments"));
-                    } else if(hashMap.get("pId").equals(userID)){
+                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), "0", hashMap.get("pComments"));
+                    } else if (hashMap.get("pId").equals(userID)) {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
-                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), hashMap.get("pLikes"),hashMap.get("pComments"));
+                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), hashMap.get("pLikes"), hashMap.get("pComments"));
                     }
-                    if(post!=null)
-                    modelpostList.add(post);
+                    if (post != null)
+                        modelpostList.add(post);
                 }
 
-                adapterPost = new Adapter(getActivity(), modelpostList);
+                adapterPost = new Adapter(getActivity(), modelpostList, editClick);
                 postlist.setAdapter(adapterPost);
-                }
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
-        } );
-
+        });
 
 
     }
 
     private void setProfile() {
         profile.setImageResource(R.drawable.ic_action_account);
-      DatabaseReference db = FirebaseDatabase.getInstance().getReference("Users");
-      db.addValueEventListener(new ValueEventListener() {
-          @Override
-          public void onDataChange(@NonNull DataSnapshot snapshot) {
-              for(DataSnapshot ds:snapshot.getChildren()){
-                  HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
-                  if(hashMap.get("Id").equals(userid)){
-                      String url = (String) hashMap.get("Url");
-                      if(url.equals("empty"))
-                          profile.setImageResource(R.drawable.ic_action_account);
-                      else
-                      Picasso.get().load(url).into(profile);
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference("Users");
+        db.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    HashMap<String, Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                    if (hashMap.get("Id").equals(userid)) {
+                        String url = (String) hashMap.get("Url");
+                        if (url.equals("empty"))
+                            profile.setImageResource(R.drawable.ic_action_account);
+                        else
+                            Picasso.get().load(url).into(profile);
 
-                  }
-              }
-          }
+                    }
+                }
+            }
 
-          @Override
-          public void onCancelled(@NonNull DatabaseError error) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-          }
-      });
+            }
+        });
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,16 +175,16 @@ public class ProfileFragment extends Fragment  {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot db:snapshot.getChildren()){
-                    HashMap<Object,String> hashMap = (HashMap<Object, String>) db.getValue();
-                    if(hashMap.get("Id").equals(userID)){
-                        String name =  hashMap.get("Name");
-                        String email =  hashMap.get("email");
-                        String status =  hashMap.get("status");
+                for (DataSnapshot db : snapshot.getChildren()) {
+                    HashMap<Object, String> hashMap = (HashMap<Object, String>) db.getValue();
+                    if (hashMap.get("Id").equals(userID)) {
+                        String name = hashMap.get("Name");
+                        String email = hashMap.get("email");
+                        String status = hashMap.get("status");
                         username.setText(name);
                         useremail.setText(email);
                         userstatus.setText(status);
-                        url  = hashMap.get("Url");
+                        url = hashMap.get("Url");
                     }
 
 
@@ -196,9 +199,25 @@ public class ProfileFragment extends Fragment  {
         });
 
 
-
     }
 
+    Adapter.EditClick editClick = new Adapter.EditClick() {
+        @Override
+        public void onEditClick(int position, String Uid, String pTimeStamp,String edit,String title,String pDescription,String pImage) {
+            PostFragment fragment = new PostFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("Id", Uid);
+            bundle.putString("pTime", pTimeStamp);
+            bundle.putString("Edit",edit);
+            bundle.putString("Title",title);
+            bundle.putString("Des",pDescription);
+            bundle.putString("Url",pImage);
+            fragment.setArguments(bundle);
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.rec,fragment).commit();
 
-
+        }
+    };
 }
+

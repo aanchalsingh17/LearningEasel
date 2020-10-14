@@ -61,9 +61,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
     DatabaseReference postsref;
     String myId;
     boolean processLike=false;
-    public Adapter(Context context, List<modelpost> postList) {
+    private EditClick edit;
+    View view;
+    String pId,pTimeStamp,pImage;
+    public Adapter(Context context, List<modelpost> postList,EditClick editClick) {
         this.context = context;
         this.postList = postList;
+        this.edit = editClick;
         myId= FirebaseAuth.getInstance().getCurrentUser().getUid();
         likesRef= FirebaseDatabase.getInstance().getReference().child("Likes");
         postsref= FirebaseDatabase.getInstance().getReference().child("Posts");
@@ -73,8 +77,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
     @NonNull
     @Override
     public Adapter.PostHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.row_post, parent, false);
-        return new PostHolder(view);
+        view = LayoutInflater.from(context).inflate(R.layout.row_post, parent, false);
+        return new PostHolder(view,edit);
     }
 
     @Override
@@ -83,14 +87,22 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         final String url=postList.get(position).getuImage();
         final String pTitle = postList.get(position).getpTitle();
         final String pDescription = postList.get(position).getpDesc();
-        final String pImage = postList.get(position).getpImage();
-        final String pTimeStamp = postList.get(position).getpTime();
-        final String pId = postList.get(position).getpId();
+        pImage = postList.get(position).getpImage();
+        pTimeStamp = postList.get(position).getpTime();
+        pId = postList.get(position).getpId();
         final String pLikes=postList.get(position).getpLikes();
         String pComments=postList.get(position).getpComments();
 
 
-
+        PostFragment postFragment = new PostFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("Id",pId);
+        bundle.putString("pTime",pTimeStamp);
+        bundle.putString("Edit","EditPost");
+        bundle.putString("Title",pTitle);
+        bundle.putString("Des",pDescription);
+        bundle.putString("Url",pImage);
+        postFragment.setArguments(bundle);
 
         holder.pName.setText(uName);
 
@@ -109,11 +121,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         holder.pTotalComment.setText(pComments + " Comments");
         if (pImage.equals("noImage")){
             System.out.println(pTitle+"  . "+pDescription);
-            holder.pImage.setVisibility(View.GONE);
+            holder.Image.setVisibility(View.GONE);
         } else{
             try {
-                holder.pImage.setVisibility(View.VISIBLE);
-                Picasso.get().load(pImage).placeholder(R.drawable.ic_default).fit().centerCrop().into(holder.pImage);
+                holder.Image.setVisibility(View.VISIBLE);
+                Picasso.get().load(pImage).placeholder(R.drawable.ic_default).fit().centerCrop().into(holder.Image);
             }catch (Exception e){}
         }
 
@@ -123,31 +135,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         holder.pTotalLikes.setText(pLikes +" Likes");
 
         setLikes(holder,pTimeStamp);
-
-        holder.morebtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-
-                        final String[] options = {"Edit", "Delete","Cancel"};
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                if (options[i].equals("Edit")) {
-                                  AppCompatActivity activity = (AppCompatActivity) view.getContext();
-                                  PostFragment postFragment = new PostFragment();
-                                  activity.getSupportFragmentManager().beginTransaction().replace(R.id.rec,postFragment).addToBackStack(null).commit();
-                                }
-
-                                if (options[i].equals("Delete")) {
-                                    beginDelete(pId, pImage, pTimeStamp);
-                                }
-                            }
-                        });
-                        builder.create().show();
-
-            }
-        });
         holder.like_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -196,7 +183,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         holder.share_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BitmapDrawable bitmapDrawable= (BitmapDrawable) holder.pImage.getDrawable();
+                BitmapDrawable bitmapDrawable= (BitmapDrawable) holder.Image.getDrawable();
                 if(bitmapDrawable == null){
                     shareTextOnly(pTitle,pDescription);
                 }
@@ -207,7 +194,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             }
         });
 
-        holder.pImage.setOnClickListener(new View.OnClickListener() {
+        holder.Image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(context, ViewImage.class);
@@ -350,15 +337,16 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
     public class PostHolder extends RecyclerView.ViewHolder {
 
         ImageView url;
-        ImageView pImage;
+        ImageView Image;
         TextView pName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
+        EditClick editClick;
 
-        public PostHolder(@NonNull View itemView) {
+        public PostHolder(@NonNull View itemView, final EditClick editClick) {
             super(itemView);
             url=itemView.findViewById(R.id.uDp);
-            pImage = itemView.findViewById(R.id.pImage);
+            Image = itemView.findViewById(R.id.pImage);
             pName=itemView.findViewById(R.id.uname);
             pTime = itemView.findViewById(R.id.time);
             pTitle = itemView.findViewById(R.id.ptitle);
@@ -369,7 +357,33 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             like_btn = itemView.findViewById(R.id.like);
             share_btn = itemView.findViewById(R.id.share);
             comment_btn = itemView.findViewById(R.id.comment);
+            this.editClick = editClick;
+            morebtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final String[] options = {"Edit", "Delete","Cancel"};
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setItems(options,new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            if (options[i].equals("Edit")) {
+                                editClick.onEditClick(getAdapterPosition(),postList.get(getAdapterPosition()).pId,postList.get(getAdapterPosition()).pTime,"EditPost",postList.get(getAdapterPosition()).pTitle,postList.get(getAdapterPosition()).pDesc,postList.get(getAdapterPosition()).pImage);
+                            }
+
+                            if (options[i].equals("Delete")) {
+                                String time = postList.get(getAdapterPosition()).pTime;
+                                beginDelete(pId, pImage, time);
+                            }
+                        }
+                    });
+                    builder.create().show();
+
+                }
+            });
         }
+    }
+    public interface  EditClick{
+        public void onEditClick(int position,String Uid,String pTimeStamp,String post,String title,String content,String url);
     }
 
 }

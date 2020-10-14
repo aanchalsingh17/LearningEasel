@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#DCD2D2"
+    android:id="@+id/post"
     tools:context=".PostFragment">
 
     <RelativeLayout

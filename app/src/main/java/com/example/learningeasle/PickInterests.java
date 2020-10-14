@@ -112,9 +112,6 @@ public class PickInterests extends AppCompatActivity {
                 }
             });
 
-
-
-
         }
         if(username.equals(""))
             username=folder.substring(0,j);
@@ -397,6 +394,13 @@ public class PickInterests extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     public void setColors(){

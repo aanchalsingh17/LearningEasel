@@ -90,8 +90,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         final String pImage = postList.get(position).getpImage();
         final String pTimeStamp = postList.get(position).getpTime();
         final String pId = postList.get(position).getpId();
+        final String pType=postList.get(position).getpType();
         String pLikes = postList.get(position).getpLikes();
-        holder.uName.setText(uName);
+        holder.uName.setText(uName+"->"+pType);
         holder.uName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

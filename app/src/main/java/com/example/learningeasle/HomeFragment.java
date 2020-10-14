@@ -1,6 +1,7 @@
 package com.example.learningeasle;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,8 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -82,7 +87,7 @@ public class HomeFragment extends Fragment {
         layoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
-
+        setHasOptionsMenu(true);
         loadPosts();
 
         return view;
@@ -98,15 +103,12 @@ public class HomeFragment extends Fragment {
                     final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
                     modelpost post;
 
-                    if(hashMap.get("pLikes")==null){
+                    if (hashMap.get("pLikes") == null) {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
-                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), "0",hashMap.get("pComments"));
-                    }
-
-                    else
-                    {
+                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), "0", hashMap.get("pComments"),hashMap.get("type"));
+                    } else {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
-                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"),hashMap.get("pLikes"), hashMap.get("pComments"));
+                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), hashMap.get("pLikes"), hashMap.get("pComments"),hashMap.get("type"));
                     }
                     modelpostList.add(post);
 
@@ -124,5 +126,26 @@ public class HomeFragment extends Fragment {
 
 
         });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.interests,menu);
+        MenuItem menuItem=menu.findItem(R.id.interests);
+//        Button button= (Button) menuItem.getActionView();
+        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                startActivity(new Intent(getContext(),PickInterests.class));
+                getActivity().finish();
+                return false;
+            }
+        });
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
     }
 }

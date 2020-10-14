@@ -15,10 +15,9 @@
         android:background="@drawable/interest_shaper">
 
         <Spinner
+            android:id="@+id/spinner"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:entries="@array/interests"
-            android:prompt="@string/interest_prompt"
             android:spinnerMode="dropdown" />
     </RelativeLayout>
 

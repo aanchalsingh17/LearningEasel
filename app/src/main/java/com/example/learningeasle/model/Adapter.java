@@ -87,6 +87,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         final String url=postList.get(position).getuImage();
         final String pTitle = postList.get(position).getpTitle();
         final String pDescription = postList.get(position).getpDesc();
+        final String pType=postList.get(position).getpType();
         pImage = postList.get(position).getpImage();
         pTimeStamp = postList.get(position).getpTime();
         pId = postList.get(position).getpId();
@@ -106,7 +107,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         bundle.putString("Comments",pComments);
         postFragment.setArguments(bundle);
 
-        holder.pName.setText(uName);
+        holder.pName.setText(uName+"->"+pType);
 
         if(url.equals("empty"))
             holder.url.setImageResource(R.drawable.ic_action_account);

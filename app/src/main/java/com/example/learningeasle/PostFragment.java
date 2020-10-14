@@ -14,9 +14,11 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -46,6 +48,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PostFragment extends Fragment implements View.OnClickListener {
@@ -58,8 +61,10 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     Uri image_rui = null;
     ProgressDialog pd;
     ProgressBar progressBar;
-    String edit,id,time,title,des,image;
+    String edit,id,time,title,des,image,email;
     String pLikes="0",pComments="0";
+    Spinner spinner;
+    ArrayAdapter<String> adapter;
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
     private static final int IMAGE_PICK_CAMERA_CODE = 300;
@@ -67,6 +72,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
     String[] cameraPermissions;
     String[] storagePermissions;
+    ArrayList<String> interests;
     ProgressDialog progressDialog;
 
 
@@ -108,6 +114,14 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.
                 WRITE_EXTERNAL_STORAGE};
+        interests=new ArrayList<>();
+
+        adapter= new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_list_item_1);
+
+
+        spinner = (Spinner) view.findViewById(R.id.spinner);
+
+
         getUserDetails();
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Please Wait...");
@@ -141,12 +155,40 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                     if (hashMap.get("Id").equals(pId)) {
                         pName = hashMap.get("Name");
                         url = hashMap.get("Url");
-                        new Handler().postDelayed(new Runnable() {
+                        email=hashMap.get("email");
+                        email=email.substring(0,email.length()-4);
+                        interests.clear();
+                        DatabaseReference ref1=FirebaseDatabase.getInstance().getReference(email);
+                        ref1.addValueEventListener(new ValueEventListener() {
                             @Override
-                            public void run() {
-                                progressDialog.dismiss();
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+                                    if(dataSnapshot.getValue().equals("1"))
+                                        interests.add(dataSnapshot.getKey());
+                                }
+
+                                adapter.addAll(interests);
+                                spinner.setAdapter(adapter);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        progressDialog.dismiss();
+                                    }
+                                }, 3000);
                             }
-                        }, 3000);
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        progressDialog.dismiss();
+                                    }
+                                }, 3000);
+
+                            }
+                        });
+
                     }
                 }
             }
@@ -179,6 +221,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         else
             timeStamp= String.valueOf(System.currentTimeMillis());
         String filePathAndName = "Posts/" + "post_" + timeStamp;
+        final String type=spinner.getSelectedItem().toString();
         if (!uri.equals("noImage")) {
             // with image
             StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
@@ -201,6 +244,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                         hashMap.put("url", url);
                         hashMap.put("pLikes",pLikes);
                         hashMap.put("pComments",pComments);
+                        hashMap.put("type",type);
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
                         ref.child(timeStamp).setValue(hashMap)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -250,6 +294,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             hashMap.put("url", url);
             hashMap.put("pLikes",pLikes);
             hashMap.put("pComments",pComments);
+            hashMap.put("type",type);
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
             ref.child(timeStamp).setValue(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {

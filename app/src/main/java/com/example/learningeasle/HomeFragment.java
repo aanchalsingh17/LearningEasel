@@ -102,7 +102,6 @@ public class HomeFragment extends Fragment {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
                     modelpost post;
-
                     if (hashMap.get("pLikes") == null) {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
                                 hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), "0", hashMap.get("pComments"),hashMap.get("type"));

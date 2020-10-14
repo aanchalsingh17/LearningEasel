@@ -49,13 +49,17 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+//import net.dankito.richtexteditor.android.RichTextEditor;
+//import net.dankito.richtexteditor.android.toolbar.AllCommandsEditorToolbar;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PostFragment extends Fragment implements View.OnClickListener {
 
     View view;
-    EditText et_title, et_desc;
+
+     EditText et_title, et_desc;
     FloatingActionButton post_btn;
     ImageView img_post;
     String pName, url="empty";

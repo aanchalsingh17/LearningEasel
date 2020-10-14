@@ -62,6 +62,7 @@ public class UpdateProfile extends AppCompatActivity {
     TextView displayname, changeimage;
     StorageReference storageReference;
     Button update;
+
     String userId;
     ImageView profileimage;
     Uri imageuri = null;
@@ -306,9 +307,30 @@ public class UpdateProfile extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     HashMap<String, Object> hashMap = (HashMap<String, Object>) ds.getValue();
+
+                    if(hashMap.get("pComments").equals("0"))
+                    {}
+                    else
+                    {
+                        HashMap<String, Object> hashMap1 = (HashMap<String, Object>) hashMap.get("Comments");
+
+                        for (String key : hashMap1.keySet()) {
+                            HashMap<String,Object> hashMap2 = (HashMap<String,Object>) hashMap1.get(key);
+//                            System.out.println(hashMap2+"...........");
+                            if(hashMap2.get("uId").equals(userId))
+                            {
+                                hashMap2.put("uName",name);
+                                databaseReference.child(ds.getKey()).child("Comments").child(key).updateChildren(hashMap2);
+//                                System.out.println(hashMap2+"./././././");
+                            }
+                        }
+                    }
+
+
                     if (hashMap.get("pId").equals(userId)) {
                         hashMap.put("pName", name);
                         hashMap.put("url", url);
+
                         databaseReference.child(ds.getKey()).updateChildren(hashMap);
                         if(type.equals("details"))
                             progressDialog.dismiss();

@@ -59,6 +59,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     ProgressDialog pd;
     ProgressBar progressBar;
     String edit,id,time,title,des,image;
+    String pLikes="0",pComments="0";
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
     private static final int IMAGE_PICK_CAMERA_CODE = 300;
@@ -85,6 +86,8 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             title = getArguments().getString("Title");
             des = getArguments().getString("Des");
             image = getArguments().getString("Url");
+            pLikes = getArguments().getString("Likes");
+            pComments = getArguments().getString("Comments");
         }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_post, container, false);
@@ -196,8 +199,8 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                         hashMap.put("pTime", timeStamp);
                         hashMap.put("pName", pName);
                         hashMap.put("url", url);
-                        hashMap.put("pLikes","0");
-                        hashMap.put("pComments","0");
+                        hashMap.put("pLikes",pLikes);
+                        hashMap.put("pComments",pComments);
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
                         ref.child(timeStamp).setValue(hashMap)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -245,8 +248,8 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             hashMap.put("pTime", timeStamp);
             hashMap.put("pName", pName);
             hashMap.put("url", url);
-            hashMap.put("pLikes","0");
-            hashMap.put("pComments","0");
+            hashMap.put("pLikes",pLikes);
+            hashMap.put("pComments",pComments);
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
             ref.child(timeStamp).setValue(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {

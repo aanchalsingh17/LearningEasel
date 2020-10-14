@@ -203,7 +203,7 @@ public class ProfileFragment extends Fragment {
 
     Adapter.EditClick editClick = new Adapter.EditClick() {
         @Override
-        public void onEditClick(int position, String Uid, String pTimeStamp,String edit,String title,String pDescription,String pImage) {
+        public void onEditClick(int position, String Uid, String pTimeStamp,String edit,String title,String pDescription,String pImage,String like,String comment) {
             PostFragment fragment = new PostFragment();
             Bundle bundle = new Bundle();
             bundle.putString("Id", Uid);
@@ -212,6 +212,8 @@ public class ProfileFragment extends Fragment {
             bundle.putString("Title",title);
             bundle.putString("Des",pDescription);
             bundle.putString("Url",pImage);
+            bundle.putString("Likes",like);
+            bundle.putString("Comments",comment);
             fragment.setArguments(bundle);
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();

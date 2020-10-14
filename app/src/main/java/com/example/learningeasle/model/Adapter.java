@@ -102,6 +102,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         bundle.putString("Title",pTitle);
         bundle.putString("Des",pDescription);
         bundle.putString("Url",pImage);
+        bundle.putString("Likes",pLikes);
+        bundle.putString("Comments",pComments);
         postFragment.setArguments(bundle);
 
         holder.pName.setText(uName);
@@ -367,7 +369,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             if (options[i].equals("Edit")) {
-                                editClick.onEditClick(getAdapterPosition(),postList.get(getAdapterPosition()).pId,postList.get(getAdapterPosition()).pTime,"EditPost",postList.get(getAdapterPosition()).pTitle,postList.get(getAdapterPosition()).pDesc,postList.get(getAdapterPosition()).pImage);
+                                editClick.onEditClick(getAdapterPosition(),postList.get(getAdapterPosition()).pId,postList.get(getAdapterPosition()).pTime,"EditPost",postList.get(getAdapterPosition()).pTitle,postList.get(getAdapterPosition()).pDesc,postList.get(getAdapterPosition()).pImage,
+                                        postList.get(getAdapterPosition()).pLikes,postList.get(getAdapterPosition()).pComments);
                             }
 
                             if (options[i].equals("Delete")) {
@@ -383,7 +386,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         }
     }
     public interface  EditClick{
-        public void onEditClick(int position,String Uid,String pTimeStamp,String post,String title,String content,String url);
+        public void onEditClick(int position,String Uid,String pTimeStamp,String post,String title,String content,String url,String pLikes,String pComment);
     }
 
 }

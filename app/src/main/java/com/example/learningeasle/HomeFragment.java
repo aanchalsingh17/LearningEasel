@@ -144,11 +144,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadPosts() {
-        modelpostList.clear();
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                modelpostList.clear();
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();

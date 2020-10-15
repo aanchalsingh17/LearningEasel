@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import com.example.learningeasle.model.ModelUsers;
 import com.example.learningeasle.model.modelpost;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -61,7 +63,7 @@ public class ProfileFragment extends Fragment {
     Adapter adapterPost;
     ImageView more;
     String url = null;
-
+    BottomNavigationView navigationView;
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -76,7 +78,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         context = getActivity();
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        final View view = inflater.inflate(R.layout.fragment_profile, container, false);
         profile = view.findViewById(R.id.image);
         user = FirebaseAuth.getInstance().getCurrentUser();
         userid = user.getUid();//
@@ -89,6 +91,7 @@ public class ProfileFragment extends Fragment {
         fstore = FirebaseFirestore.getInstance();
         postlist = view.findViewById(R.id.posts);
         more = view.findViewById(R.id.more);
+        navigationView = view.findViewById(R.id.navigation);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
@@ -104,6 +107,26 @@ public class ProfileFragment extends Fragment {
                 });
         loadPosts();
         setProfile();
+        navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.post:
+                                  break;
+                    case R.id.follower:
+                                  Intent intent = new Intent(context,FollowerFollowing.class);
+                                  intent.putExtra("Task","Follower");
+                                  startActivity(intent);
+                                  break;
+                    case R.id.follow:
+                                 Intent in = new Intent(context,FollowerFollowing.class);
+                                 in.putExtra("Task","Following");
+                                  startActivity(in);
+                                  break;
+                }
+                return false;
+            }
+        });
         return view;
 
     }

@@ -60,41 +60,58 @@ public class UserProfile extends AppCompatActivity {
         modelpostList = new ArrayList<>();
         loadprofile();
         loadposts();
+        final String curruid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        setfollower(curruid,Id);
         follow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(Id);
-                 reference.child("Following").addValueEventListener(new ValueEventListener() {
-                     boolean found = false;
-                     @Override
 
-                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                         for(DataSnapshot ds:snapshot.getChildren()){
-                             String  uid = (String) ds.getValue();
-                             if(uid.equals(Id)){
-                                 found = true;
+                final DatabaseReference reffollowing = FirebaseDatabase.getInstance().getReference("Users")
+                        .child(curruid);
+                final DatabaseReference reffollowers = FirebaseDatabase.getInstance().getReference("Users")
+                        .child(Id);
+                  reffollowing.addListenerForSingleValueEvent(new ValueEventListener() {
+                      @Override
+                      public void onDataChange(@NonNull DataSnapshot snapshot) {
+                          if(snapshot.child("Following").hasChild(Id)){
+                              reffollowing.child("Following").child(Id).removeValue();
+                              reffollowers.child("Followers").child(curruid).removeValue();
+                          }else
+                              reffollowing.child("Following").child(Id).setValue(Id);
+                             reffollowers.child("Followers").child(curruid).setValue(curruid);
 
-                             }
-                         }
-                         if(found) {
-                             follow.setText("Follow");
-                             follow.setBackgroundColor(R.drawable.follow_button);
-                              reference.child("Following").child(Id).setValue(Id);
-                         }
-                         else {
-                             follow.setText("Following");
-                             follow.setBackgroundColor(R.drawable.following);
-                             reference.child("Following").child(Id).removeValue();
-                         }
-                     }
+                      }
 
-                     @Override
-                     public void onCancelled(@NonNull DatabaseError error) {
+                      @Override
+                      public void onCancelled(@NonNull DatabaseError error) {
 
-                     }
-                 });
+                      }
+                  });
             }
         });
+    }
+
+    private void setfollower(final String curruid, final String id) {
+        DatabaseReference reffollowing = FirebaseDatabase.getInstance().getReference("Users")
+                .child(curruid);
+        reffollowing.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.child("Following").hasChild(id)){
+                    follow.setText("Following");
+                    follow.setBackgroundColor(R.drawable.following);
+                }else{
+                    follow.setText("Follow");
+                    //follow.setBackgroundColor(R.drawable.follow_button);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
     private void loadposts() {

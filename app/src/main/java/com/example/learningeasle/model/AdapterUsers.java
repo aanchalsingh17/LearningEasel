@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +19,9 @@ import com.example.learningeasle.R;
 import com.example.learningeasle.UserProfile;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -54,14 +57,42 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
           final String email = userList.get(position).getEmail();
           final String url = userList.get(position).getUrl();
           final String Uid = userList.get(position).getId();
+          final String curruid = FirebaseAuth.getInstance().getCurrentUser().getUid();
           holder.name.setText(userName);
           holder.email.setText(email);
          if(url.equals("empty"))
            holder.profile.setImageResource(R.drawable.ic_action_account);
          else
            Picasso.get().load(url).into(holder.profile);
+         //Setting the follower i.e if current user is following the user of holder or not
+          setFollower(holder,curruid,Uid);
+          //Following and unfollowing the user from the holder view
+           holder.follow.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+                   final DatabaseReference reffollowing = FirebaseDatabase.getInstance().getReference("Users")
+                           .child(curruid);
+                   final DatabaseReference reffollowers = FirebaseDatabase.getInstance().getReference("Users")
+                           .child(Uid);
+                   reffollowing.addListenerForSingleValueEvent(new ValueEventListener() {
+                       @Override
+                       public void onDataChange(@NonNull DataSnapshot snapshot) {
+                           if(snapshot.child("Following").hasChild(Uid)){
+                               reffollowing.child("Following").child(Uid).removeValue();
+                               reffollowers.child("Followers").child(curruid).removeValue();
+                           }else{
+                               reffollowing.child("Following").child(Uid).setValue(Uid);
+                               reffollowers.child("Followers").child(curruid).setValue(curruid);
+                           }
+                       }
 
+                       @Override
+                       public void onCancelled(@NonNull DatabaseError error) {
 
+                       }
+                   });
+               }
+           });
 
           holder.itemView.setOnClickListener(new View.OnClickListener() {
               @Override
@@ -71,6 +102,28 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
                   context.startActivity(intent);
               }
           });
+    }
+
+    private void setFollower(final UserHolder holder, final String curruid, final String uid) {
+        final DatabaseReference reffollowing = FirebaseDatabase.getInstance().getReference("Users")
+                .child(curruid);
+        reffollowing.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.child("Following").hasChild(uid)){
+                    holder.follow.setText("Following");
+                    holder.follow.setBackgroundColor(R.drawable.following);
+                }else{
+                    holder.follow.setText("Follow");
+                   // holder.follow.setBackgroundColor(R.drawable.follow_button);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Override
@@ -83,11 +136,13 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
 
         ImageView profile;
         TextView name,email;
+        Button follow;
         public UserHolder(@NonNull View itemView) {
             super(itemView);
             profile = itemView.findViewById(R.id.image);
             name = itemView.findViewById(R.id.name);
             email = itemView.findViewById(R.id.email);
+            follow = itemView.findViewById(R.id.follow);
         }
     }
 

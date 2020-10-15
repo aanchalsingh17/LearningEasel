@@ -16,7 +16,7 @@
     <string name="menu_profile">Profile</string>
     <string name="menu_home">Home</string>
     <string name="Go">Go on</string>
-    <string name="menu_edit">Edit Profile</string>
+    <string name="menu_follower">Followers</string>
     <string name="menu_follow">Following</string>
     <string name="menu_post">Post</string>
     <string name="interest_prompt">Choose an Interest</string>

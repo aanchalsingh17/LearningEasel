@@ -493,7 +493,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                     Post_Data(title, description, String.valueOf(image_rui));
                 } else {
 //                     post without image
-                    if(edit.equals("EditPost")&&url!="noImage")
+                    if(edit.equals("EditPost")&&!image.equals("noImage"))
                         Post_Data(title,description,image);
                     else
                     Post_Data(title, description, "noImage");

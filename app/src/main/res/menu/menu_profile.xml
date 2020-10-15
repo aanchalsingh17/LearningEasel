@@ -3,9 +3,9 @@
     <item android:id="@+id/post"
         android:title="@string/menu_post"
         android:icon="@drawable/ic_baseline_post_add_24"/>
-    <item android:id="@+id/edit"
-        android:title="@string/menu_edit"
-        android:icon="@drawable/ic_edit" />
+    <item android:id="@+id/follower"
+        android:title="@string/menu_follower"
+        android:icon="@drawable/ic_followers" />
     <item android:id="@+id/follow"
         android:title="@string/menu_follow"
         android:icon="@drawable/ic_baseline_done_24" />

@@ -151,6 +151,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         final String pId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -203,7 +204,6 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
             }
         });
-
     }
 
     private void trigger() {

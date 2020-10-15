@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -43,11 +44,18 @@ import java.util.Locale;
 
 public class PostDetailActivity extends AppCompatActivity {
 
-    String hisuId, myEmail, myName, myDp, postId, mylikes, hisDp, hisName;
+    String hisuId, myEmail, myName, myDp, postId, mylikes, hisDp, hisName,postType;
 
     ProgressBar progressBar;
     ImageView uDpIV, pImageIV;
-    TextView nameTV, pTimeTV, pTitleTV, pDescriptionTV, pLikesTV, pCommentsTV;
+    TextView nameTV;
+    TextView pTimeTV;
+    TextView pTitleTV;
+    TextView pDescriptionTV;
+    TextView pLikesTV;
+    TextView pCommentsTV;
+    TextView pType;
+    String pImage;
     RecyclerView recyclerView;
     Button likebtn, sharebtn;
     LinearLayout profileLayout;
@@ -56,6 +64,7 @@ public class PostDetailActivity extends AppCompatActivity {
     ImageButton sendbtn, morebtn;
     List<ModelComment> commentList;
     AdapterComments adapterComments;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +85,7 @@ public class PostDetailActivity extends AppCompatActivity {
         pDescriptionTV = findViewById(R.id.pdesc);
         pLikesTV = findViewById(R.id.totallikes);
         pCommentsTV=findViewById(R.id.totalcomments);
+        pType=findViewById(R.id.pType);
         morebtn = findViewById(R.id.more);
         likebtn = findViewById(R.id.like);
         sharebtn = findViewById(R.id.share);
@@ -85,6 +95,10 @@ public class PostDetailActivity extends AppCompatActivity {
         avatarIV = findViewById(R.id.avtar);
 
 
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
 
         loadPostInfo();
 
@@ -97,6 +111,14 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
+        pImageIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ViewImage.class);
+                intent.putExtra("image", pImage);
+                startActivity(intent);
+            }
+        });
         likebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -305,10 +327,11 @@ Toast.makeText(getApplicationContext(),""+e.getMessage(),Toast.LENGTH_SHORT).sho
                 String pDesc = "" + snapshot.child("pDesc").getValue();
                 mylikes = "" + snapshot.child("pLikes").getValue();
                 String pTimeStamp = "" + snapshot.child("pTime").getValue();
-                String pImage = "" + snapshot.child("pImage").getValue();
+                pImage = "" + snapshot.child("pImage").getValue();
                 hisuId = (String) snapshot.child("pId").getValue();
                 hisDp = "" + snapshot.child("url").getValue();
                 hisName = "" + snapshot.child("pName").getValue();
+                postType= (String) snapshot.child("type").getValue();
                 String CommentCount;
 
                 if(snapshot.child("pComments").getValue()==null)
@@ -327,13 +350,15 @@ Toast.makeText(getApplicationContext(),""+e.getMessage(),Toast.LENGTH_SHORT).sho
                 pTimeTV.setText(pTime);
                 nameTV.setText(hisName);
                 pCommentsTV.setText(CommentCount + " Comments");
+                pType.setText(postType);
 
-                if (pImageIV.equals("noImage")) {
+
+                if (pImage.equals("noImage")) {
                     pImageIV.setVisibility(View.GONE);
                 } else {
                     try {
                         pImageIV.setVisibility(View.VISIBLE);
-                        Picasso.get().load(pImage).placeholder(R.drawable.ic_default).fit().centerCrop().
+                        Picasso.get().load(String.valueOf(pImage)).placeholder(R.drawable.ic_default).fit().centerCrop().
                                 into(pImageIV);
                     } catch (Exception e) {
                     }
@@ -348,6 +373,7 @@ Toast.makeText(getApplicationContext(),""+e.getMessage(),Toast.LENGTH_SHORT).sho
                     Picasso.get().load(R.drawable.ic_default)
                             .into(uDpIV);
                 }
+                progressDialog.dismiss();
             }
 
             @Override

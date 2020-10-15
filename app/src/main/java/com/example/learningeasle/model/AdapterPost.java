@@ -92,7 +92,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         final String pId = postList.get(position).getpId();
         final String pType=postList.get(position).getpType();
         String pLikes = postList.get(position).getpLikes();
-        holder.uName.setText(uName+"->"+pType);
+        holder.uName.setText(uName);
+        holder.pType.setText(pType);
         holder.uName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -282,9 +283,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
     static class MyHolder extends RecyclerView.ViewHolder {
 
-        ImageView uDp;
-        ImageView pImage;
-        TextView uName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment;
+        ImageView uDp,pImage;
+        TextView uName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment,pType;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
 
@@ -302,6 +302,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             share_btn = itemView.findViewById(R.id.share);
             comment_btn = itemView.findViewById(R.id.comment);
             pTotalComment=itemView.findViewById(R.id.totalcomments);
+            pType=itemView.findViewById(R.id.pType);
         }
     }
 }

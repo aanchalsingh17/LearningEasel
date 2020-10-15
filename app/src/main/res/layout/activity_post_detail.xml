@@ -8,12 +8,12 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_above="@+id/layoutcomment"
         android:layout_height="match_parent"
+        android:layout_above="@+id/layoutcomment"
         android:layout_alignParentRight="true">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -33,7 +33,7 @@
                     <LinearLayout
                         android:id="@+id/profileLayout"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
                         android:padding="5dp">
@@ -51,15 +51,33 @@
                             android:layout_weight="1"
                             android:orientation="vertical">
 
-                            <TextView
-                                android:id="@+id/uname"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:autoLink="all"
-                                android:fontFamily="@font/ubuntu"
-                                android:text="Name"
-                                android:textColor="#00d5ff"
-                                android:textSize="20sp" />
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/uname"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:autoLink="all"
+                                    android:fontFamily="@font/ubuntu"
+                                    android:text="Name"
+                                    android:textColor="#00d5ff"
+                                    android:textSize="20sp" />
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_arrow"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/pType"
+                                    android:fontFamily="@font/ubuntu"
+                                    android:text="Type"
+                                    android:textColor="#00d5ff"
+                                    android:textSize="20sp"/>
+                            </LinearLayout>
 
                             <TextView
                                 android:id="@+id/time"
@@ -148,9 +166,9 @@
                         android:layout_height="1dp" />
 
                     <LinearLayout
+                        android:layout_weight="1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:gravity="center">
 
                         <Button
@@ -175,7 +193,6 @@
 
                     </LinearLayout>
 
-
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
@@ -183,24 +200,24 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Comments"
-                android:padding="2dp"
-                android:drawablePadding="5dp"
-                android:drawableLeft="@drawable/ic_comments"
                 android:drawableStart="@drawable/ic_comments"
-                />
+                android:drawableLeft="@drawable/ic_comments"
+                android:drawablePadding="5dp"
+                android:padding="2dp"
+                android:text="Comments" />
+
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/Recyclerview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/Recyclerview"/>
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
     <RelativeLayout
+        android:id="@+id/layoutcomment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/layoutcomment"
         android:layout_alignParentBottom="true">
 
         <com.mikhaellopez.circularimageview.CircularImageView

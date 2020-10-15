@@ -12,6 +12,7 @@ import androidx.loader.content.AsyncTaskLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class HomeFragment extends Fragment {
 
     FirebaseAuth firebaseAuth;
@@ -53,6 +55,8 @@ public class HomeFragment extends Fragment {
     RecyclerView recyclerView;
     List<modelpost> modelpostList;
     AdapterPost adapterPost;
+    String email;
+    ArrayList<String> interest;
     ProgressBar progressBar;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -88,28 +92,78 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
         setHasOptionsMenu(true);
-        loadPosts();
+        interest=new ArrayList<>();
+        getUserDetails();
+
+
 
         return view;
     }
 
+    public void getUserDetails() {
+        final String pId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot db:snapshot.getChildren()) {
+                    HashMap<Object, String> hashMap = (HashMap<Object, String>) db.getValue();
+                    if (hashMap.get("Id").equals(pId)) {
+                        email=hashMap.get("email");
+                        email=email.substring(0,email.length()-4);
+                        interest.clear();
+                        DatabaseReference ref1=FirebaseDatabase.getInstance().getReference(email);
+                        ref1.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+                                    if(dataSnapshot.getValue().equals("1"))
+                                        interest.add(dataSnapshot.getKey());
+                                }
+                                loadPosts();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void loadPosts() {
+        modelpostList.clear();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                modelpostList.clear();
+
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
+//                    if(FirebaseDatabase.getInstance().getReference(""))
                     modelpost post;
-                    if (hashMap.get("pLikes") == null) {
+                    if (hashMap.get("pLikes") == null && interest.contains(hashMap.get("type"))) {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
                                 hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), "0", hashMap.get("pComments"),hashMap.get("type"));
-                    } else {
+                        modelpostList.add(post);
+                    } else if(interest.contains(hashMap.get("type"))) {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
                                 hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), hashMap.get("pLikes"), hashMap.get("pComments"),hashMap.get("type"));
+                        modelpostList.add(post);
                     }
-                    modelpostList.add(post);
+
 
                 }
 

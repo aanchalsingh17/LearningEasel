@@ -107,8 +107,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         bundle.putString("Comments",pComments);
         postFragment.setArguments(bundle);
 
-        holder.pName.setText(uName+"->"+pType);
-
+        holder.pName.setText(uName);
+        holder.pType.setText(pType);
         if(url.equals("empty"))
             holder.url.setImageResource(R.drawable.ic_action_account);
         else
@@ -339,9 +339,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
     public class PostHolder extends RecyclerView.ViewHolder {
 
-        ImageView url;
-        ImageView Image;
-        TextView pName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment;
+        ImageView url,Image;
+        TextView pName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment,pType;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
         EditClick editClick;
@@ -360,6 +359,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             like_btn = itemView.findViewById(R.id.like);
             share_btn = itemView.findViewById(R.id.share);
             comment_btn = itemView.findViewById(R.id.comment);
+            pType=itemView.findViewById(R.id.pType);
             this.editClick = editClick;
             morebtn.setOnClickListener(new View.OnClickListener() {
                 @Override

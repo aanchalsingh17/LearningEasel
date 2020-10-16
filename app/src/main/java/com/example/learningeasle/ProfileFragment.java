@@ -123,6 +123,11 @@ public class ProfileFragment extends Fragment {
                                  in.putExtra("Task","Following");
                                   startActivity(in);
                                   break;
+                    case R.id.bookmark:
+                                 Intent intent1 = new Intent(context,Bookmark.class);
+                                  startActivity(intent1);
+                                  break;
+
                 }
                 return false;
             }

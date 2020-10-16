@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class FollowerFollowing extends AppCompatActivity {
@@ -62,7 +63,6 @@ public class FollowerFollowing extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 HashMap<Object,String> hashMap = (HashMap<Object, String>) snapshot.getValue();
-                                System.out.println(hashMap.get("Name")+" "+hashMap.get("email"));
                                 ModelUsers users = new ModelUsers(hashMap.get("Id"),hashMap.get("Name"),hashMap.get("Url"),hashMap.get("email"),hashMap.get("phone"),hashMap.get("status"));
                                 usersList.add(users);
 
@@ -74,10 +74,11 @@ public class FollowerFollowing extends AppCompatActivity {
 
                             }
                         });
+                        adapterfollow = new AdapterUsers(FollowerFollowing.this,usersList);
+                        follows.setAdapter(adapterfollow);
 
                     }
-                    adapterfollow = new AdapterUsers(FollowerFollowing.this,usersList);
-                    follows.setAdapter(adapterfollow);
+
                 }
 
                 @Override
@@ -93,16 +94,16 @@ public class FollowerFollowing extends AppCompatActivity {
                      usersList.clear();
                      for(DataSnapshot ds:snapshot.getChildren()){
                          final String userid = (String) ds.getValue();
-                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(userid);
-                         ref.addValueEventListener(new ValueEventListener() {
+
+                         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
+                         databaseReference.addValueEventListener(new ValueEventListener() {
                              @Override
                              public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                     HashMap<Object, String> hashMap = (HashMap<Object, String>) snapshot.getValue();
-                                 System.out.println(hashMap.get("Name")+" "+hashMap.get("email"));
-                                     ModelUsers user = new ModelUsers(hashMap.get("Id"), hashMap.get("Name"), hashMap.get("Url"), hashMap.get("email"), hashMap.get("phone"), hashMap.get("status"));
-                                     usersList.add(user);
+                                 HashMap<Object,String> hashMap = (HashMap<Object, String>) snapshot.getValue();
+                                 ModelUsers users = new ModelUsers(hashMap.get("Id"),hashMap.get("Name"),hashMap.get("Url"),hashMap.get("email"),hashMap.get("phone"),hashMap.get("status"));
+                                 usersList.add(users);
 
-                                 }
+                             }
 
 
                              @Override
@@ -110,9 +111,10 @@ public class FollowerFollowing extends AppCompatActivity {
 
                              }
                          });
+                         adapterfollow = new AdapterUsers(FollowerFollowing.this,usersList);
+                         follows.setAdapter(adapterfollow);
                      }
-                     adapterfollow  = new AdapterUsers(getApplicationContext(),usersList);
-                     follows.setAdapter(adapterfollow);
+
                  }
 
                  @Override
@@ -122,4 +124,6 @@ public class FollowerFollowing extends AppCompatActivity {
              });
         }
     }
+
+
 }

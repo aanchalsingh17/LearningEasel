@@ -39,8 +39,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -227,15 +230,55 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    private void addUserInfo(FirebaseUser user) {
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+    private void addUserInfo(final FirebaseUser user) {
+        final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
         if (account != null) {
             SharedPreferences preferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString("email_Id", account.getEmail());
-
             editor.commit();
-            startActivity(new Intent(Login.this, PickInterests.class));
+            final DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(!snapshot.hasChild(user.getUid())){
+                        final HashMap<Object, String> hashMap = new HashMap<>();
+                        hashMap.put("Name",account.getDisplayName());
+                        hashMap.put("Id",user.getUid());
+                        hashMap.put("Url", "empty");
+                        hashMap.put("email",account.getEmail());
+                        hashMap.put("phone","");
+                        hashMap.put("status","");
+                        reference.child(user.getUid()).setValue(hashMap);
+                        String email = account.getEmail();
+                        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
+                        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        int j=email.length()-4;
+                        final String username=email.substring(0,j);
+                        final DatabaseReference myRef=database.getReference().child(username);
+
+                        myRef.child("Science").setValue("0");
+                        myRef.child("Medication").setValue("0");
+                        myRef.child("Computers").setValue("0");
+                        myRef.child("Business").setValue("0");
+                        myRef.child("Environment").setValue("0");
+                        myRef.child("Arts").setValue("0");
+                        myRef.child("Sports").setValue("0");
+                        myRef.child("Economics").setValue("0");
+                        myRef.child("Architecture").setValue("0");
+
+
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+            startActivity(new Intent(Login.this,MainActivity.class));
             finish();
 
         }
@@ -259,7 +302,7 @@ public class Login extends AppCompatActivity {
                     Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
                     //Uploading profile pic n name n uid in realtimedatabase  to show all the users in the users fragment;
 
-                    startActivity(new Intent(getApplicationContext(),PickInterests.class));
+                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
                     overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
                     finish();
 

@@ -82,6 +82,13 @@
                 android:layout_marginRight="3dp"
                 android:background="@null"
                 android:src="@drawable/ic_more" />
+            <ImageView
+                android:id="@+id/bookmarks"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="3dp"
+                android:background="@null"
+                android:src="@drawable/ic_bookmarks"/>
 
         </LinearLayout>
 

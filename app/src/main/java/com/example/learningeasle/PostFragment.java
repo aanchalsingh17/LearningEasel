@@ -221,122 +221,145 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         // String UserId = firebaseUser.getUid();
         final String timeStamp;
+        //If post is to be edited then timestamp is going to be the time stamp of the post to be edited not the current timestamp
         if(edit.equals("EditPost"))
             timeStamp = time;
         else
             timeStamp= String.valueOf(System.currentTimeMillis());
         String filePathAndName = "Posts/" + "post_" + timeStamp;
         final String type=spinner.getSelectedItem().toString();
+        //If post contains the image
         if (!uri.equals("noImage")) {
             // with image
-            StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
-            ref.putFile(Uri.parse(uri)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                    while (!uriTask.isSuccessful()) ;
-                    String downloadUri = uriTask.getResult().toString();
+                StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);ref.putFile(Uri.parse(uri)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                        while (!uriTask.isSuccessful()) ;
+                        String downloadUri = uriTask.getResult().toString();
 
 
-                    if (uriTask.isSuccessful()) {
-                        HashMap<Object, String> hashMap = new HashMap<>();
-                        hashMap.put("pId", firebaseUser.getUid());
-                        hashMap.put("pImage", downloadUri);
-                        hashMap.put("pTitle", title);
-                        hashMap.put("pDesc", description);
-                        hashMap.put("pTime", timeStamp);
-                        hashMap.put("pName", pName);
-                        hashMap.put("url", url);
-                        hashMap.put("pLikes",pLikes);
-                        hashMap.put("pComments",pComments);
-                        hashMap.put("type",type);
-                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-                        ref.child(timeStamp).setValue(hashMap)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        if (uriTask.isSuccessful()) {
+                            HashMap<Object, String> hashMap = new HashMap<>();
+                            hashMap.put("pId", firebaseUser.getUid());
+                            hashMap.put("pImage", downloadUri);
+                            hashMap.put("pTitle", title);
+                            hashMap.put("pDesc", description);
+                            hashMap.put("pTime", timeStamp);
+                            hashMap.put("pName", pName);
+                            hashMap.put("url", url);
+                            hashMap.put("pLikes", "0");
+                            hashMap.put("pComments", "0");
+                            hashMap.put("type", type);
+                            if (edit.equals("EditPost")) {
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(timeStamp);
+                                ref.child("pTitle").setValue(title);
+                                ref.child("pDesc").setValue(description);
+                                ref.child("type").setValue(type);
+                                ref.child("pImage").setValue(downloadUri);
+                                Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
+                                        .show();
+                                et_desc.setText("");
+                                et_title.setText("");
+                                img_post.setImageURI(null);
+                                image_rui = null;
+                                Intent intent = new Intent(getActivity(), MainActivity.class);
+                                startActivity(intent);
+                            } else {
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");//.child(timeStamp);
+                                ref.child(timeStamp).setValue(hashMap)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+//                                pd.dismiss();
+                                                progressBar.setVisibility(View.GONE);
+                                                Toast.makeText(getActivity(), "Post published!", Toast.LENGTH_SHORT)
+                                                        .show();
+                                                et_desc.setText("");
+                                                et_title.setText("");
+                                                img_post.setImageURI(null);
+                                                image_rui = null;
+
+                                                Intent intent = new Intent(getActivity(), MainActivity.class);
+                                                startActivity(intent);
+
+
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
                                     @Override
-                                    public void onSuccess(Void aVoid) {
+                                    public void onFailure(@NonNull Exception e) {
 //                                pd.dismiss();
                                         progressBar.setVisibility(View.GONE);
-                                        if(edit.equals("EditPost"))
-                                            Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
-                                                    .show();
-                                        else
-                                        Toast.makeText(getActivity(), "Post published!", Toast.LENGTH_SHORT)
-                                                .show();
-                                        et_desc.setText("");
-                                        et_title.setText("");
-                                        img_post.setImageURI(null);
-                                        image_rui = null;
-
-                                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                                            startActivity(intent);
-
-
+//                                Toast.makeText(getApplicationContext(),"Whyyy",Toast.LENGTH_SHORT).show();
                                     }
-                                }).addOnFailureListener(new OnFailureListener() {
+                                });
+                            }
+                        }
+
+                    }
+                })
+                        .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-//                                pd.dismiss();
-                                progressBar.setVisibility(View.GONE);
-//                                Toast.makeText(getApplicationContext(),"Whyyy",Toast.LENGTH_SHORT).show();
+//                            pd.dismiss();
                             }
                         });
-                    }
-
-                }
-            })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-//                            pd.dismiss();
-                        }
-                    });
 
 
         } else {
-
-
-            HashMap<Object, String> hashMap = new HashMap<>();
-            hashMap.put("pId", firebaseUser.getUid());
-            hashMap.put("pImage", "noImage");
-            hashMap.put("pTitle", title);
-            hashMap.put("pDesc", description);
-            hashMap.put("pTime", timeStamp);
-            hashMap.put("pName", pName);
-            hashMap.put("url", url);
-            hashMap.put("pLikes",pLikes);
-            hashMap.put("pComments",pComments);
-            hashMap.put("type",type);
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-            ref.child(timeStamp).setValue(hashMap)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
+            if (edit.equals("EditPost")) {
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(timeStamp);
+                ref.child("pTitle").setValue(title);
+                ref.child("pDesc").setValue(description);
+                ref.child("type").setValue(type);
+                ref.child("pImage").setValue("noImage");
+                    Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
+                            .show();
+                et_desc.setText("");
+                et_title.setText("");
+                img_post.setImageURI(null);
+                image_rui = null;
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+            } else {
+                HashMap<Object, String> hashMap = new HashMap<>();
+                hashMap.put("pId", firebaseUser.getUid());
+                hashMap.put("pImage", "noImage");
+                hashMap.put("pTitle", title);
+                hashMap.put("pDesc", description);
+                hashMap.put("pTime", timeStamp);
+                hashMap.put("pName", pName);
+                hashMap.put("url", url);
+                hashMap.put("pLikes", pLikes);
+                hashMap.put("pComments", pComments);
+                hashMap.put("type", type);
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                ref.child(timeStamp).setValue(hashMap)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
 //                            pd.dismiss();
-                            progressBar.setVisibility(View.GONE);
-                            if(edit.equals("EditPost"))
-                                Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
-                                        .show();
-                            else
-                            Toast.makeText(getActivity(), "Post published!", Toast.LENGTH_SHORT)
-                                    .show();
-                            et_desc.setText("");
-                            et_title.setText("");
-                            img_post.setImageURI(null);
-                            image_rui = null;
-                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                            startActivity(intent);
+                                progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(getActivity(), "Post published!", Toast.LENGTH_SHORT)
+                                            .show();
+                                et_desc.setText("");
+                                et_title.setText("");
+                                img_post.setImageURI(null);
+                                image_rui = null;
+                                Intent intent = new Intent(getActivity(), MainActivity.class);
+                                startActivity(intent);
 
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
 //                    pd.dismiss();
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getActivity(), "Whyyy", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(getActivity(), "Whyyy", Toast.LENGTH_SHORT).show();
 
-                }
-            });
+                    }
+                });
+            }
         }
 
     }

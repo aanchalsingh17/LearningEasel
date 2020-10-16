@@ -184,6 +184,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
             }
         });
+        setBookmark(holder,myId,pId,pTimeStamp);
         holder.comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -205,7 +206,27 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 }
             }
         });
+        holder.boookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(myId);
+                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.child("Bookmarks").hasChild(pTimeStamp)){
+                            reference.child("Bookmarks").child(pTimeStamp).removeValue();
+                        }else{
+                            reference.child("Bookmarks").child(pTimeStamp).setValue(pId);
+                        }
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        });
         holder.pImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -215,6 +236,28 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
             }
         });
+    }
+
+    private void setBookmark(final MyHolder holder, String myId, final String pId, final String pTimeStamp) {
+        final DatabaseReference Posts = FirebaseDatabase.getInstance().getReference("Posts")
+                .child(pTimeStamp);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(myId);//.child("Bookmarks");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.child("Bookmarks").hasChild(pTimeStamp)){
+                    holder.boookmark.setBackgroundColor(R.drawable.swipe_button_background);
+                }else{
+                    holder.boookmark.setBackgroundColor(R.drawable.ic_bookmarks);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
     private void shareImageAndText(String pTitle, String pDescription, Bitmap bitmap) {
@@ -283,7 +326,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
     static class MyHolder extends RecyclerView.ViewHolder {
 
-        ImageView uDp,pImage;
+        ImageView uDp,pImage,boookmark;
         TextView uName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment,pType;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
@@ -302,6 +345,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             share_btn = itemView.findViewById(R.id.share);
             comment_btn = itemView.findViewById(R.id.comment);
             pTotalComment=itemView.findViewById(R.id.totalcomments);
+            boookmark = itemView.findViewById(R.id.bookmarks);
             pType=itemView.findViewById(R.id.pType);
         }
     }

@@ -242,6 +242,7 @@ public class Login extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if(!snapshot.hasChild(user.getUid())){
+                        //If First Time logging in using gmail then need to add all these fields on database
                         final HashMap<Object, String> hashMap = new HashMap<>();
                         hashMap.put("Name",account.getDisplayName());
                         hashMap.put("Id",user.getUid());

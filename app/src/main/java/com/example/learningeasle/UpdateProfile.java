@@ -297,6 +297,7 @@ public class UpdateProfile extends AppCompatActivity {
         hashmap.put("Id", userId);
         hashmap.put("Name", name);
         hashmap.put("Url", url);
+        System.out.println(url+"url");
         hashmap.put("email", email);
         hashmap.put("phone", phone);
         hashmap.put("status", status);

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.example.learningeasle.model.AdapterUsers;
@@ -74,8 +75,14 @@ public class FollowerFollowing extends AppCompatActivity {
 
                             }
                         });
-                        adapterfollow = new AdapterUsers(FollowerFollowing.this,usersList);
-                        follows.setAdapter(adapterfollow);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapterfollow = new AdapterUsers(FollowerFollowing.this,usersList);
+                                follows.setAdapter(adapterfollow);
+                            }
+                        },500);
+
 
                     }
 
@@ -111,8 +118,14 @@ public class FollowerFollowing extends AppCompatActivity {
 
                              }
                          });
-                         adapterfollow = new AdapterUsers(FollowerFollowing.this,usersList);
-                         follows.setAdapter(adapterfollow);
+                         new Handler().postDelayed(new Runnable() {
+                             @Override
+                             public void run() {
+                                 adapterfollow = new AdapterUsers(FollowerFollowing.this,usersList);
+                                 follows.setAdapter(adapterfollow);
+                             }
+                         },500);
+
                      }
 
                  }

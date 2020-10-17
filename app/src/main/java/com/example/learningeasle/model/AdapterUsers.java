@@ -60,6 +60,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
           final String curruid = FirebaseAuth.getInstance().getCurrentUser().getUid();
           holder.name.setText(userName);
           holder.email.setText(email);
+          System.out.println(userName+" jsr "+email);
          if(url.equals("empty"))
            holder.profile.setImageResource(R.drawable.ic_action_account);
          else
@@ -115,7 +116,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
                     holder.follow.setBackgroundColor(R.drawable.following);
                 }else{
                     holder.follow.setText("Follow");
-                   // holder.follow.setBackgroundColor(R.drawable.follow_button);
+                    holder.follow.setBackgroundColor(R.drawable.follow_button);
                 }
             }
 

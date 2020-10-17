@@ -268,8 +268,13 @@ public class Login extends AppCompatActivity {
                         myRef.child("Economics").setValue("0");
                         myRef.child("Architecture").setValue("0");
 
+                        startActivity(new Intent(Login.this,PickInterests.class));
+                        finish();
 
-
+                    }
+                    else{
+                        startActivity(new Intent(Login.this,MainActivity.class));
+                        finish();
                     }
                 }
 
@@ -279,8 +284,7 @@ public class Login extends AppCompatActivity {
                 }
             });
 
-            startActivity(new Intent(Login.this,MainActivity.class));
-            finish();
+
 
         }
     }

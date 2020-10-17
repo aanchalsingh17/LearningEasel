@@ -9,7 +9,7 @@
     <style name="AppTheme2" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">#152238</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
     <style name="MyProgressBarRectangle" parent="@style/Widget.AppCompat.ProgressBar">

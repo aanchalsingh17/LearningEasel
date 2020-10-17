@@ -5,53 +5,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Register"
-    android:background="@drawable/background">
+    android:background="@drawable/gradient">
 
 
         <ImageView
             android:id="@+id/logo_reg"
-            android:layout_width="241dp"
-            android:layout_height="148dp"
+            android:layout_width="291dp"
+            android:layout_height="178dp"
             android:layout_marginStart="85dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="50dp"
             android:layout_marginEnd="85dp"
-            app:layout_constraintBottom_toTopOf="@id/app_name_reg"
+            app:layout_constraintBottom_toTopOf="@id/name_reg"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/logo"
-            android:contentDescription="@string/app_name" />
+            android:src="@drawable/logo_large"/>
 
-
-        <TextView
-            android:id="@+id/app_name_reg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:duplicateParentState="false"
-            android:fontFamily="@font/autour_one"
-            android:lineSpacingExtra="8sp"
-            android:text="@string/app_name"
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/colorSecondary"
-            android:textSize="38sp"
-            android:textStyle="bold"
-
-            android:typeface="normal"
-            app:layout_constraintBottom_toTopOf="@id/name_reg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logo_reg" />
 
 
         <EditText
             android:id="@+id/name_reg"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_below="@id/app_name_reg"
+            android:layout_below="@id/logo_reg"
             android:layout_centerInParent="true"
             android:layout_marginStart="53dp"
             android:layout_marginTop="20dp"
@@ -62,7 +39,7 @@
             android:backgroundTintMode="src_over"
             android:drawableStart="@drawable/ic_action_account"
             android:ems="10"
-            android:fontFamily="@font/arya"
+            android:fontFamily="@font/ubuntu"
             android:hint="@string/Name"
             android:importantForAutofill="no"
             android:inputType="textPersonName"
@@ -76,7 +53,7 @@
             app:layout_constraintBottom_toTopOf="@id/email_reg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/app_name_reg" />
+            app:layout_constraintTop_toBottomOf="@+id/logo_reg" />
 
         <EditText
             android:id="@+id/email_reg"
@@ -93,7 +70,7 @@
             android:backgroundTintMode="src_over"
             android:drawableStart="@drawable/ic_action_user"
             android:ems="10"
-            android:fontFamily="@font/arya"
+            android:fontFamily="@font/ubuntu"
             android:hint="@string/Email"
             android:inputType="textEmailAddress"
             android:lineSpacingExtra="7sp"
@@ -126,7 +103,7 @@
             android:backgroundTintMode="src_over"
             android:drawableStart="@drawable/ic_action_phone"
             android:ems="10"
-            android:fontFamily="@font/arya"
+            android:fontFamily="@font/ubuntu"
             android:hint="@string/Mobile_number"
             android:importantForAutofill="no"
             android:inputType="numberDecimal"
@@ -157,7 +134,7 @@
             android:backgroundTintMode="src_over"
             android:drawableStart="@drawable/ic_action_pass"
             android:ems="10"
-            android:fontFamily="@font/arya"
+            android:fontFamily="@font/ubuntu"
             android:hint="@string/Password"
             android:inputType="textPassword"
             android:lineSpacingExtra="7sp"
@@ -177,8 +154,8 @@
 
         <Button
             android:id="@+id/register_reg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="171dp"
+            android:layout_height="50dp"
             android:layout_below="@id/password_reg"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
@@ -187,18 +164,18 @@
             android:layout_marginStart="109dp"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="109dp"
-            android:background="@drawable/button_round"
-            android:backgroundTint="@color/colorSecondary"
-            android:fontFamily="sans-serif-black"
+            android:background="@drawable/button_shaper_aqua"
+            android:backgroundTint="#0099cc"
+            android:fontFamily="@font/ubuntu"
+            android:textColor="#fff"
             android:paddingStart="30dp"
             android:paddingLeft="10dp"
             android:paddingTop="10dp"
             android:paddingEnd="30dp"
-            android:textColor="@color/textDark"
 
             android:paddingRight="10dp"
             android:paddingBottom="10dp"
-            android:text = "@string/Next"
+            android:text = "SignUp"
             android:textSize="19sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -217,7 +194,8 @@
             android:layout_marginEnd="108dp"
             android:text="@string/already_signed_in_login_here"
             android:textAlignment="center"
-            android:textColor="@color/colorSecondary"
+            android:textColor="#00ffff"
+            android:fontFamily="@font/ubuntu"
 
             android:textSize="16sp"
             android:textStyle="bold"

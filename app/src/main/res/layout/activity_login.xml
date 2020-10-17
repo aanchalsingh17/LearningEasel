@@ -5,52 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Login"
-    android:background="@drawable/background">
+    android:background="@drawable/gradient">
 
 
         <ImageView
             android:id="@+id/logo_login"
-            android:layout_width="241dp"
-            android:layout_height="148dp"
+            android:layout_width="291dp"
+            android:layout_height="178dp"
             android:layout_marginStart="85dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="50dp"
             android:layout_marginEnd="85dp"
-            android:contentDescription="@string/app_name"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/logo" />
+            app:srcCompat="@drawable/logo_large" />
 
-
-        <TextView
-            android:id="@+id/app_name_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/logo_login"
-            android:layout_marginTop="16dp"
-            android:duplicateParentState="false"
-            android:fontFamily="@font/autour_one"
-            android:lineSpacingExtra="8sp"
-            android:text="@string/app_name"
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/colorSecondary"
-            android:textSize="38sp"
-
-            android:textStyle="bold"
-            android:typeface="normal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.505"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logo_login" />
 
         <EditText
             android:id="@+id/email_login"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_below="@id/app_name_login"
+            android:layout_below="@id/logo_login"
             android:layout_alignParentTop="false"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="53dp"
@@ -59,7 +35,7 @@
             android:background="@drawable/rounded_edit_text"
             android:drawableStart="@drawable/ic_action_user"
             android:ems="10"
-            android:fontFamily="@font/arya"
+            android:fontFamily="@font/ubuntu"
             android:hint="@string/Email"
             android:inputType="textEmailAddress"
             android:lineSpacingExtra="7sp"
@@ -70,7 +46,7 @@
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/app_name_login"
+            app:layout_constraintTop_toBottomOf="@id/logo_login"
             tools:ignore="Autofill" />
 
         <EditText
@@ -85,7 +61,7 @@
             android:background="@drawable/rounded_edit_text"
             android:drawableStart="@drawable/ic_action_pass"
             android:ems="10"
-            android:fontFamily="@font/arya"
+            android:fontFamily="@font/ubuntu"
             android:hint="@string/Password"
             android:inputType="textPassword"
             android:lineSpacingExtra="7sp"
@@ -102,8 +78,8 @@
 
         <Button
             android:id="@+id/login_login"
-            android:layout_width="208dp"
-            android:layout_height="60dp"
+            android:layout_width="171dp"
+            android:layout_height="50dp"
             android:layout_below="@id/password_login"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
@@ -112,11 +88,11 @@
             android:layout_marginStart="109dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="109dp"
-            android:background="@drawable/button_round"
-            android:backgroundTint="@color/colorSecondary"
-            android:fontFamily="sans-serif-black"
+            android:background="@drawable/button_shaper_aqua"
+            android:backgroundTint="#0099cc"
+            android:fontFamily="@font/ubuntu"
             android:text="@string/Login"
-            android:textColor="@color/textDark"
+            android:textColor="#fff"
 
 
             android:textSize="19sp"
@@ -134,7 +110,8 @@
             android:gravity="center|center_horizontal|center_vertical"
             android:text="@string/New_user_create_account"
             android:textAlignment="center"
-            android:textColor="@color/colorSecondary"
+            android:textColor="#00ffff"
+            android:fontFamily="@font/ubuntu"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -166,7 +143,8 @@
                     android:gravity="center|center_horizontal|center_vertical"
                     android:text="@string/forgot_password"
                     android:textAlignment="center"
-                    android:textColor="@color/colorSecondary"
+                    android:textColor="#00ffff"
+                    android:fontFamily="@font/ubuntu"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 

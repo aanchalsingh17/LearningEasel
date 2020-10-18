@@ -143,28 +143,30 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             public void onClick(View view) {
 //                Toast.makeText(context, "Like", Toast.LENGTH_SHORT).show();
                 final int pLikes;
-                String likes=postList.get(position).getpLikes();
-                if(likes==null)
-                    pLikes=0;
+                String likes = postList.get(position).getpLikes();
+                if (likes == null)
+                    pLikes = 0;
                 else
-                    pLikes= Integer.parseInt(postList.get(position).getpLikes());
-                processLike=true;
-                final String stamp=postList.get(position).getpTime();
-                likesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    pLikes = Integer.parseInt(postList.get(position).getpLikes());
+                processLike = true;
+                final String stamp = postList.get(position).getpTime();
+                postsref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if(processLike)
-                            if(snapshot.child(stamp).hasChild(myId)) {
-                                postsref.child(stamp).child("pLikes").setValue(""+(pLikes - 1));
-                                likesRef.child(stamp).child(myId).removeValue();
-                                processLike=false;
-                            }
-                            else{
-                                postsref.child(stamp).child("pLikes").setValue(""+(pLikes+1));
-                                likesRef.child(stamp).child(myId).setValue("Liked");
-                                processLike=false;
+
+                        if (processLike)
+                            if (snapshot.child(stamp).child("Likes").hasChild(myId)) {
+                                postsref.child(stamp).child("pLikes").setValue("" + (pLikes - 1));
+                                postsref.child(stamp).child("Likes").child(myId).removeValue();
+                                processLike = false;
+                            } else {
+
+                                postsref.child(stamp).child("pLikes").setValue("" + (pLikes + 1));
+                                postsref.child(stamp).child("Likes").child(myId).setValue("Liked");
+                                processLike = false;
                             }
                     }
+
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
@@ -309,21 +311,23 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
     }
 
     private void setLikes(final PostHolder holder, final String pTimeStamp) {
-        likesRef.addValueEventListener(new ValueEventListener() {
+        postsref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.child(pTimeStamp).hasChild(myId)){
-                    holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked,0,0,
+
+                if (snapshot.child(pTimeStamp).hasChild("Likes") && snapshot.child(pTimeStamp).child("Likes").hasChild(myId)) {
+//                        System.out.println(ds.child("Likes")+".........."+myId);
+                    holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0,
                             0);
                     holder.like_btn.setText("Liked");
                 }
-                else
-                {
-                    holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like,0,0,
+                else {
+                    holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like, 0, 0,
                             0);
                     holder.like_btn.setText("Like");
                 }
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -331,6 +335,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             }
         });
     }
+
 
     @Override
     public int getItemCount() {

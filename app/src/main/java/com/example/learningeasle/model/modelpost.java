@@ -19,6 +19,8 @@ public class modelpost {
         this.pType=pType;
     }
 
+
+
     public String getpComments() {
         return pComments;
     }

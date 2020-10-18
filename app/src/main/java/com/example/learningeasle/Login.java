@@ -238,10 +238,13 @@ public class Login extends AppCompatActivity {
             editor.putString("email_Id", account.getEmail());
             editor.commit();
             final DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
+            final boolean[] start = new boolean[1];
+            start[0]=true;
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if(!snapshot.hasChild(user.getUid())){
+                        start[0] =false;
                         final HashMap<Object, String> hashMap = new HashMap<>();
                         hashMap.put("Name",account.getDisplayName());
                         hashMap.put("Id",user.getUid());
@@ -267,11 +270,14 @@ public class Login extends AppCompatActivity {
                         myRef.child("Economics").setValue("0");
                         myRef.child("Architecture").setValue("0");
 
+                        System.out.println("pick");
+
                         startActivity(new Intent(Login.this,PickInterests.class));
                         finish();
 
                     }
-                    else{
+                    else if(start[0] == true){
+                        System.out.println("main");
                         startActivity(new Intent(Login.this,MainActivity.class));
                         finish();
                     }

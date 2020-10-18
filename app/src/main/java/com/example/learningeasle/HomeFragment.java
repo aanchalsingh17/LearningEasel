@@ -114,8 +114,9 @@ public class HomeFragment extends Fragment {
                     if (hashMap.get("Id").equals(pId)) {
                         email=hashMap.get("email");
                         email=email.substring(0,email.length()-4);
+
                         interest.clear();
-                        DatabaseReference ref1=FirebaseDatabase.getInstance().getReference(email);
+                        DatabaseReference ref1=FirebaseDatabase.getInstance().getReference("Users").child(db.getKey()).child(email);
                         ref1.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {

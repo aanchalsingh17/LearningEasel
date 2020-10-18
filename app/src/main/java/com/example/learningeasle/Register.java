@@ -132,7 +132,8 @@ public class Register extends AppCompatActivity {
 
                             Toast.makeText(Register.this, "User Created.", Toast.LENGTH_SHORT).show();
 
-                            userID = fAuth_reg.getCurrentUser().getUid();                                                           //user id stored
+                            userID = fAuth_reg.getCurrentUser().getUid();   int j=email.length()-4;
+                            final String username=email.substring(0,j);                                                          //user id stored
                             final HashMap<Object, String> hashMap = new HashMap<>();
                                     hashMap.put("Name",fullName);
                                     hashMap.put("Id",Uid);
@@ -157,10 +158,8 @@ public class Register extends AppCompatActivity {
                             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                             FirebaseUser users = firebaseAuth.getCurrentUser();
                             final FirebaseDatabase database = FirebaseDatabase.getInstance();
-                            int j=email.length()-4;
-                            final String username=email.substring(0,j);
-                            final DatabaseReference myRef=database.getReference().child(username);
 
+                            final DatabaseReference myRef=database.getReference().child("Users").child(userID).child(username);
                             myRef.child("Science").setValue("0");
                             myRef.child("Medication").setValue("0");
                             myRef.child("Computers").setValue("0");

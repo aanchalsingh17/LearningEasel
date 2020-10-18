@@ -30,7 +30,7 @@
         <activity android:name=".ViewImage" />
         <activity android:name=".PostDetailActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".PickInterests" />
+        <activity android:name=".PickInterests" android:theme="@style/AppTheme2" />
         <activity android:name=".Profile" />
         <activity
             android:name=".Register"

@@ -162,13 +162,16 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                         pName = hashMap.get("Name");
                         url = hashMap.get("Url");
                         email=hashMap.get("email");
-                        email=email.substring(0,email.length()-4);
+                        String folder=email.substring(0,email.length()-4);
                         interests.clear();
-                        DatabaseReference ref1=FirebaseDatabase.getInstance().getReference(email);
+                        DatabaseReference ref1=FirebaseDatabase.getInstance().getReference("Users").child(db.getKey()).child(folder);
                         ref1.addValueEventListener(new ValueEventListener() {
                             @Override
+
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                                 for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+                                    System.out.println(dataSnapshot.getKey()+"///////////////");
                                     if(dataSnapshot.getValue().equals("1"))
                                         interests.add(dataSnapshot.getKey());
                                 }

@@ -44,8 +44,8 @@ import java.util.Locale;
 
 public class PostDetailActivity extends AppCompatActivity {
 
-    String hisuId, myEmail, myName, myDp, postId, mylikes, hisDp, hisName,postType;
-
+    String hisuId, myEmail, myName, myDp, postId, mylikes, hisDp, hisName, postType;
+    boolean processLike = false;
     ProgressBar progressBar;
     ImageView uDpIV, pImageIV;
     TextView nameTV;
@@ -81,11 +81,11 @@ public class PostDetailActivity extends AppCompatActivity {
         nameTV = findViewById(R.id.uname);
         pTimeTV = findViewById(R.id.time);
         pTitleTV = findViewById(R.id.ptitle);
-        recyclerView=findViewById(R.id.Recyclerview);
+        recyclerView = findViewById(R.id.Recyclerview);
         pDescriptionTV = findViewById(R.id.pdesc);
         pLikesTV = findViewById(R.id.totallikes);
-        pCommentsTV=findViewById(R.id.totalcomments);
-        pType=findViewById(R.id.pType);
+        pCommentsTV = findViewById(R.id.totalcomments);
+        pType = findViewById(R.id.pType);
         morebtn = findViewById(R.id.more);
         likebtn = findViewById(R.id.like);
         sharebtn = findViewById(R.id.share);
@@ -95,7 +95,7 @@ public class PostDetailActivity extends AppCompatActivity {
         avatarIV = findViewById(R.id.avtar);
 
 
-        progressDialog=new ProgressDialog(this);
+        progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
@@ -119,23 +119,51 @@ public class PostDetailActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         likebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                likePost();
+                processLike = true;
+                final DatabaseReference postsref = FirebaseDatabase.getInstance().getReference().child("Posts");
+                final String myId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                postsref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        if (processLike)
+                            if (snapshot.child(postId).child("Likes").hasChild(myId)) {
+                                postsref.child(postId).child("pLikes").setValue("" +(Integer.parseInt(mylikes) - 1));
+                                postsref.child(postId).child("Likes").child(myId).removeValue();
+                                processLike = false;
+                            } else {
+
+                                postsref.child(postId).child("pLikes").setValue("" + (Integer.parseInt(mylikes) + 1));
+                                postsref.child(postId).child("Likes").child(myId).setValue("Liked");
+                                processLike = false;
+                            }
+                    }
+
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+
             }
         });
         setLikes();
-        LinearLayoutManager layoutManager=new LinearLayoutManager(
+        LinearLayoutManager layoutManager = new LinearLayoutManager(
                 getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
-        commentList=new ArrayList<>();
+        commentList = new ArrayList<>();
         loadComments();
     }
 
     private void loadComments() {
 
-        DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Posts").child(postId).
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(postId).
                 child("Comments");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -145,17 +173,16 @@ public class PostDetailActivity extends AppCompatActivity {
                     final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
                     ModelComment modelComment;
 
-                    modelComment=new ModelComment(hashMap.get("cId"),hashMap.get("comment"),hashMap.get("timeStamp"),
+                    modelComment = new ModelComment(hashMap.get("cId"), hashMap.get("comment"), hashMap.get("timeStamp"),
                             hashMap.get("uId"),
-                            hashMap.get("uDp"),hashMap.get("uName"));
+                            hashMap.get("uDp"), hashMap.get("uName"));
 
                     commentList.add(modelComment);
 
 
-
                 }
-                System.out.println(commentList+",.,.,.,..,.,.,.,.");
-                adapterComments=new AdapterComments(getApplicationContext(),commentList);
+                System.out.println(commentList + ",.,.,.,..,.,.,.,.");
+                adapterComments = new AdapterComments(getApplicationContext(), commentList);
                 recyclerView.setAdapter(adapterComments);
             }
 
@@ -169,51 +196,25 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     private void setLikes() {
-        final DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
+        final DatabaseReference postsref = FirebaseDatabase.getInstance().getReference().child("Posts");
         final String myId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        likesRef.addValueEventListener(new ValueEventListener() {
+        postsref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.child(postId).hasChild(myId)) {
-                    likebtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0,
+
+                if (snapshot.child(postId).hasChild("Likes") && snapshot.child(postId).child("Likes").hasChild(myId)) {
+//                        System.out.println(ds.child("Likes")+".........."+myId);
+                   likebtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0,
                             0);
-                   likebtn.setText("Liked");
-                } else {
+                    likebtn.setText("Liked");
+                }
+                else {
                    likebtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like, 0, 0,
                             0);
                     likebtn.setText("Like");
                 }
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
-    boolean processLike = false;
-
-    private void likePost() {
-        processLike = true;
-        final DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
-        final DatabaseReference postsref = FirebaseDatabase.getInstance().getReference().child("Posts");
-        final String myId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        likesRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (processLike)
-                    if (snapshot.child(postId).hasChild(myId)) {
-                        postsref.child(postId).child("pLikes").setValue("" + (Integer.parseInt(mylikes) - 1));
-                        likesRef.child(postId).child(myId).removeValue();
-                        processLike = false;
-
-                    } else {
-                        postsref.child(postId).child("pLikes").setValue("" + (Integer.parseInt(mylikes) + 1));
-                        likesRef.child(postId).child(myId).setValue("Liked");
-                        processLike = false;
-                    }
-            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -221,8 +222,8 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
-
     }
+
 
     private void postComment() {
 
@@ -232,6 +233,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     .show();
             return;
         }
+
         String timeStamp = String.valueOf(System.currentTimeMillis());
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts")
@@ -260,7 +262,7 @@ public class PostDetailActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-Toast.makeText(getApplicationContext(),""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -276,9 +278,9 @@ Toast.makeText(getApplicationContext(),""+e.getMessage(),Toast.LENGTH_SHORT).sho
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (mProcessComment) {
                     String comments = (String) snapshot.child("pComments").getValue();
-                    if(comments==null)
-                        comments="0";
-                    int newCommentVal = Integer.parseInt(comments)+1 ;
+                    if (comments == null)
+                        comments = "0";
+                    int newCommentVal = Integer.parseInt(comments) + 1;
                     ref.child("pComments").setValue("" + (newCommentVal));
                     mProcessComment = false;
                 }
@@ -340,41 +342,41 @@ Toast.makeText(getApplicationContext(),""+e.getMessage(),Toast.LENGTH_SHORT).sho
                     CommentCount = "" + snapshot.child("pComments").getValue();
 
                 Calendar calendar = Calendar.getInstance(Locale.getDefault());
-                    calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
+                calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
 
-                    String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
+                String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
 
-                    pTitleTV.setText(pTitle);
-                    pDescriptionTV.setText(pDesc);
-                    pLikesTV.setText(mylikes + " Likes");
-                    pTimeTV.setText(pTime);
-                    nameTV.setText(hisName);
-                    pCommentsTV.setText(CommentCount + " Comments");
-                    pType.setText(postType);
-
-
-                    if (pImage.equals("noImage")) {
-                        pImageIV.setVisibility(View.GONE);
-                    } else {
-                        try {
-                            pImageIV.setVisibility(View.VISIBLE);
-                            Picasso.get().load(String.valueOf(pImage)).placeholder(R.drawable.ic_default).fit().centerCrop().
-                                    into(pImageIV);
-                        } catch (Exception e) {
-                        }
-                    }
+                pTitleTV.setText(pTitle);
+                pDescriptionTV.setText(pDesc);
+                pLikesTV.setText(mylikes + " Likes");
+                pTimeTV.setText(pTime);
+                nameTV.setText(hisName);
+                pCommentsTV.setText(CommentCount + " Comments");
+                pType.setText(postType);
 
 
-                    // in comment , dp
+                if (pImage.equals("noImage")) {
+                    pImageIV.setVisibility(View.GONE);
+                } else {
                     try {
-                        Picasso.get().load(hisDp).placeholder(R.drawable.ic_default)
-                                .into(uDpIV);
+                        pImageIV.setVisibility(View.VISIBLE);
+                        Picasso.get().load(String.valueOf(pImage)).placeholder(R.drawable.ic_default).fit().centerCrop().
+                                into(pImageIV);
                     } catch (Exception e) {
-                        Picasso.get().load(R.drawable.ic_default)
-                                .into(uDpIV);
                     }
-                    progressDialog.dismiss();
                 }
+
+
+                // in comment , dp
+                try {
+                    Picasso.get().load(hisDp).placeholder(R.drawable.ic_default)
+                            .into(uDpIV);
+                } catch (Exception e) {
+                    Picasso.get().load(R.drawable.ic_default)
+                            .into(uDpIV);
+                }
+                progressDialog.dismiss();
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

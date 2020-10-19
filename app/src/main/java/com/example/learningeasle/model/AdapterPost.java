@@ -57,7 +57,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     Context context;
     List<modelpost> postList;
     private String pName;
-    private DatabaseReference likesRef;
     DatabaseReference postsref;
     String myId;
     View view;
@@ -67,7 +66,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         this.context = context;
         this.postList = postList;
         myId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
         postsref = FirebaseDatabase.getInstance().getReference().child("Posts");
     }
 
@@ -160,20 +158,23 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                     pLikes = Integer.parseInt(postList.get(position).getpLikes());
                 processLike = true;
                 final String stamp = postList.get(position).getpTime();
-                likesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                postsref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (processLike)
-                            if (snapshot.child(stamp).hasChild(myId)) {
-                                postsref.child(stamp).child("pLikes").setValue("" + (pLikes - 1));
-                                likesRef.child(stamp).child(myId).removeValue();
-                                processLike = false;
-                            } else {
-                                postsref.child(stamp).child("pLikes").setValue("" + (pLikes + 1));
-                                likesRef.child(stamp).child(myId).setValue("Liked");
-                                processLike = false;
-                            }
-                    }
+
+                            if (processLike)
+                                if (snapshot.child(stamp).child("Likes").hasChild(myId)) {
+                                    postsref.child(stamp).child("pLikes").setValue("" + (pLikes - 1));
+                                    postsref.child(stamp).child("Likes").child(myId).removeValue();
+                                    processLike = false;
+                                } else {
+
+                                    postsref.child(stamp).child("pLikes").setValue("" + (pLikes + 1));
+                                    postsref.child(stamp).child("Likes").child(myId).setValue("Liked");
+                                    processLike = false;
+                                }
+                        }
+
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
@@ -298,19 +299,23 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     }
 
     private void setLikes(final MyHolder holder, final String pTimeStamp) {
-        likesRef.addValueEventListener(new ValueEventListener() {
+       postsref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.child(pTimeStamp).hasChild(myId)) {
-                    holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0,
-                            0);
-                    holder.like_btn.setText("Liked");
-                } else {
-                    holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like, 0, 0,
-                            0);
-                    holder.like_btn.setText("Like");
+
+                    if (snapshot.child(pTimeStamp).hasChild("Likes") && snapshot.child(pTimeStamp).child("Likes").hasChild(myId)) {
+//                        System.out.println(ds.child("Likes")+".........."+myId);
+                        holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0,
+                                0);
+                        holder.like_btn.setText("Liked");
+                    }
+                     else {
+                        holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like, 0, 0,
+                                0);
+                        holder.like_btn.setText("Like");
+                    }
                 }
-            }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

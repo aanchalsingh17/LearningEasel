@@ -42,6 +42,8 @@ public class PickInterests extends AppCompatActivity {
     FirebaseUser fUser;
     FirebaseFirestore fStore;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +64,8 @@ public class PickInterests extends AppCompatActivity {
             editor.commit();
             username=personEmail.substring(0,personEmail.length()-4);
             final FirebaseDatabase database = FirebaseDatabase.getInstance();
-            final DatabaseReference myRef=database.getReference().child(username);
+            final String myId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            myRef=database.getReference().child("Users").child(myId).child(username);
 
             myRef.child("Science").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -113,13 +116,17 @@ public class PickInterests extends AppCompatActivity {
             });
 
         }
+
         if(username.equals(""))
             username=folder.substring(0,j);
         final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser user = firebaseAuth.getCurrentUser();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        myRef= database.getReference().child(username);
+        final String myId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+
+                myRef=FirebaseDatabase.getInstance().getReference().child("Users").child(myId).child(username);
+System.out.println(myRef.child("Arts").getKey()+"..........");
         btn_science = findViewById(R.id.science);
         btn_medication = findViewById(R.id.medication);
         btn_computers = findViewById(R.id.computers);
@@ -404,10 +411,10 @@ public class PickInterests extends AppCompatActivity {
     }
 
     public void setColors(){
-        myRef.child("Science").addListenerForSingleValueEvent(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String  data = snapshot.getValue().toString();
+                String  data = snapshot.child("Science").getValue().toString();
                 if (data.equals("1")) {
                     btn_science.setBackgroundResource(R.drawable.button_shaper_red);
                     btn_science.setText("Unfollow");

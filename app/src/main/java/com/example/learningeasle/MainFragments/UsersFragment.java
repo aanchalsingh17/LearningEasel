@@ -1,4 +1,4 @@
-package com.example.learningeasle;
+package com.example.learningeasle.MainFragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.appcompat.widget.SearchView;
 
+import com.example.learningeasle.R;
 import com.example.learningeasle.model.AdapterUsers;
 import com.example.learningeasle.model.ModelUsers;
 import com.google.firebase.auth.FirebaseAuth;

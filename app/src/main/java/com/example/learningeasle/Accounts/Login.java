@@ -1,4 +1,4 @@
-package com.example.learningeasle;
+package com.example.learningeasle.Accounts;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,10 +11,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -24,6 +22,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.learningeasle.MainActivity;
+import com.example.learningeasle.PickInterests;
+import com.example.learningeasle.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -44,14 +45,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class Login extends AppCompatActivity {
     EditText email_login, password_login;
@@ -272,7 +268,7 @@ public class Login extends AppCompatActivity {
 
                         System.out.println("pick");*/
 
-                        startActivity(new Intent(Login.this,PickInterests.class));
+                        startActivity(new Intent(Login.this, PickInterests.class));
                         finish();
 
                     }

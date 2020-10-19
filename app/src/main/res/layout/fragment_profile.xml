@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/rec"
-    tools:context=".ProfileFragment">
+    tools:context=".MainFragments.ProfileFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <androidx.core.widget.NestedScrollView
@@ -24,6 +24,8 @@
                 android:layout_height="wrap_content"
                 app:menu="@menu/menu_profile"
                 android:background="#EBF3F6"
+                app:itemTextColor="#18415C"
+                app:itemIconTint="#18415C"
                 android:layout_marginTop="230dp">
 
             </com.google.android.material.bottomnavigation.BottomNavigationView>

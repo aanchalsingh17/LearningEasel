@@ -1,34 +1,31 @@
-package com.example.learningeasle;
+package com.example.learningeasle.MainFragments;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.learningeasle.Bookmark;
+import com.example.learningeasle.FollowerFollowing;
+import com.example.learningeasle.FullView;
+import com.example.learningeasle.MainFragments.PostFragment;
+import com.example.learningeasle.R;
+import com.example.learningeasle.UpdateProfile;
 import com.example.learningeasle.model.Adapter;
-import com.example.learningeasle.model.ModelUsers;
 import com.example.learningeasle.model.modelpost;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,7 +37,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -114,7 +110,7 @@ public class ProfileFragment extends Fragment {
                     case R.id.post:
                                   break;
                     case R.id.follower:
-                                  Intent intent = new Intent(context,FollowerFollowing.class);
+                                  Intent intent = new Intent(context, FollowerFollowing.class);
                                   intent.putExtra("Task","Follower");
                                   startActivity(intent);
                                   break;
@@ -124,7 +120,7 @@ public class ProfileFragment extends Fragment {
                                   startActivity(in);
                                   break;
                     case R.id.bookmark:
-                                 Intent intent1 = new Intent(context,Bookmark.class);
+                                 Intent intent1 = new Intent(context, Bookmark.class);
                                   startActivity(intent1);
                                   break;
 

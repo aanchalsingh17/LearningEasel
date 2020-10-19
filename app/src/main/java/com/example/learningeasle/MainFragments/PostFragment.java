@@ -1,4 +1,4 @@
-package com.example.learningeasle;
+package com.example.learningeasle.MainFragments;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -30,6 +30,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.learningeasle.MainActivity;
+import com.example.learningeasle.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;

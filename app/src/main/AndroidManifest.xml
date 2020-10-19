@@ -31,12 +31,12 @@
         <activity android:name=".PostDetailActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".PickInterests" android:theme="@style/AppTheme2" />
-        <activity android:name=".Profile" />
+        <activity android:name=".Accounts.Profile" />
         <activity
-            android:name=".Register"
+            android:name=".Accounts.Register"
             android:theme="@style/AppTheme2" />
         <activity
-            android:name=".Login"
+            android:name=".Accounts.Login"
             android:theme="@style/AppTheme2">
 
         </activity>

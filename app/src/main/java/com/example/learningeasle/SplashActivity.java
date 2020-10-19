@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.widget.ImageView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.example.learningeasle.Accounts.Login;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -22,7 +23,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(getApplicationContext(),Login.class));
+                startActivity(new Intent(getApplicationContext(), Login.class));
                 finish();
             }
         },4700);

@@ -1,4 +1,4 @@
-package com.example.learningeasle;
+package com.example.learningeasle.MainFragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -24,6 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.learningeasle.PickInterests;
+import com.example.learningeasle.R;
 import com.example.learningeasle.model.AdapterPost;
 import com.example.learningeasle.model.modelpost;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -191,7 +193,7 @@ public class HomeFragment extends Fragment {
         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                startActivity(new Intent(getContext(),PickInterests.class));
+                startActivity(new Intent(getContext(), PickInterests.class));
                 getActivity().finish();
                 return false;
             }

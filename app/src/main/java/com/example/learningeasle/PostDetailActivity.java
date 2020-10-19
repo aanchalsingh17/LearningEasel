@@ -320,62 +320,74 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     private void loadPostInfo() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-
-        ref.child(postId).addValueEventListener(new ValueEventListener() {
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String pTitle = "" + snapshot.child("pTitle").getValue();
-                String pDesc = "" + snapshot.child("pDesc").getValue();
-                mylikes = "" + snapshot.child("pLikes").getValue();
-                String pTimeStamp = "" + snapshot.child("pTime").getValue();
-                pImage = "" + snapshot.child("pImage").getValue();
-                hisuId = (String) snapshot.child("pId").getValue();
-                hisDp = "" + snapshot.child("url").getValue();
-                hisName = "" + snapshot.child("pName").getValue();
-                postType = (String) snapshot.child("type").getValue();
-                String CommentCount;
+                if(snapshot.hasChild(postId)){
+                    ref.child(postId).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            String pTitle = "" + snapshot.child("pTitle").getValue();
+                            String pDesc = "" + snapshot.child("pDesc").getValue();
+                            mylikes = "" + snapshot.child("pLikes").getValue();
+                            String pTimeStamp = (String) snapshot.child("pTime").getValue();
+                            pImage = "" + snapshot.child("pImage").getValue();
+                            hisuId = (String) snapshot.child("pId").getValue();
+                            hisDp = "" + snapshot.child("url").getValue();
+                            hisName = "" + snapshot.child("pName").getValue();
+                            postType = (String) snapshot.child("type").getValue();
+                            String CommentCount;
+                            if (pTimeStamp != null) {
+                                if (snapshot.child("pComments").getValue() == null)
+                                    CommentCount = "0";
+                                else
+                                    CommentCount = "" + snapshot.child("pComments").getValue();
 
-                if (snapshot.child("pComments").getValue() == null)
-                    CommentCount = "0";
-                else
-                    CommentCount = "" + snapshot.child("pComments").getValue();
+                                Calendar calendar = Calendar.getInstance(Locale.getDefault());
+                                calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
 
-                Calendar calendar = Calendar.getInstance(Locale.getDefault());
-                calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
+                                String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
 
-                String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
-
-                pTitleTV.setText(pTitle);
-                pDescriptionTV.setText(pDesc);
-                pLikesTV.setText(mylikes + " Likes");
-                pTimeTV.setText(pTime);
-                nameTV.setText(hisName);
-                pCommentsTV.setText(CommentCount + " Comments");
-                pType.setText(postType);
+                                pTitleTV.setText(pTitle);
+                                pDescriptionTV.setText(pDesc);
+                                pLikesTV.setText(mylikes + " Likes");
+                                pTimeTV.setText(pTime);
+                                nameTV.setText(hisName);
+                                pCommentsTV.setText(CommentCount + " Comments");
+                                pType.setText(postType);
 
 
-                if (pImage.equals("noImage")) {
-                    pImageIV.setVisibility(View.GONE);
-                } else {
-                    try {
-                        pImageIV.setVisibility(View.VISIBLE);
-                        Picasso.get().load(String.valueOf(pImage)).placeholder(R.drawable.ic_default).fit().centerCrop().
-                                into(pImageIV);
-                    } catch (Exception e) {
-                    }
+                                if (pImage.equals("noImage")) {
+                                    pImageIV.setVisibility(View.GONE);
+                                } else {
+                                    try {
+                                        pImageIV.setVisibility(View.VISIBLE);
+                                        Picasso.get().load(String.valueOf(pImage)).placeholder(R.drawable.ic_default).fit().centerCrop().
+                                                into(pImageIV);
+                                    } catch (Exception e) {
+                                    }
+                                }
+
+
+                                // in comment , dp
+                                try {
+                                    Picasso.get().load(hisDp).placeholder(R.drawable.ic_default)
+                                            .into(uDpIV);
+                                } catch (Exception e) {
+                                    Picasso.get().load(R.drawable.ic_default)
+                                            .into(uDpIV);
+                                }
+                                progressDialog.dismiss();
+                            }
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
                 }
-
-
-                // in comment , dp
-                try {
-                    Picasso.get().load(hisDp).placeholder(R.drawable.ic_default)
-                            .into(uDpIV);
-                } catch (Exception e) {
-                    Picasso.get().load(R.drawable.ic_default)
-                            .into(uDpIV);
-                }
-                progressDialog.dismiss();
             }
 
             @Override

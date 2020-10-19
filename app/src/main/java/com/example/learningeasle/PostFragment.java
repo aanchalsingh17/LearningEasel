@@ -234,7 +234,24 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         //If post contains the image
         if (!uri.equals("noImage")) {
             // with image
-                StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);ref.putFile(Uri.parse(uri)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            //If imageuri is null which means that the post image is not changed
+            if(image_rui==null){
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(timeStamp);
+                ref.child("pTitle").setValue(title);
+                ref.child("pDesc").setValue(description);
+                ref.child("type").setValue(type);
+                Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
+                        .show();
+                et_desc.setText("");
+                et_title.setText("");
+                img_post.setImageURI(null);
+                image_rui = null;
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+            }else {
+                //otherwise we have added a image either from the gallery or from the camera
+                StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
+                ref.putFile(Uri.parse(uri)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
@@ -243,17 +260,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
 
                         if (uriTask.isSuccessful()) {
-                            HashMap<Object, String> hashMap = new HashMap<>();
-                            hashMap.put("pId", firebaseUser.getUid());
-                            hashMap.put("pImage", downloadUri);
-                            hashMap.put("pTitle", title);
-                            hashMap.put("pDesc", description);
-                            hashMap.put("pTime", timeStamp);
-                            hashMap.put("pName", pName);
-                            hashMap.put("url", url);
-                            hashMap.put("pLikes", "0");
-                            hashMap.put("pComments", "0");
-                            hashMap.put("type", type);
+                            //If edit post then in any scenerio we can either change image type title and desc nothing else than that
                             if (edit.equals("EditPost")) {
                                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(timeStamp);
                                 ref.child("pTitle").setValue(title);
@@ -269,7 +276,20 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                                 Intent intent = new Intent(getActivity(), MainActivity.class);
                                 startActivity(intent);
                             } else {
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");//.child(timeStamp);
+                                //Otherwise we are publishing the post
+                                HashMap<Object, String> hashMap = new HashMap<>();
+                                hashMap.put("pId", firebaseUser.getUid());
+                                hashMap.put("pImage", downloadUri);
+                                hashMap.put("pTitle", title);
+                                hashMap.put("pDesc", description);
+                                hashMap.put("pTime", timeStamp);
+                                hashMap.put("pName", pName);
+                                hashMap.put("url", url);
+                                hashMap.put("pLikes", "0");
+                                hashMap.put("pComments", "0");
+                                hashMap.put("type", type);
+
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
                                 ref.child(timeStamp).setValue(hashMap)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
@@ -308,8 +328,9 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                             }
                         });
 
-
+            }
         } else {
+            //If its edit post then we need to set the values of only title content type and image
             if (edit.equals("EditPost")) {
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(timeStamp);
                 ref.child("pTitle").setValue(title);
@@ -325,6 +346,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 startActivity(intent);
             } else {
+                //otherwise publish the new post
                 HashMap<Object, String> hashMap = new HashMap<>();
                 hashMap.put("pId", firebaseUser.getUid());
                 hashMap.put("pImage", "noImage");
@@ -333,8 +355,8 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 hashMap.put("pTime", timeStamp);
                 hashMap.put("pName", pName);
                 hashMap.put("url", url);
-                hashMap.put("pLikes", pLikes);
-                hashMap.put("pComments", pComments);
+                hashMap.put("pLikes", "0");
+                hashMap.put("pComments", "0");
                 hashMap.put("type", type);
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
                 ref.child(timeStamp).setValue(hashMap)

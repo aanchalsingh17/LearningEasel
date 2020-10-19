@@ -260,7 +260,7 @@ public class Login extends AppCompatActivity {
                         final String username=email.substring(0,j);
                         final DatabaseReference myRef=database.getReference().child(username);
 
-                        myRef.child("Science").setValue("0");
+                       /* myRef.child("Science").setValue("0");
                         myRef.child("Medication").setValue("0");
                         myRef.child("Computers").setValue("0");
                         myRef.child("Business").setValue("0");
@@ -270,7 +270,7 @@ public class Login extends AppCompatActivity {
                         myRef.child("Economics").setValue("0");
                         myRef.child("Architecture").setValue("0");
 
-                        System.out.println("pick");
+                        System.out.println("pick");*/
 
                         startActivity(new Intent(Login.this,PickInterests.class));
                         finish();

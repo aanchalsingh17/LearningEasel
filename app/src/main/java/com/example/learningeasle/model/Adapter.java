@@ -215,19 +215,23 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         if(pImage.equals("noImage")){
             final ProgressDialog pd = new ProgressDialog(context);
             pd.setMessage("Deleting....");
+            //If there in no image than we need to delete this only from the realtime database
             Query query = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
             query.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for(DataSnapshot ds:snapshot.getChildren()){
                         HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
-                        if(hashMap.get("pTime").equals(pTimeStamp)) {
-                            ds.getRef().removeValue();
-                            Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
-                        }
+                            if (hashMap.get("pTime").equals(pTimeStamp)) {
+                                ds.getRef().removeValue();
+                                Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                            }
+
                     }
 
                     pd.dismiss();
+
+
                 }
 
                 @Override
@@ -236,6 +240,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                 }
             });
         }else{
+            //If image is present than delete it from the storage too
             final ProgressDialog pd = new ProgressDialog(context);
             pd.setMessage("Deleting....");
 
@@ -251,7 +256,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                                 HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
                                 if(hashMap.get("pTime").equals(pTimeStamp))
                                     ds.getRef().removeValue();
-                               // Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
+                               Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
                             }
                             pd.dismiss();
                         }
@@ -382,6 +387,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                             if (options[i].equals("Delete")) {
                                 String time = postList.get(getAdapterPosition()).pTime;
                                 String pImage = postList.get(getAdapterPosition()).pImage;
+                                String pId = postList.get(getAdapterPosition()).pId;
                                 beginDelete(pId, pImage, time);
                             }
                         }

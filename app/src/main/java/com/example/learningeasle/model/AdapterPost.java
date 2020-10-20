@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.learningeasle.PostDetailActivity;
 import com.example.learningeasle.R;
-import com.example.learningeasle.UserProfile;
+import com.example.learningeasle.UserDetails.UserProfile;
 import com.example.learningeasle.ViewImage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;

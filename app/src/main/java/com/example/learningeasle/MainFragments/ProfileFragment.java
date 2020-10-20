@@ -18,12 +18,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.learningeasle.Bookmark;
-import com.example.learningeasle.FollowerFollowing;
+import com.example.learningeasle.UserDetails.Bookmark;
+import com.example.learningeasle.UserDetails.FollowerFollowing;
 import com.example.learningeasle.FullView;
-import com.example.learningeasle.MainFragments.PostFragment;
 import com.example.learningeasle.R;
-import com.example.learningeasle.UpdateProfile;
+import UpdateProfile;
 import com.example.learningeasle.model.Adapter;
 import com.example.learningeasle.model.modelpost;
 import com.google.android.material.bottomnavigation.BottomNavigationView;

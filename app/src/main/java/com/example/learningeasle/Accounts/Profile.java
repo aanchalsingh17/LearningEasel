@@ -88,34 +88,37 @@ public class Profile extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-                ref.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            final HashMap<String, Object> hashMap = (HashMap<String, Object>) dataSnapshot.getValue();
-                            if (hashMap.get("Id").equals(fUser.getUid())) {
-                                hashMap.put("Url", url);
-                                ref.child(fUser.getUid()).updateChildren(hashMap);
-                                if (url.equals("empty"))
-                                    image.setImageResource(R.drawable.ic_action_account);
-                                else
-                                    Picasso.get().load(url).into(image);
+
+                    final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+                    ref.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                final HashMap<String, Object> hashMap = (HashMap<String, Object>) dataSnapshot.getValue();
+                                if (hashMap.get("Id").equals(fUser.getUid())) {
+                                    hashMap.put("Url", url);
+                                    ref.child(fUser.getUid()).updateChildren(hashMap);
+                                    if (url.equals("empty"))
+                                        image.setImageResource(R.drawable.ic_action_account);
+                                    else
+                                        Picasso.get().load(url).into(image);
+                                }
                             }
+
                         }
 
-                    }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                        }
+                    });
 
-                    }
-                });
+                    Intent intent = new Intent(getApplicationContext(), PickInterests.class);
+                    startActivity(intent);
 
-                Intent intent = new Intent(getApplicationContext(), PickInterests.class);
-                startActivity(intent);
+                }
 
-            }
+
         });
 
     }

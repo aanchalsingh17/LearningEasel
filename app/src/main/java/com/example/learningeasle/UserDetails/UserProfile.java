@@ -1,21 +1,21 @@
-package com.example.learningeasle;
+package com.example.learningeasle.UserDetails;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.learningeasle.R;
 import com.example.learningeasle.model.AdapterPost;
 import com.example.learningeasle.model.modelpost;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -99,10 +99,10 @@ public class UserProfile extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.child("Following").hasChild(id)){
                     follow.setText("Following");
-                    follow.setBackgroundColor(R.drawable.following);
+                    follow.setBackgroundColor(Color.rgb(133,204,236));
                 }else{
                     follow.setText("Follow");
-                    //follow.setBackgroundColor(R.drawable.follow_button);
+                    follow.setBackgroundColor(Color.rgb(84,104,213));
                 }
             }
 

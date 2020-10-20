@@ -254,9 +254,9 @@ public class Login extends AppCompatActivity {
                         final FirebaseDatabase database = FirebaseDatabase.getInstance();
                         int j=email.length()-4;
                         final String username=email.substring(0,j);
-                        final DatabaseReference myRef=database.getReference().child(username);
+                        final DatabaseReference myRef=database.getReference("Users").child(user.getUid()).child(username);
 
-                       /* myRef.child("Science").setValue("0");
+                        myRef.child("Science").setValue("0");
                         myRef.child("Medication").setValue("0");
                         myRef.child("Computers").setValue("0");
                         myRef.child("Business").setValue("0");
@@ -266,7 +266,7 @@ public class Login extends AppCompatActivity {
                         myRef.child("Economics").setValue("0");
                         myRef.child("Architecture").setValue("0");
 
-                        System.out.println("pick");*/
+                        System.out.println("pick");
 
                         startActivity(new Intent(Login.this, PickInterests.class));
                         finish();
@@ -300,27 +300,28 @@ public class Login extends AppCompatActivity {
         hideKeyboard(Login.this);
 
         // authenticate user
-        fAuth_login.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
+            fAuth_login.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
 
-                if (task.isSuccessful()) {
-                    Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
-                    //Uploading profile pic n name n uid in realtimedatabase  to show all the users in the users fragment;
+                    if (task.isSuccessful()) {
+                        Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
+                        //Uploading profile pic n name n uid in realtimedatabase  to show all the users in the users fragment;
 
-                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                    overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
-                    finish();
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+                        finish();
 
-                } else if (task.getException() != null) {
-                    Toast.makeText(Login.this, "Error !" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    } else if (task.getException() != null) {
+                        Toast.makeText(Login.this, "Error !" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 
+                    }
+
+
+                    progressBar_login.setVisibility(View.GONE);
                 }
+            });
 
-
-                progressBar_login.setVisibility(View.GONE);
-            }
-        });
 
     }
 

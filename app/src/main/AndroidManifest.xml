@@ -22,7 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserDetails.Bookmark" />
         <activity android:name=".UserDetails.UserProfile" />
         <activity android:name=".UserDetails.UpdateProfile" />
         <activity android:name=".FullView" />

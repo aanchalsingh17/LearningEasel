@@ -89,7 +89,7 @@ public class Login extends AppCompatActivity {
                 signIn();
             }
         });
-        if (fUser != null) {
+        if (fUser != null&&fUser.isEmailVerified()) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }
@@ -117,8 +117,8 @@ public class Login extends AppCompatActivity {
                     password_login.setError("Password must be >= 6 characters");
                     return;
                 }
+                    loginUser(email, password);
 
-                loginUser(email, password);
             }
 
         });
@@ -300,27 +300,31 @@ public class Login extends AppCompatActivity {
         hideKeyboard(Login.this);
 
         // authenticate user
-            fAuth_login.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
+           if(fUser.isEmailVerified()) {
+               fAuth_login.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                   @Override
+                   public void onComplete(@NonNull Task<AuthResult> task) {
 
-                    if (task.isSuccessful()) {
-                        Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
-                        //Uploading profile pic n name n uid in realtimedatabase  to show all the users in the users fragment;
+                       if (task.isSuccessful()) {
+                           Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
+                           //Uploading profile pic n name n uid in realtimedatabase  to show all the users in the users fragment;
 
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
-                        finish();
+                           startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                           overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+                           finish();
 
-                    } else if (task.getException() != null) {
-                        Toast.makeText(Login.this, "Error !" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                       } else if (task.getException() != null) {
+                           Toast.makeText(Login.this, "Error !" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 
-                    }
+                       }
 
 
-                    progressBar_login.setVisibility(View.GONE);
-                }
-            });
+                       progressBar_login.setVisibility(View.GONE);
+                   }
+               });
+           }else{
+               Toast.makeText(this,"Email Not Verified",Toast.LENGTH_SHORT).show();
+           }
 
 
     }

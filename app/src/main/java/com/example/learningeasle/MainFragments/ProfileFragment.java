@@ -22,7 +22,8 @@ import com.example.learningeasle.UserDetails.Bookmark;
 import com.example.learningeasle.UserDetails.FollowerFollowing;
 import com.example.learningeasle.FullView;
 import com.example.learningeasle.R;
-import UpdateProfile;
+
+import com.example.learningeasle.UserDetails.UpdateProfile;
 import com.example.learningeasle.model.Adapter;
 import com.example.learningeasle.model.modelpost;
 import com.google.android.material.bottomnavigation.BottomNavigationView;

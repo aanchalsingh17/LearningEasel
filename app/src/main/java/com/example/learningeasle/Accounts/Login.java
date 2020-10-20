@@ -300,7 +300,6 @@ public class Login extends AppCompatActivity {
         hideKeyboard(Login.this);
 
         // authenticate user
-           if(fUser.isEmailVerified()) {
                fAuth_login.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                    @Override
                    public void onComplete(@NonNull Task<AuthResult> task) {
@@ -322,9 +321,6 @@ public class Login extends AppCompatActivity {
                        progressBar_login.setVisibility(View.GONE);
                    }
                });
-           }else{
-               Toast.makeText(this,"Email Not Verified",Toast.LENGTH_SHORT).show();
-           }
 
 
     }

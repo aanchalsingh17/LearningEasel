@@ -10,4 +10,6 @@
     <color name="progressBar2a">#00C853</color>
     <color name="progressBar2b">#2962FF</color>
     <color name="text">#DEFFFFFF</color>
+    <color name="allTabs">#18415C</color>
+    <color name="tabSelected">#152238</color>
 </resources>

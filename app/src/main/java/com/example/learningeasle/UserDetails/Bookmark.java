@@ -10,6 +10,7 @@ import android.os.Handler;
 
 import com.example.learningeasle.R;
 import com.example.learningeasle.model.AdapterPost;
+import com.example.learningeasle.model.ModelUsers;
 import com.example.learningeasle.model.modelpost;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -36,10 +37,19 @@ public class Bookmark extends AppCompatActivity {
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(layoutManager);
-        loadBookmarks();
+        loadBookmarks(new OnDataReceiveCallback() {
+            @Override
+            public void onDataReceived(List<modelpost> postsList) {
+
+            }
+        });
     }
 
-    private void loadBookmarks() {
+    public interface OnDataReceiveCallback {
+        void onDataReceived(List<modelpost> postsList);
+    }
+
+    private void loadBookmarks(OnDataReceiveCallback callback) {
         String userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userid).child("Bookmarks");
         reference.addValueEventListener(new ValueEventListener() {
@@ -71,8 +81,7 @@ public class Bookmark extends AppCompatActivity {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    adapterPost = new AdapterPost(Bookmark.this, bookmarkList);
-                                    recyclerView.setAdapter(adapterPost);
+
                                 }
                             },500);
 

@@ -4,40 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PickInterests">
+    tools:context=".PickInterests"
+    tools:menu="@menu/interests">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/ubuntu"
-            android:layout_gravity="center"
-            android:text="Areas of Interest"
-            android:textColor="#11568E"
-            android:textSize="30dp" />
-
-        <Button
-            android:id="@+id/proceed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/button_shaper_aqua"
-            android:fontFamily="@font/ubuntu"
-            android:padding="10dp"
-            android:layout_margin="7dp"
-            android:text="Proceed" />
-    </LinearLayout>
-
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="100dp"
-        android:background="#DCD2D2">
+        android:background="@drawable/gradient">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -361,7 +334,7 @@
         </LinearLayout>
 
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 
 </RelativeLayout>

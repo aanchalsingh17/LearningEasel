@@ -103,10 +103,12 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.child("Following").hasChild(uid)){
                     holder.follow.setText("Following");
-                    holder.follow.setBackgroundColor(Color.rgb(133,204,236));
+                    holder.follow.setBackgroundResource(R.drawable.button_unfollow);
+//                    holder.follow.setBackgroundColor(Color.rgb(133,204,236));
                 }else{
                     holder.follow.setText("Follow");
-                    holder.follow.setBackgroundColor(Color.rgb(84,104,213));
+                    holder.follow.setBackgroundResource(R.drawable.button_follow);
+//                    holder.follow.setBackgroundColor(Color.rgb(84,104,213));
                 }
             }
 

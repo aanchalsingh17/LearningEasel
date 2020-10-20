@@ -99,10 +99,10 @@ public class UserProfile extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.child("Following").hasChild(id)){
                     follow.setText("Following");
-                    follow.setBackgroundColor(Color.rgb(133,204,236));
+                    follow.setBackgroundResource(R.drawable.button_unfollow);
                 }else{
                     follow.setText("Follow");
-                    follow.setBackgroundColor(Color.rgb(84,104,213));
+                    follow.setBackgroundResource(R.drawable.button_follow);
                 }
             }
 

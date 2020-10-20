@@ -2,31 +2,30 @@ package com.example.learningeasle.MainFragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.learningeasle.UserDetails.Bookmark;
-import com.example.learningeasle.UserDetails.FollowerFollowing;
+import com.example.learningeasle.ProfileFragments.UserBookmarkFragment;
+import com.example.learningeasle.ProfileFragments.UserFollowersFragment;
+import com.example.learningeasle.ProfileFragments.UserFollowingFragment;
+import com.example.learningeasle.ProfileFragments.UserPostsFragment;
 import com.example.learningeasle.FullView;
 import com.example.learningeasle.R;
 
 import com.example.learningeasle.UserDetails.UpdateProfile;
-import com.example.learningeasle.model.Adapter;
-import com.example.learningeasle.model.modelpost;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.learningeasle.model.SectionPagerAdapter;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -39,9 +38,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class ProfileFragment extends Fragment {
     ImageView profile;
@@ -54,15 +51,11 @@ public class ProfileFragment extends Fragment {
     FirebaseAuth fAuth;
     Activity context;
     Button editprofile;
-    RecyclerView postlist;
-    List<modelpost> modelpostList;
-    Adapter adapterPost;
-    ImageView more;
     String url = null;
-    BottomNavigationView navigationView;
-    public ProfileFragment() {
-        // Required empty public constructor
-    }
+    View view;
+    ViewPager viewPager;
+    TabLayout tabLayout;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,7 +67,9 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         context = getActivity();
-        final View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        view = inflater.inflate(R.layout.fragment_profile, container, false);
+        viewPager=view.findViewById(R.id.viewPager);
+        tabLayout=view.findViewById(R.id.tabLayout);
         profile = view.findViewById(R.id.image);
         user = FirebaseAuth.getInstance().getCurrentUser();
         userid = user.getUid();//
@@ -85,14 +80,7 @@ public class ProfileFragment extends Fragment {
         userstatus = view.findViewById(R.id.status);
         fAuth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
-        postlist = view.findViewById(R.id.posts);
-        more = view.findViewById(R.id.more);
-        navigationView = view.findViewById(R.id.navigation);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setStackFromEnd(true);
-        layoutManager.setReverseLayout(true);
-        postlist.setLayoutManager(layoutManager);
-        modelpostList = new ArrayList<>();
+        setProfile();
         editprofile.setOnClickListener(
 
                 new View.OnClickListener() {
@@ -101,68 +89,59 @@ public class ProfileFragment extends Fragment {
                         startActivity(new Intent(context, UpdateProfile.class));
                     }
                 });
-        loadPosts();
-        setProfile();
-        navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
-                    case R.id.post:
-                                  break;
-                    case R.id.follower:
-                                  Intent intent = new Intent(context, FollowerFollowing.class);
-                                  intent.putExtra("Task","Follower");
-                                  startActivity(intent);
-                                  break;
-                    case R.id.follow:
-                                 Intent in = new Intent(context,FollowerFollowing.class);
-                                 in.putExtra("Task","Following");
-                                  startActivity(in);
-                                  break;
-                    case R.id.bookmark:
-                                 Intent intent1 = new Intent(context, Bookmark.class);
-                                  startActivity(intent1);
-                                  break;
-
-                }
-                return false;
-            }
-        });
         return view;
 
     }
 
-    private void loadPosts() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                modelpostList.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
-                    modelpost post = null;
-                    if (hashMap.get("pLikes") == null && hashMap.get("pId").equals(userID)) {
-                        post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
-                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), "0", hashMap.get("pComments"),hashMap.get("type"));
-                    } else if (hashMap.get("pId").equals(userID)) {
-                        post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
-                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), hashMap.get("pLikes"), hashMap.get("pComments"),hashMap.get("type"));
-                    }
-                    if (post != null)
-                        modelpostList.add(post);
-                }
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-                adapterPost = new Adapter(getActivity(), modelpostList, editClick);
-                postlist.setAdapter(adapterPost);
+        setUpViewPager(viewPager);
+        tabLayout.setupWithViewPager(viewPager);
+
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_baseline_post_add_24);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_followers);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_baseline_done_24);
+        tabLayout.getTabAt(3).setIcon(R.drawable.ic_bookmarks);
+
+
+        tabLayout.getTabAt(0).getIcon().setColorFilter(getResources().getColor(R.color.allTabs), PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(1).getIcon().setColorFilter(getResources().getColor(R.color.allTabs), PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(2).getIcon().setColorFilter(getResources().getColor(R.color.allTabs), PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(3).getIcon().setColorFilter(getResources().getColor(R.color.allTabs), PorterDuff.Mode.SRC_IN);
+
+
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+//                tab.getIcon().setColorFilter(getResources().getColor(R.color.text), PorterDuff.Mode.SRC_IN);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onTabUnselected(TabLayout.Tab tab) {
+//                tab.getIcon().setColorFilter(getResources().getColor(R.color.allTabs), PorterDuff.Mode.SRC_IN);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
-
-
     }
+
+    private void setUpViewPager(ViewPager viewPager) {
+        SectionPagerAdapter sectionPagerAdapter=new SectionPagerAdapter(getChildFragmentManager());
+        sectionPagerAdapter.addFragment(new UserPostsFragment(),"");
+        sectionPagerAdapter.addFragment(new UserFollowersFragment(),"");
+        sectionPagerAdapter.addFragment(new UserFollowingFragment(),"");
+        sectionPagerAdapter.addFragment(new UserBookmarkFragment(),"");
+
+        viewPager.setAdapter(sectionPagerAdapter);
+    }
+
+
 
     private void setProfile() {
         profile.setImageResource(R.drawable.ic_action_account);
@@ -225,25 +204,6 @@ public class ProfileFragment extends Fragment {
 
     }
 
-    Adapter.EditClick editClick = new Adapter.EditClick() {
-        @Override
-        public void onEditClick(int position, String Uid, String pTimeStamp,String edit,String title,String pDescription,String pImage,String like,String comment) {
-            PostFragment fragment = new PostFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("Id", Uid);
-            bundle.putString("pTime", pTimeStamp);
-            bundle.putString("Edit",edit);
-            bundle.putString("Title",title);
-            bundle.putString("Des",pDescription);
-            bundle.putString("Url",pImage);
-            bundle.putString("Likes",like);
-            bundle.putString("Comments",comment);
-            fragment.setArguments(bundle);
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.rec,fragment).commit();
 
-        }
-    };
 }
 

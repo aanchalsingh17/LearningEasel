@@ -11,6 +11,8 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
@@ -48,6 +50,7 @@ public class PickInterests extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pick_interests);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         SharedPreferences sharedPreferences=getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         String folder = sharedPreferences.getString("email_Id", "");
@@ -139,15 +142,15 @@ System.out.println(myRef.child("Arts").getKey()+"..........");
 
         setColors();
 
-        Button proceed_button=findViewById(R.id.proceed);
-        proceed_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(getApplicationContext(),MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+//        Button proceed_button=findViewById(R.id.proceed);
+//        proceed_button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+//                startActivity(intent);
+//                finish();
+//            }
+//        });
 
         btn_science.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -401,6 +404,33 @@ System.out.println(myRef.child("Arts").getKey()+"..........");
             }
         });
 
+    }
+
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        int id = menuItem.getItemId();
+        if (id == android.R.id.home) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.save,menu);
+        MenuItem menuItem=menu.findItem(R.id.save);
+        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(intent);
+                finish();
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

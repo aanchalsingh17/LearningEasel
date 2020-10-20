@@ -52,7 +52,8 @@
               android:layout_marginTop="5dp"
               android:layout_marginStart="170dp"
               android:layout_width="150dp"
-              android:layout_height="40dp"
+              android:layout_height="30dp"
+              android:background="@drawable/interest_shaper"
               android:text="Follow" />
       </LinearLayout>
   </LinearLayout>

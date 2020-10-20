@@ -89,7 +89,7 @@ public class Login extends AppCompatActivity {
                 signIn();
             }
         });
-        if (fUser != null&&fUser.isEmailVerified()) {
+        if (fUser != null ) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }

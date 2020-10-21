@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    tools:context=".MainActivity">
+
+   <!-- <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.197"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.078">
+
+        <TextView
+            android:id="@+id/player_position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <SeekBar
+            android:id="@+id/seekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/player_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/btn_play"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/play"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.219"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.314" />
+
+    <ImageView
+        android:id="@+id/btn_pause"
+        android:layout_width="30dp"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_baseline_pause_24"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.219"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pick"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.891"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.221" />-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical"
+        >
+    <ImageView
+        android:id="@+id/videopick"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="@android:dimen/app_icon_size"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/video">
+
+    </ImageView>
+
+    <!-- <TextView
+         android:id="@+id/bold"
+         android:layout_width="20dp"
+         android:layout_height="20dp"
+         android:layout_marginStart="90dp"
+         android:text="B"
+         android:layout_marginTop="5dp"
+         android:fontFamily="@font/extrabold"
+         android:textColor="@color/black_overlay"
+         android:textSize="18sp">
+
+     </TextView>-->
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:hint="Full Description.......">
+
+    </EditText>
+<VideoView
+         android:id="@+id/videoView"
+         android:layout_width="250dp"
+         android:layout_height="250dp"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintHorizontal_bias="0.559"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+         app:layout_constraintVertical_bias="0.694" />
+    </LinearLayout>
+
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

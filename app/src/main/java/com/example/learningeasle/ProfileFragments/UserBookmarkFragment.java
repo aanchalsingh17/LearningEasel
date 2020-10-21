@@ -48,13 +48,13 @@ public class UserBookmarkFragment extends Fragment {
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(layoutManager);
-        loadBookmarks(new OnDataReceiveCallback() {
+       /* loadBookmarks(new OnDataReceiveCallback() {
             @Override
             public void onDataReceived(List<modelpost> bookmarkList) {
                 adapterPost = new AdapterPost(getContext(), bookmarkList);
                 recyclerView.setAdapter(adapterPost);
             }
-        });
+        });*/
         return view;
     }
 

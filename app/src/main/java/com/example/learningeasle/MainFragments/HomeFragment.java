@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.loader.content.AsyncTaskLoader;
@@ -20,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -61,6 +63,8 @@ public class HomeFragment extends Fragment {
     String email;
     ArrayList<String> interest;
     ProgressBar progressBar;
+    String oldestPost = "";
+    int CurrentItems, totalItems, ViewedItems;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -80,7 +84,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-//        progressBar = view.findViewById(R.id.progressBar_home);
+         progressBar = view.findViewById(R.id.progressBar_loading);
 //        progressBar.setVisibility(View.VISIBLE);
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading...");
@@ -96,10 +100,67 @@ public class HomeFragment extends Fragment {
         setHasOptionsMenu(true);
         interest=new ArrayList<>();
         getUserDetails();
+        //Losding the starting few posts into the home fragment
+       // getStartingPost();
+        /*recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(newState== AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
+                    progressBar.setVisibility(View.VISIBLE);
+                    loadPosts();
+                }
+            }
 
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
 
+        });*/
 
         return view;
+    }
+
+    private void getStartingPost() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        ref.limitToFirst(3).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                modelpostList.clear();
+
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
+//                    if(FirebaseDatabase.getInstance().getReference(""))
+                    oldestPost = dataSnapshot.getKey();
+                    modelpost post;
+                    if (hashMap.get("pLikes") == null && interest.contains(hashMap.get("type"))) {
+                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
+                                hashMap.get("pComments").toString(),hashMap.get("type").toString(),hashMap.get("views"));
+                        modelpostList.add(post);
+                    } else if(interest.contains(hashMap.get("type"))) {
+                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
+                                hashMap.get("pComments").toString(),hashMap.get("type").toString(),hashMap.get("views"));
+                        modelpostList.add(post);
+                    }
+
+
+                }
+
+                adapterPost = new AdapterPost(getActivity(), modelpostList);
+                recyclerView.setAdapter(adapterPost);
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+//                Toast.makeText(getActivity(),"Error Loading",Toast.LENGTH_SHORT).show();
+            }
+
+
+        });
     }
 
     public void getUserDetails() {
@@ -149,33 +210,36 @@ public class HomeFragment extends Fragment {
     private void loadPosts() {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        final boolean[] start = {true};
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelpostList.clear();
-
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
 //                    if(FirebaseDatabase.getInstance().getReference(""))
-                    modelpost post;
-                    if (hashMap.get("pLikes") == null && interest.contains(hashMap.get("type"))) {
-                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                hashMap.get("pComments").toString(),hashMap.get("type").toString(),hashMap.get("views"));
-                        modelpostList.add(post);
-                    } else if(interest.contains(hashMap.get("type"))) {
-                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                hashMap.get("pComments").toString(),hashMap.get("type").toString(),hashMap.get("views"));
-                        modelpostList.add(post);
-                    }
+                    oldestPost = dataSnapshot.getKey();
+                        modelpost post;
+                        if (hashMap.get("pLikes") == null && interest.contains(hashMap.get("type"))) {
+                            post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                    hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
+                                    hashMap.get("pComments").toString(), hashMap.get("type").toString(), hashMap.get("views"));
+                            modelpostList.add(post);
+                        } else if (interest.contains(hashMap.get("type"))) {
+                            post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                    hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
+                                    hashMap.get("pComments").toString(), hashMap.get("type").toString(), hashMap.get("views"));
+                            modelpostList.add(post);
+                        }
 
 
                 }
 
                 adapterPost = new AdapterPost(getActivity(), modelpostList);
                 recyclerView.setAdapter(adapterPost);
+                adapterPost.notifyDataSetChanged();
                 progressDialog.dismiss();
+               // progressBar.setVisibility(View.INVISIBLE);
             }
 
             @Override

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ProgressBar;
 
 import com.example.learningeasle.R;
@@ -34,8 +35,9 @@ public class UserFollowingFragment extends Fragment {
     String Uid;
     //Context context = this;
     DatabaseReference reference;
-    ProgressBar progressBar;
-
+    ProgressBar progressBar,loading;
+    String oldestfollowing ="";
+    boolean first = true;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +57,7 @@ public class UserFollowingFragment extends Fragment {
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
         follows.setLayoutManager(layoutManager);
+        loading = view.findViewById(R.id.progressBar_loading);
         usersList = new ArrayList<>();
         loadList(new OnDataReceiveCallback() {
             @Override
@@ -62,6 +65,24 @@ public class UserFollowingFragment extends Fragment {
                 progressBar.setVisibility(View.GONE);
                 adapterfollow = new AdapterUsers(getActivity(), usersList);
                 follows.setAdapter(adapterfollow);
+            }
+        });
+        follows.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(newState== AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
+                    loading.setVisibility(View.VISIBLE);
+                    loadList(new OnDataReceiveCallback() {
+                        @Override
+                        public void onDataReceived(List<ModelUsers> usersList) {
+                            loading.setVisibility(View.INVISIBLE);
+                            adapterfollow = new AdapterUsers(getActivity(),usersList);
+                            adapterfollow.notifyDataSetChanged();
+                            follows.setAdapter(adapterfollow);
+                        }
+                    });
+                }
             }
         });
         return view;
@@ -73,46 +94,93 @@ public class UserFollowingFragment extends Fragment {
 
 
     private void loadList(final OnDataReceiveCallback callback) {
-        progressBar.setVisibility(View.VISIBLE);
+
 
         reference = FirebaseDatabase.getInstance().getReference().child("Users").child(Uid).child("Following");
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        if(first) {
+            progressBar.setVisibility(View.VISIBLE);
+            reference.limitToLast(5).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                usersList.clear();
-                if (snapshot.getChildrenCount() == 0) {
+                    usersList.clear();
+                    if (snapshot.getChildrenCount() == 0) {
+                        progressBar.setVisibility(View.GONE);
+                        callback.onDataReceived(usersList);
+                    }
+                    System.out.println(snapshot.getChildrenCount() + " = size");
+                    for (DataSnapshot ds : snapshot.getChildren()) {
+                        final String userid = (String) ds.getValue();
+                        oldestfollowing = ds.getKey();
+                        System.out.println(userid + " = user of list");
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
+                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                HashMap<Object, String> hashMap = (HashMap<Object, String>) snapshot.getValue();
+                                ModelUsers users = new ModelUsers(hashMap.get("Id"), hashMap.get("Name"), hashMap.get("Url"), hashMap.get("email"), hashMap.get("phone"), hashMap.get("status"));
+                                usersList.add(users);
+                                callback.onDataReceived(usersList);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
                     progressBar.setVisibility(View.GONE);
-                    callback.onDataReceived(usersList);
                 }
-                System.out.println(snapshot.getChildrenCount() + " = size");
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    final String userid = (String) ds.getValue();
+            });
+            first = false;
+        }else{
+           // loading.setVisibility(View.VISIBLE);
+            final boolean[] start = {true};
+            reference.orderByKey().startAt(oldestfollowing).limitToLast(5).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.getChildrenCount() == 0) {
+                        loading.setVisibility(View.GONE);
+                        callback.onDataReceived(usersList);
+                    }
+                    System.out.println(snapshot.getChildrenCount() + " = size");
+                    for (DataSnapshot ds : snapshot.getChildren()) {
+                        if (!start[0]) {
+                            final String userid = (String) ds.getValue();
+                            oldestfollowing = ds.getKey();
+                            System.out.println(userid + " = user of list");
+                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
+                            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    HashMap<Object, String> hashMap = (HashMap<Object, String>) snapshot.getValue();
+                                    ModelUsers users = new ModelUsers(hashMap.get("Id"), hashMap.get("Name"), hashMap.get("Url"), hashMap.get("email"), hashMap.get("phone"), hashMap.get("status"));
+                                    usersList.add(users);
+                                    callback.onDataReceived(usersList);
+                                }
 
-                    System.out.println(userid + " = user of list");
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
-                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            HashMap<Object, String> hashMap = (HashMap<Object, String>) snapshot.getValue();
-                            ModelUsers users = new ModelUsers(hashMap.get("Id"), hashMap.get("Name"), hashMap.get("Url"), hashMap.get("email"), hashMap.get("phone"), hashMap.get("status"));
-                            usersList.add(users);
-                            callback.onDataReceived(usersList);
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    loading.setVisibility(View.INVISIBLE);
+                                }
+                            });
+                        }else{
+                            start[0] = false;
                         }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            progressBar.setVisibility(View.GONE);
-                        }
-                    });
+                    }
+                   // loading.setVisibility(View.INVISIBLE);
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                progressBar.setVisibility(View.GONE);
-            }
-        });
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    loading.setVisibility(View.INVISIBLE);
+                }
+            });
+        }
 
     }
 }

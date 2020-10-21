@@ -80,9 +80,6 @@
             android:visibility="gone" />
 
 
-
-
-
     </LinearLayout>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/post_button"

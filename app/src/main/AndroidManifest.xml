@@ -30,6 +30,8 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".PickInterests" android:label="Your Interests"/>
         <activity android:name=".Accounts.Profile" />
+        <activity android:name=".AudioVideo"/>
+
         <activity
             android:name=".Accounts.Register"
             android:theme="@style/AppTheme2" />

@@ -149,7 +149,7 @@ public class HomeFragment extends Fragment {
     private void loadPosts() {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelpostList.clear();
@@ -160,11 +160,13 @@ public class HomeFragment extends Fragment {
                     modelpost post;
                     if (hashMap.get("pLikes") == null && interest.contains(hashMap.get("type"))) {
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0", hashMap.get("pComments").toString(),hashMap.get("type").toString());
+                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
+                                hashMap.get("pComments").toString(),hashMap.get("type").toString(),hashMap.get("views"));
                         modelpostList.add(post);
                     } else if(interest.contains(hashMap.get("type"))) {
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(), hashMap.get("pComments").toString(),hashMap.get("type").toString());
+                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
+                                hashMap.get("pComments").toString(),hashMap.get("type").toString(),hashMap.get("views"));
                         modelpostList.add(post);
                     }
 

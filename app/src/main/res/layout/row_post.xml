@@ -152,7 +152,21 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/ubuntu"
                 android:text="2k Comments"
+                android:drawableRight="@drawable/ic_baseline_stop_24"
+                android:drawablePadding="4dp"
                 android:textAlignment="textEnd" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/viewCount"
+                android:layout_weight="0.05"
+                android:textAlignment="viewEnd"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:paddingRight="4dp"
+                android:drawableLeft="@drawable/ic_views"
+                android:text="100"/>
         </LinearLayout>
 
         <View

@@ -86,7 +86,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         pTimeStamp = postList.get(position).getpTime();
         pId = postList.get(position).getpId();
         final String pLikes=postList.get(position).getpLikes();
+        final String viewsCount=postList.get(position).getViews();
         String pComments=postList.get(position).getpComments();
+
 
 
         PostFragment postFragment = new PostFragment();
@@ -103,6 +105,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
         holder.pName.setText(uName);
         holder.pType.setText(pType);
+        holder.views.setText(viewsCount);
         if(url.equals("empty"))
             holder.url.setImageResource(R.drawable.ic_action_account);
         else
@@ -344,7 +347,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
     public class PostHolder extends RecyclerView.ViewHolder {
 
         ImageView url,Image;
-        TextView pName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment,pType;
+        TextView pName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment,pType,views;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
         EditClick editClick;
@@ -364,6 +367,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             share_btn = itemView.findViewById(R.id.share);
             comment_btn = itemView.findViewById(R.id.comment);
             pType=itemView.findViewById(R.id.pType);
+            views=itemView.findViewById(R.id.viewCount);
             this.editClick = editClick;
             morebtn.setOnClickListener(new View.OnClickListener() {
                 @Override

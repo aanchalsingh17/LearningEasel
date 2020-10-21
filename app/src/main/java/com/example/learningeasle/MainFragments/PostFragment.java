@@ -243,6 +243,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 ref.child("pTitle").setValue(title);
                 ref.child("pDesc").setValue(description);
                 ref.child("type").setValue(type);
+                ref.child("views").setValue("0");
                 Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
                         .show();
                 et_desc.setText("");
@@ -270,6 +271,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                                 ref.child("pDesc").setValue(description);
                                 ref.child("type").setValue(type);
                                 ref.child("pImage").setValue(downloadUri);
+                                ref.child("views").setValue("0");
                                 Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
                                         .show();
                                 et_desc.setText("");
@@ -291,6 +293,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                                 hashMap.put("pLikes", "0");
                                 hashMap.put("pComments", "0");
                                 hashMap.put("type", type);
+                                hashMap.put("views","0");
 
                                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
                                 ref.child(timeStamp).setValue(hashMap)
@@ -340,6 +343,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 ref.child("pDesc").setValue(description);
                 ref.child("type").setValue(type);
                 ref.child("pImage").setValue("noImage");
+                ref.child("views").setValue("0");
                     Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
                             .show();
                 et_desc.setText("");
@@ -361,6 +365,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 hashMap.put("pLikes", "0");
                 hashMap.put("pComments", "0");
                 hashMap.put("type", type);
+                hashMap.put("views","0");
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
                 ref.child(timeStamp).setValue(hashMap)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {

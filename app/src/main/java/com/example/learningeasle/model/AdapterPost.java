@@ -74,9 +74,22 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         final String pTimeStamp = postList.get(position).getpTime();
         final String pId = postList.get(position).getpId();
         final String pType=postList.get(position).getpType();
+        String viewsCount=postList.get(position).getViews();
         String pLikes = postList.get(position).getpLikes();
+
+
+        int viewsCnt=Integer.parseInt(viewsCount);
+        System.out.println(viewsCnt+"= views");
+        viewsCnt++;
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        ref.child(pTimeStamp).child("views").setValue(Integer.toString(viewsCnt));
+
+
+
         holder.uName.setText(uName);
         holder.pType.setText(pType);
+        holder.views.setText(viewsCount);
         holder.uName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -317,7 +330,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     static class MyHolder extends RecyclerView.ViewHolder {
 
         ImageView uDp,pImage,boookmark;
-        TextView uName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment,pType;
+        TextView uName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment,pType,views;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
 
@@ -337,6 +350,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             pTotalComment=itemView.findViewById(R.id.totalcomments);
             boookmark = itemView.findViewById(R.id.bookmarks);
             pType=itemView.findViewById(R.id.pType);
+            views=itemView.findViewById(R.id.viewCount);
         }
     }
 }

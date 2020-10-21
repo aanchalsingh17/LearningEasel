@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
         navigationView1 = findViewById(R.id.menu_nav);
         navigationView1.setOnNavigationItemSelectedListener(listener1);
 
-
         getSupportFragmentManager().beginTransaction().replace(R.id.scrollable, new HomeFragment(), "H").commit();
 
     }

@@ -116,7 +116,7 @@ public class UserProfile extends AppCompatActivity {
 
     private void loadposts() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelpostList.clear();

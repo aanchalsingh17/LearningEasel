@@ -26,7 +26,7 @@ public class AdminMainPage extends AppCompatActivity {
         navigationView = findViewById(R.id.menu_nav);
         navigationView.setOnNavigationItemSelectedListener(listener);
         //By default in the starting load the main page
-        getSupportFragmentManager().beginTransaction().replace(R.id.scroll,new HomeFragment(),"H").commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.scroll,new AdminPostFragment(),"H").commit();
     }
     private BottomNavigationView.OnNavigationItemSelectedListener listener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
@@ -35,7 +35,7 @@ public class AdminMainPage extends AppCompatActivity {
             //Get the item id then accordingly perform the action
             switch (item.getItemId()){
                 case R.id.home:
-                    selectedItem = new HomeFragment();
+                    selectedItem = new AdminPostFragment();
                     //if Current fragment is not home fragment than find the current fragment and replace accordingly
                     if(getSupportFragmentManager().findFragmentByTag("H")==null){
                         getSupportFragmentManager().beginTransaction().add(R.id.scroll, selectedItem, "H").commit();

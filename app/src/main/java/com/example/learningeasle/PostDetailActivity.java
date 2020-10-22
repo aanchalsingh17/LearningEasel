@@ -103,7 +103,22 @@ public class PostDetailActivity extends AppCompatActivity {
         loadPostInfo();
 
         loadUserInfo();
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    //Current User is Admin Then Make send Button invisible so that admin wont be able to comment
+                    sendbtn.setVisibility(View.GONE);
+                    commentET.setVisibility(View.GONE);
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         sendbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

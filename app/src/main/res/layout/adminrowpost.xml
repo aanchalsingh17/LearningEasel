@@ -77,20 +77,13 @@
 
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/more"
-                android:layout_width="25dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="3dp"
-                android:background="@null"
-                android:src="@drawable/ic_more" />
+
             <ImageView
-                android:id="@+id/bookmarks"
+                android:id="@+id/delete"
                 android:layout_width="25dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="0dp"
-                android:background="@null"
-                android:src="@drawable/ic_bookmarks"/>
+                android:src="@drawable/ic_baseline_delete_24"
+                android:layout_marginRight="3dp"></ImageView>
         </LinearLayout>
 
         <TextView
@@ -178,14 +171,6 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <Button
-                android:id="@+id/like"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_like"
-                android:drawablePadding="5dp"
-                android:text="LIKE" />
 
             <Button
                 android:id="@+id/comment"
@@ -194,16 +179,9 @@
                 android:layout_weight="1"
                 android:drawableLeft="@drawable/ic_comment"
                 android:drawablePadding="5dp"
-                android:text="COMMENT" />
+                android:text="VIEW COMMENTS" />
 
-            <Button
-                android:id="@+id/share"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_share"
-                android:drawablePadding="5dp"
-                android:text="SHARE" />
+
 
 
         </LinearLayout>

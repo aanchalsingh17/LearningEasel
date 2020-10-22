@@ -99,71 +99,12 @@ public class HomeFragment extends Fragment {
         modelpostList = new ArrayList<>();
         setHasOptionsMenu(true);
         interest=new ArrayList<>();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChild(firebaseAuth.getCurrentUser().getUid())) {
-                    loadAllPosts();
-                }else{
-                    getUserDetails();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
+        getUserDetails();
 
 
 
         return view;
     }
-
-    private void loadAllPosts() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-        final boolean[] start = {true};
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                modelpostList.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
-//                    if(FirebaseDatabase.getInstance().getReference(""))
-                    oldestPost = dataSnapshot.getKey();
-                    modelpost post;
-                    if (hashMap.get("pLikes") == null) {
-                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                hashMap.get("pComments").toString(), hashMap.get("type").toString());
-                        modelpostList.add(post);
-                    } else  {
-                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                hashMap.get("pComments").toString(), hashMap.get("type").toString());
-                        modelpostList.add(post);
-                    }
-
-
-                }
-
-                adapterPost = new AdapterPost(getActivity(), modelpostList);
-                recyclerView.setAdapter(adapterPost);
-                progressDialog.dismiss();
-                // progressBar.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-//                Toast.makeText(getActivity(),"Error Loading",Toast.LENGTH_SHORT).show();
-            }
-
-
-        });
-    }
-
     private void getStartingPost() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         ref.limitToFirst(3).addListenerForSingleValueEvent(new ValueEventListener() {

@@ -164,25 +164,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             } catch (Exception e) {
             }
         }
-        //Checking if the current user is admin if it is so then mark more btn visible n bookmark invisible and viceversa
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("admin").child("Id");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChild(myId)) {
-                    holder.boookmark.setVisibility(View.GONE);
-                    holder.morebtn.setVisibility(View.GONE);
-                } else {
-                    holder.morebtn.setVisibility(View.GONE);
-                    holder.delete.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        holder.morebtn.setVisibility(View.GONE);
         holder.pTime.setText(pTime);
         holder.pTitle.setText(pTitle);
         holder.pDesc.setText(pDescription);
@@ -281,89 +263,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
             }
         });
-       holder.delete.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               Toast.makeText(context,"Delete",Toast.LENGTH_SHORT).show();
-               if(pImage.equals("noImage")){
-                   final ProgressDialog pd = new ProgressDialog(context);
-                   pd.setMessage("Deleting....");
-                   //If there in no image than we need to delete this only from the realtime database
-                   DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Posts").child(pTimeStamp);
-                   reference1.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                       @Override
-                       public void onSuccess(Void aVoid) {
-                           Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_SHORT).show();
-                       }
-                   }).addOnFailureListener(new OnFailureListener() {
-                       @Override
-                       public void onFailure(@NonNull Exception e) {
-                           Toast.makeText(context, "Unable to Complete Task", Toast.LENGTH_SHORT).show();
-                       }
-                   });
-                   pd.dismiss();
-                  /* Query query = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
-                   query.addValueEventListener(new ValueEventListener() {
-                       @Override
-                       public void onDataChange(@NonNull DataSnapshot snapshot) {
-                           for(DataSnapshot ds:snapshot.getChildren()){
-                               HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
-                               if (hashMap.get("pTime").equals(pTimeStamp)) {
-                                   ds.getRef().removeValue();
 
-                               }
-
-
-
-
-
-
-                       }
-
-                       @Override
-                       public void onCancelled(@NonNull DatabaseError error) {
-
-                       }
-                   });*/
-               }else{
-                   final ProgressDialog pd = new ProgressDialog(context);
-                   pd.setMessage("Deleting....");
-
-                   StorageReference picref = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
-                   picref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                       @Override
-                       public void onSuccess(Void aVoid) {
-                           Query query = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
-                           query.addValueEventListener(new ValueEventListener() {
-                               @Override
-                               public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                   for(DataSnapshot ds:snapshot.getChildren()){
-                                       HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
-                                       if(hashMap.get("pTime").equals(pTimeStamp))
-                                           ds.getRef().removeValue();
-                                       Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
-                                   }
-                                   pd.dismiss();
-                               }
-
-                               @Override
-                               public void onCancelled(@NonNull DatabaseError error) {
-
-                               }
-                           });
-                       }
-                   }).addOnFailureListener(new OnFailureListener() {
-                       @Override
-                       public void onFailure(@NonNull Exception e) {
-                           pd.dismiss();
-                           Toast.makeText(context,"Unable to delete Post",Toast.LENGTH_SHORT).show();
-                       }
-                   });
-               }
-           }
-
-
-       });
     }
 
     private void setBookmark(final MyHolder holder, String myId, final String pId, final String pTimeStamp) {
@@ -458,7 +358,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
     static class MyHolder extends RecyclerView.ViewHolder {
 
-        ImageView uDp,pImage,boookmark,delete;
+        ImageView uDp,pImage,boookmark;
         TextView uName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment,pType,views;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
@@ -480,7 +380,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             boookmark = itemView.findViewById(R.id.bookmarks);
             pType=itemView.findViewById(R.id.pType);
             views=itemView.findViewById(R.id.viewCount);
-            delete = itemView.findViewById(R.id.delete);
 
         }
 

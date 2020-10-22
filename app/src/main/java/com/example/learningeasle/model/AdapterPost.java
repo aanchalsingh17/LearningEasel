@@ -88,13 +88,13 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String viewsCount = postList.get(position).getViews();
         String pLikes = postList.get(position).getpLikes();
 
-
-        int viewsCnt = Integer.parseInt(viewsCount);
-        System.out.println(viewsCnt + "= views");
-        viewsCnt++;
-
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-        ref.child(pTimeStamp).child("views").setValue(Integer.toString(viewsCnt));
+//
+//        int viewsCnt = Integer.parseInt(viewsCount);
+//        System.out.println(viewsCnt + "= views");
+//        viewsCnt++;
+//
+//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+//        ref.child(pTimeStamp).child("views").setValue(Integer.toString(viewsCnt));
 
 
         holder.uName.setText(uName);
@@ -146,11 +146,11 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.hasChild(myId)) {
-                    holder.boookmark.setVisibility(View.INVISIBLE);
-                    holder.morebtn.setVisibility(View.INVISIBLE);
+                    holder.boookmark.setVisibility(View.GONE);
+                    holder.morebtn.setVisibility(View.GONE);
                 } else {
-                    holder.morebtn.setVisibility(View.INVISIBLE);
-                    holder.delete.setVisibility(View.INVISIBLE);
+                    holder.morebtn.setVisibility(View.GONE);
+                    holder.delete.setVisibility(View.GONE);
                 }
             }
 
@@ -231,7 +231,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             @Override
             public void onClick(View v) {
                 final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(myId);
-                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                reference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.child("Bookmarks").hasChild(pTimeStamp)) {

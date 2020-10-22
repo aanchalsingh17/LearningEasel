@@ -99,23 +99,32 @@ public class Login extends AppCompatActivity {
         if (fUser != null ) {
             //If Current User is Admin then open the AdminPage otherwise main Activity
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
-            reference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if(snapshot.hasChild(fUser.getUid())){
-                        startActivity(new Intent(getApplicationContext(),AdminMainPage.class));
-                        finish();
-                    }else{
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        finish();
-                    }
-                }
+            if(reference.child(fUser.getUid()) == null){
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finish();
+            }
+            else{
+                startActivity(new Intent(getApplicationContext(),AdminMainPage.class));
+                finish();
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
+//            reference.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                    if(snapshot.hasChild(fUser.getUid())){
+//                        startActivity(new Intent(getApplicationContext(),AdminMainPage.class));
+//                        finish();
+//                    }else{
+//                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+//                        finish();
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError error) {
+//
+//                }
+//            });
 
         }
         admin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

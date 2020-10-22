@@ -234,6 +234,8 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             timeStamp= String.valueOf(System.currentTimeMillis());
         String filePathAndName = "Posts/" + "post_" + timeStamp;
         final String type=spinner.getSelectedItem().toString();
+
+
         //If post contains the image
         if (!uri.equals("noImage")) {
             // with image
@@ -295,14 +297,15 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                                 hashMap.put("type", type);
                                 hashMap.put("views","0");
 
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-                                ref.child(timeStamp).setValue(hashMap)
+                                //Reference of the admin pending post when user post for the first time then it should pass through the admin
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");
+                                reference.child(timeStamp).setValue(hashMap)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
 //                                pd.dismiss();
                                                 progressBar.setVisibility(View.GONE);
-                                                Toast.makeText(getActivity(), "Post published!", Toast.LENGTH_SHORT)
+                                                Toast.makeText(getActivity(), "Post Passed to Admin!!", Toast.LENGTH_SHORT)
                                                         .show();
                                                 et_desc.setText("");
                                                 et_title.setText("");
@@ -366,14 +369,14 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 hashMap.put("pComments", "0");
                 hashMap.put("type", type);
                 hashMap.put("views","0");
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");
                 ref.child(timeStamp).setValue(hashMap)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
 //                            pd.dismiss();
                                 progressBar.setVisibility(View.GONE);
-                                    Toast.makeText(getActivity(), "Post published!", Toast.LENGTH_SHORT)
+                                    Toast.makeText(getActivity(), "Post Passesd to Admin!", Toast.LENGTH_SHORT)
                                             .show();
                                 et_desc.setText("");
                                 et_title.setText("");

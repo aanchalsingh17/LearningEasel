@@ -99,27 +99,69 @@ public class HomeFragment extends Fragment {
         modelpostList = new ArrayList<>();
         setHasOptionsMenu(true);
         interest=new ArrayList<>();
-        getUserDetails();
-        //Losding the starting few posts into the home fragment
-       // getStartingPost();
-        /*recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if(newState== AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
-                    progressBar.setVisibility(View.VISIBLE);
-                    loadPosts();
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChild(firebaseAuth.getCurrentUser().getUid())) {
+                    loadAllPosts();
+                }else{
+                    getUserDetails();
                 }
             }
 
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
+            public void onCancelled(@NonNull DatabaseError error) {
 
-        });*/
+            }
+        });
+
+
+
 
         return view;
+    }
+
+    private void loadAllPosts() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        final boolean[] start = {true};
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                modelpostList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
+//                    if(FirebaseDatabase.getInstance().getReference(""))
+                    oldestPost = dataSnapshot.getKey();
+                    modelpost post;
+                    if (hashMap.get("pLikes") == null) {
+                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString(), hashMap.get("views"));
+                        modelpostList.add(post);
+                    } else  {
+                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString(), hashMap.get("views"));
+                        modelpostList.add(post);
+                    }
+
+
+                }
+
+                adapterPost = new AdapterPost(getActivity(), modelpostList);
+                recyclerView.setAdapter(adapterPost);
+                progressDialog.dismiss();
+                // progressBar.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+//                Toast.makeText(getActivity(),"Error Loading",Toast.LENGTH_SHORT).show();
+            }
+
+
+        });
     }
 
     private void getStartingPost() {

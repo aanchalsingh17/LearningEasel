@@ -17,6 +17,8 @@ import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 import com.example.learningeasle.MainActivity;
 import com.example.learningeasle.PickInterests;
 import com.example.learningeasle.R;
+import com.example.learningeasle.admin.AdminMainPage;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -57,10 +60,12 @@ public class Login extends AppCompatActivity {
     FirebaseAuth fAuth_login;
     SignInButton signin;
     // FirebaseFirestore fStore;
+    CheckBox admin;
     FirebaseUser fUser;
     FirebaseFirestore fStore;
     GoogleSignInClient mgooglesignin;
     String url;
+    boolean adminlogin = false;
     private int RC_SIGN_IN = 101;
 
     @Override
@@ -76,6 +81,7 @@ public class Login extends AppCompatActivity {
         createBtn_login = findViewById(R.id.create_login);
         forgot_password = findViewById(R.id.forgot_password);
         fUser = fAuth_login.getCurrentUser();
+        admin = findViewById(R.id.adminLogin);
         signin = findViewById(R.id.googlesignin);
         fStore = FirebaseFirestore.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).
@@ -89,11 +95,41 @@ public class Login extends AppCompatActivity {
                 signIn();
             }
         });
-        if (fUser != null ) {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            finish();
-        }
 
+        if (fUser != null ) {
+            //If Current User is Admin then open the AdminPage otherwise main Activity
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.hasChild(fUser.getUid())){
+                        startActivity(new Intent(getApplicationContext(),AdminMainPage.class));
+                        finish();
+                    }else{
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+        }
+        admin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    adminlogin = true;
+                }else{
+                   adminlogin = false;
+                }
+
+
+            }
+        });
         loginBtn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -300,17 +336,47 @@ public class Login extends AppCompatActivity {
         hideKeyboard(Login.this);
 
         // authenticate user
+
                fAuth_login.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                    @Override
                    public void onComplete(@NonNull Task<AuthResult> task) {
 
                        if (task.isSuccessful()) {
-                           Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
-                           //Uploading profile pic n name n uid in realtimedatabase  to show all the users in the users fragment;
+                              final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                              DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("admin").child("Id");
+                              reference.addValueEventListener(new ValueEventListener() {
+                                  @Override
+                                  public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                           startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                           overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
-                           finish();
+                                      if (adminlogin) {
+                                          if (snapshot.hasChild(fUser.getUid())) {
+                                              Toast.makeText(Login.this, "Welcome Admin!!", Toast.LENGTH_SHORT).show();
+                                              startActivity(new Intent(getApplicationContext(), AdminMainPage.class));
+                                              overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+                                              finish();
+                                          } else {
+                                              Toast.makeText(Login.this, "Not Admin Try Logging in as User!!", Toast.LENGTH_SHORT).show();
+                                          }
+                                      } else {
+                                          if (snapshot.hasChild(fUser.getUid())) {
+                                              Toast.makeText(Login.this, "You are Admin!!", Toast.LENGTH_SHORT).show();
+                                          } else {
+                                              Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
+                                              startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                              overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+                                              finish();
+                                          }
+                                      }
+                                  }
+
+
+                                  @Override
+                                  public void onCancelled(@NonNull DatabaseError error) {
+
+                                  }
+                              });
+
+
 
                        } else if (task.getException() != null) {
                            Toast.makeText(Login.this, "Error !" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();

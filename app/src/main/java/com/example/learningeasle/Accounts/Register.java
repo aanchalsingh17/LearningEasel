@@ -142,6 +142,8 @@ public class Register extends AppCompatActivity {
 
                                         }
                                     });
+                                  DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
+                                  reference.child(userID).setValue("admin");
 
                             // after registration redirect to main class
 //                                sharedPreferences=getSharedPreferences("MyPref", Context.MODE_PRIVATE);

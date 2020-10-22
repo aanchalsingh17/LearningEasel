@@ -1,16 +1,20 @@
 package com.example.learningeasle.model;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.learningeasle.R;
@@ -51,6 +55,20 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
           holder.name.setText(userName);
           holder.email.setText(email);
 //          System.out.println(userName+" jsr "+email);
+         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
+         databaseReference.addValueEventListener(new ValueEventListener() {
+             @Override
+             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                 if(snapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                     holder.follow.setVisibility(View.INVISIBLE);
+                 }
+             }
+
+             @Override
+             public void onCancelled(@NonNull DatabaseError error) {
+
+             }
+         });
          if(url.equals("empty"))
            holder.profile.setImageResource(R.drawable.ic_action_account);
          else
@@ -136,6 +154,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
             name = itemView.findViewById(R.id.name);
             email = itemView.findViewById(R.id.email);
             follow = itemView.findViewById(R.id.follow);
+
         }
     }
 

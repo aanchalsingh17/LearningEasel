@@ -9,6 +9,7 @@
     app:cardBackgroundColor="@color/text"
     app:contentPadding="3dp">
   <LinearLayout
+      android:id="@+id/user"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="horizontal">

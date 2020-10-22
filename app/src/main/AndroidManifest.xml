@@ -15,7 +15,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashActivity" android:theme="@style/AppTheme2">
+        <activity android:name=".admin.AdminMainPage"></activity>
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/AppTheme2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,18 +31,17 @@
         <activity android:name=".ViewImage" />
         <activity android:name=".PostDetailActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".PickInterests" android:label="Your Interests"/>
+        <activity
+            android:name=".PickInterests"
+            android:label="Your Interests" />
         <activity android:name=".Accounts.Profile" />
-        <activity android:name=".AudioVideo"/>
-
+        <activity android:name=".AudioVideo" />
         <activity
             android:name=".Accounts.Register"
             android:theme="@style/AppTheme2" />
         <activity
             android:name=".Accounts.Login"
-            android:theme="@style/AppTheme2">
-
-        </activity>
+            android:theme="@style/AppTheme2" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

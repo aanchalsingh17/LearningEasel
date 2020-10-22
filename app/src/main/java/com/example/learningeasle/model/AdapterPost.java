@@ -1,6 +1,8 @@
 package com.example.learningeasle.model;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,30 +26,38 @@ import com.example.learningeasle.PostDetailActivity;
 import com.example.learningeasle.R;
 import com.example.learningeasle.UserDetails.UserProfile;
 import com.example.learningeasle.ViewImage;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
-    Context context;
+     Context context;
     List<modelpost> postList;
     private String pName;
     DatabaseReference postsref;
     String myId;
     View view;
     boolean processLike = false;
-
+    String pId;
+     String pImage;
+     String pTimeStamp;
     public AdapterPost(Context context, List<modelpost> postList) {
         this.context = context;
         this.postList = postList;
@@ -66,25 +77,24 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         //String uId=postList.get(position).getuId();
 //        String uEmail=postList.get(position).getuEmail();
         String uName = postList.get(position).getpName();
-        String pComments=postList.get(position).getpComments();
+        String pComments = postList.get(position).getpComments();
         String url = postList.get(position).getuImage();
         final String pTitle = postList.get(position).getpTitle();
         final String pDescription = postList.get(position).getpDesc();
-        final String pImage = postList.get(position).getpImage();
-        final String pTimeStamp = postList.get(position).getpTime();
-        final String pId = postList.get(position).getpId();
-        final String pType=postList.get(position).getpType();
-        String viewsCount=postList.get(position).getViews();
+        pImage = postList.get(position).getpImage();
+        pTimeStamp = postList.get(position).getpTime();
+        pId = postList.get(position).getpId();
+        final String pType = postList.get(position).getpType();
+        String viewsCount = postList.get(position).getViews();
         String pLikes = postList.get(position).getpLikes();
 
 
-        int viewsCnt=Integer.parseInt(viewsCount);
-        System.out.println(viewsCnt+"= views");
+        int viewsCnt = Integer.parseInt(viewsCount);
+        System.out.println(viewsCnt + "= views");
         viewsCnt++;
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         ref.child(pTimeStamp).child("views").setValue(Integer.toString(viewsCnt));
-
 
 
         holder.uName.setText(uName);
@@ -94,15 +104,15 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             @Override
             public void onClick(View v) {
 
-                if(!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(pId)) {
+                if (!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(pId)) {
                     Intent intent = new Intent(context, UserProfile.class);
                     intent.putExtra("Id", pId);
                     context.startActivity(intent);
-                }else{
+                } else {
                     /*AppCompatActivity activity = (AppCompatActivity) view.getContext();
                     Fragment myFragment = new ProfileFragment();
                     activity.getSupportFragmentManager().beginTransaction().replace(R.id.home, myFragment).addToBackStack(null).commit();*/
-                    Toast.makeText(context,"Go to Profile to view your profile",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Go to Profile to view your profile", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -111,12 +121,12 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
             Picasso.get().load(url).into(holder.uDp);
-        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        final Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
 
         String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
-        if(pComments==null)
-            pComments="0";
+        if (pComments == null)
+            pComments = "0";
         holder.pTotalComment.setText(pComments + " Comments");
 
 
@@ -130,7 +140,25 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             } catch (Exception e) {
             }
         }
+        //Checking if the current user is admin if it is so then mark more btn visible n bookmark invisible and viceversa
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("admin").child("Id");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChild(myId)) {
+                    holder.boookmark.setVisibility(View.INVISIBLE);
+                    holder.morebtn.setVisibility(View.INVISIBLE);
+                } else {
+                    holder.morebtn.setVisibility(View.INVISIBLE);
+                    holder.delete.setVisibility(View.INVISIBLE);
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         holder.pTime.setText(pTime);
         holder.pTitle.setText(pTitle);
         holder.pDesc.setText(pDescription);
@@ -138,12 +166,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
         setLikes(holder, pTimeStamp);
 
-        holder.morebtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(context, "More", Toast.LENGTH_SHORT).show();
-            }
-        });
+
         holder.like_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -160,18 +183,18 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                            if (processLike)
-                                if (snapshot.child(stamp).child("Likes").hasChild(myId)) {
-                                    postsref.child(stamp).child("pLikes").setValue("" + (pLikes - 1));
-                                    postsref.child(stamp).child("Likes").child(myId).removeValue();
-                                    processLike = false;
-                                } else {
+                        if (processLike)
+                            if (snapshot.child(stamp).child("Likes").hasChild(myId)) {
+                                postsref.child(stamp).child("pLikes").setValue("" + (pLikes - 1));
+                                postsref.child(stamp).child("Likes").child(myId).removeValue();
+                                processLike = false;
+                            } else {
 
-                                    postsref.child(stamp).child("pLikes").setValue("" + (pLikes + 1));
-                                    postsref.child(stamp).child("Likes").child(myId).setValue("Liked");
-                                    processLike = false;
-                                }
-                        }
+                                postsref.child(stamp).child("pLikes").setValue("" + (pLikes + 1));
+                                postsref.child(stamp).child("Likes").child(myId).setValue("Liked");
+                                processLike = false;
+                            }
+                    }
 
 
                     @Override
@@ -183,25 +206,24 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
             }
         });
-        setBookmark(holder,myId,pId,pTimeStamp);
+        setBookmark(holder, myId, pId, pTimeStamp);
         holder.comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(context, PostDetailActivity.class);
-                intent.putExtra("postId",pTimeStamp);
+                Intent intent = new Intent(context, PostDetailActivity.class);
+                intent.putExtra("postId", pTimeStamp);
                 context.startActivity(intent);
             }
         });
         holder.share_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BitmapDrawable bitmapDrawable= (BitmapDrawable) holder.pImage.getDrawable();
-                if(bitmapDrawable == null){
-                    shareTextOnly(pTitle,pDescription);
-                }
-                else{
-                    Bitmap bitmap=bitmapDrawable.getBitmap();
-                    shareImageAndText(pTitle,pDescription,bitmap);
+                BitmapDrawable bitmapDrawable = (BitmapDrawable) holder.pImage.getDrawable();
+                if (bitmapDrawable == null) {
+                    shareTextOnly(pTitle, pDescription);
+                } else {
+                    Bitmap bitmap = bitmapDrawable.getBitmap();
+                    shareImageAndText(pTitle, pDescription, bitmap);
                 }
             }
         });
@@ -212,9 +234,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 reference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if(snapshot.child("Bookmarks").hasChild(pTimeStamp)){
+                        if (snapshot.child("Bookmarks").hasChild(pTimeStamp)) {
                             reference.child("Bookmarks").child(pTimeStamp).removeValue();
-                        }else{
+                        } else {
                             reference.child("Bookmarks").child(pTimeStamp).setValue(pId);
                         }
                     }
@@ -235,6 +257,89 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
             }
         });
+       holder.delete.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               Toast.makeText(context,"Delete",Toast.LENGTH_SHORT).show();
+               if(pImage.equals("noImage")){
+                   final ProgressDialog pd = new ProgressDialog(context);
+                   pd.setMessage("Deleting....");
+                   //If there in no image than we need to delete this only from the realtime database
+                   DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Posts").child(pTimeStamp);
+                   reference1.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                       @Override
+                       public void onSuccess(Void aVoid) {
+                           Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                       }
+                   }).addOnFailureListener(new OnFailureListener() {
+                       @Override
+                       public void onFailure(@NonNull Exception e) {
+                           Toast.makeText(context, "Unable to Complete Task", Toast.LENGTH_SHORT).show();
+                       }
+                   });
+                   pd.dismiss();
+                  /* Query query = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
+                   query.addValueEventListener(new ValueEventListener() {
+                       @Override
+                       public void onDataChange(@NonNull DataSnapshot snapshot) {
+                           for(DataSnapshot ds:snapshot.getChildren()){
+                               HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                               if (hashMap.get("pTime").equals(pTimeStamp)) {
+                                   ds.getRef().removeValue();
+
+                               }
+
+
+
+
+
+
+                       }
+
+                       @Override
+                       public void onCancelled(@NonNull DatabaseError error) {
+
+                       }
+                   });*/
+               }else{
+                   final ProgressDialog pd = new ProgressDialog(context);
+                   pd.setMessage("Deleting....");
+
+                   StorageReference picref = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
+                   picref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                       @Override
+                       public void onSuccess(Void aVoid) {
+                           Query query = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
+                           query.addValueEventListener(new ValueEventListener() {
+                               @Override
+                               public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                   for(DataSnapshot ds:snapshot.getChildren()){
+                                       HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                                       if(hashMap.get("pTime").equals(pTimeStamp))
+                                           ds.getRef().removeValue();
+                                       Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
+                                   }
+                                   pd.dismiss();
+                               }
+
+                               @Override
+                               public void onCancelled(@NonNull DatabaseError error) {
+
+                               }
+                           });
+                       }
+                   }).addOnFailureListener(new OnFailureListener() {
+                       @Override
+                       public void onFailure(@NonNull Exception e) {
+                           pd.dismiss();
+                           Toast.makeText(context,"Unable to delete Post",Toast.LENGTH_SHORT).show();
+                       }
+                   });
+               }
+           }
+
+
+       });
     }
 
     private void setBookmark(final MyHolder holder, String myId, final String pId, final String pTimeStamp) {
@@ -329,7 +434,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
     static class MyHolder extends RecyclerView.ViewHolder {
 
-        ImageView uDp,pImage,boookmark;
+        ImageView uDp,pImage,boookmark,delete;
         TextView uName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment,pType,views;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
@@ -351,6 +456,10 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             boookmark = itemView.findViewById(R.id.bookmarks);
             pType=itemView.findViewById(R.id.pType);
             views=itemView.findViewById(R.id.viewCount);
+            delete = itemView.findViewById(R.id.delete);
+
         }
+
+
     }
 }

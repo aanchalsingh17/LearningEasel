@@ -69,9 +69,10 @@ public class UserPostsFragment extends Fragment {
                     if (hashMap.get("pLikes") == null && hashMap.get("pId").equals(userID)) {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
                                 hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), "0", hashMap.get("pComments"),hashMap.get("type"));
+
+                    } else if (hashMap.get("pId").equals(userID)) {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
                                 hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), hashMap.get("pLikes"), hashMap.get("pComments"),hashMap.get("type"));
-                    } else if (hashMap.get("pId").equals(userID)) {
                     }
                     if (post != null)
                         modelpostList.add(post);

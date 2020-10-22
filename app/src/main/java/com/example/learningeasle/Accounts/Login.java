@@ -99,14 +99,8 @@ public class Login extends AppCompatActivity {
         if (fUser != null ) {
             //If Current User is Admin then open the AdminPage otherwise main Activity
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
-//            if(reference.child(fUser.getUid()) == null){
-//                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-//                finish();
-//            }
-//            else{
-//                startActivity(new Intent(getApplicationContext(),AdminMainPage.class));
-//                finish();
-//            }
+
+
 
             reference.addValueEventListener(new ValueEventListener() {
                 @Override

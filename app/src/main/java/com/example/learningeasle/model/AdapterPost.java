@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
-     Context context;
+    Context context;
     List<modelpost> postList;
     private String pName;
     DatabaseReference postsref;
@@ -56,8 +56,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     View view;
     boolean processLike = false;
     String pId;
-     String pImage;
-     String pTimeStamp;
     public AdapterPost(Context context, List<modelpost> postList) {
         this.context = context;
         this.postList = postList;
@@ -81,36 +79,34 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String url = postList.get(position).getuImage();
         final String pTitle = postList.get(position).getpTitle();
         final String pDescription = postList.get(position).getpDesc();
-        pImage = postList.get(position).getpImage();
-        pTimeStamp = postList.get(position).getpTime();
+        final String pImage = postList.get(position).getpImage();
+        final String pTimeStamp = postList.get(position).getpTime();
         pId = postList.get(position).getpId();
         final String pType = postList.get(position).getpType();
         String pLikes = postList.get(position).getpLikes();
 
-//
-//        int viewsCnt = Integer.parseInt(viewsCount);
-//        System.out.println(viewsCnt + "= views");
-//        viewsCnt++;
-//
-//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-//        ref.child(pTimeStamp).child("views").setValue(Integer.toString(viewsCnt));
+
+        System.out.println(uName+" "+pTitle+" "+pDescription+" "+pTimeStamp);
 
 
         final String[] viewsCount = new String[1];
 
-        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
-        databaseReference.child(pTimeStamp).addListenerForSingleValueEvent(new ValueEventListener() {
+        final DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                viewsCount[0] =snapshot.getValue().toString();
-                System.out.println(viewsCount[0]+" idhar");
-                int viewsCnt = Integer.parseInt(viewsCount[0]);
-                System.out.println(viewsCnt + "= views");
-                viewsCnt++;
+                for(DataSnapshot ds:snapshot.getChildren()){
+                    if(ds.getKey().equals(pTimeStamp)){
+                        viewsCount[0] =ds.getValue().toString();
+                        int viewsCnt = Integer.parseInt(viewsCount[0]);
+                        viewsCnt++;
 
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Views");
-                ref.child(pTimeStamp).setValue(Integer.toString(viewsCnt));
-                holder.views.setText(viewsCount[0]);
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Views");
+                        ref.child(pTimeStamp).setValue(Integer.toString(viewsCnt));
+                        holder.views.setText(viewsCount[0]);
+                    }
+                }
+
             }
 
             @Override
@@ -122,7 +118,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
         holder.uName.setText(uName);
         holder.pType.setText(pType);
-        holder.views.setText(viewsCount[0]);
         holder.uName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,8 +183,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 postsref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                        if (processLike)
+//
+//                        if (processLike)
                             if (snapshot.child(stamp).child("Likes").hasChild(myId)) {
                                 postsref.child(stamp).child("pLikes").setValue("" + (pLikes - 1));
                                 postsref.child(stamp).child("Likes").child(myId).removeValue();
@@ -216,6 +211,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         holder.comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                System.out.println(pTimeStamp+" cmnt");
                 Intent intent = new Intent(context, PostDetailActivity.class);
                 intent.putExtra("postId", pTimeStamp);
                 context.startActivity(intent);

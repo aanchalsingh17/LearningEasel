@@ -73,7 +73,29 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/email_login"
+            app:layout_constraintBottom_toTopOf="@id/adminLogin"
             tools:ignore="Autofill" />
+
+        <CheckBox
+            android:id="@+id/adminLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:checked="false"
+            android:fontFamily="@font/ubuntu"
+
+            android:gravity="center"
+            android:buttonTint="#00ffff"
+            android:layout_marginTop="5dp"
+            android:text="Admin Login"
+            android:textAlignment="center"
+            android:textColor="#00ffff"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/login_login"
+            app:layout_constraintTop_toBottomOf="@id/password_login"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
 
 
         <Button
@@ -86,7 +108,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="109dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="15dp"
             android:layout_marginEnd="109dp"
             android:background="@drawable/button_shaper_aqua"
             android:backgroundTint="#0099cc"
@@ -98,7 +120,7 @@
             android:textSize="19sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/password_login" />
+            app:layout_constraintTop_toBottomOf="@id/adminLogin" />
 
         <TextView
             android:id="@+id/create_login"
@@ -151,23 +173,7 @@
 
         </LinearLayout>
 
-        <CheckBox
-            android:id="@+id/adminLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:fontFamily="@font/ubuntu"
-            android:gravity="center|center_horizontal|center_vertical"
-            android:text="Admin Login"
-            android:textAlignment="center"
-            android:textColor="#00ffff"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.889" />
+
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/googlesignin"

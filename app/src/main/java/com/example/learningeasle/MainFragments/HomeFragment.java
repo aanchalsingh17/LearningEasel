@@ -220,7 +220,6 @@ public class HomeFragment extends Fragment {
 
                 adapterPost = new AdapterPost(getActivity(), modelpostList);
                 recyclerView.setAdapter(adapterPost);
-                adapterPost.notifyDataSetChanged();
                 progressDialog.dismiss();
                // progressBar.setVisibility(View.INVISIBLE);
             }

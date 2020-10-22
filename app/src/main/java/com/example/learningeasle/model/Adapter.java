@@ -57,7 +57,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
     boolean processLike=false;
     private EditClick edit;
     View view;
-    String pId,pTimeStamp,pImage;
     public Adapter(Context context, List<modelpost> postList,EditClick editClick) {
         this.context = context;
         this.postList = postList;
@@ -82,9 +81,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         final String pTitle = postList.get(position).getpTitle();
         final String pDescription = postList.get(position).getpDesc();
         final String pType=postList.get(position).getpType();
-        pImage = postList.get(position).getpImage();
-        pTimeStamp = postList.get(position).getpTime();
-        pId = postList.get(position).getpId();
+        final String pImage = postList.get(position).getpImage();
+        final String pTimeStamp = postList.get(position).getpTime();
+        String pId = postList.get(position).getpId();
         final String pLikes=postList.get(position).getpLikes();
         String pComments=postList.get(position).getpComments();
         final String[] viewsCount = new String[1];
@@ -125,7 +124,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
         holder.pName.setText(uName);
         holder.pType.setText(pType);
-        holder.views.setText(viewsCount[0]);
         if(url.equals("empty"))
             holder.url.setImageResource(R.drawable.ic_action_account);
         else

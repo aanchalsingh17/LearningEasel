@@ -91,7 +91,7 @@
                 android:fontFamily="@font/ubuntu"
                 android:text="Hello there"
                 android:textColor="#008080"
-                android:textSize="20dp" />
+                android:textSize="15sp" />
 
         </RelativeLayout>
 

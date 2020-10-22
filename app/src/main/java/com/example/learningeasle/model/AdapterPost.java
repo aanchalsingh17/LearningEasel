@@ -85,7 +85,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         pTimeStamp = postList.get(position).getpTime();
         pId = postList.get(position).getpId();
         final String pType = postList.get(position).getpType();
-        String viewsCount = postList.get(position).getViews();
         String pLikes = postList.get(position).getpLikes();
 
 //
@@ -97,9 +96,33 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 //        ref.child(pTimeStamp).child("views").setValue(Integer.toString(viewsCnt));
 
 
+        final String[] viewsCount = new String[1];
+
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
+        databaseReference.child(pTimeStamp).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                viewsCount[0] =snapshot.getValue().toString();
+                System.out.println(viewsCount[0]+" idhar");
+                int viewsCnt = Integer.parseInt(viewsCount[0]);
+                System.out.println(viewsCnt + "= views");
+                viewsCnt++;
+
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Views");
+                ref.child(pTimeStamp).setValue(Integer.toString(viewsCnt));
+                holder.views.setText(viewsCount[0]);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
         holder.uName.setText(uName);
         holder.pType.setText(pType);
-        holder.views.setText(viewsCount);
+        holder.views.setText(viewsCount[0]);
         holder.uName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,6 +151,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         if (pComments == null)
             pComments = "0";
         holder.pTotalComment.setText(pComments + " Comments");
+
 
 
         if (pImage.equals("noImage")) {
@@ -230,14 +254,14 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         holder.boookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(myId);
-                reference.addValueEventListener(new ValueEventListener() {
+                final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(myId).child("Bookmarks");
+                reference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.child("Bookmarks").hasChild(pTimeStamp)) {
-                            reference.child("Bookmarks").child(pTimeStamp).removeValue();
+                        if (snapshot.hasChild(pTimeStamp)) {
+                            reference.child(pTimeStamp).removeValue();
                         } else {
-                            reference.child("Bookmarks").child(pTimeStamp).setValue(pId);
+                            reference.child(pTimeStamp).setValue(pId);
                         }
                     }
 

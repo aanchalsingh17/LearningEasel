@@ -236,16 +236,21 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         final String type=spinner.getSelectedItem().toString();
 
 
+
+
+
         //If post contains the image
         if (!uri.equals("noImage")) {
             // with image
             //If imageuri is null which means that the post image is not changed
             if(image_rui==null){
+                DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
+                databaseReference.child(timeStamp).setValue("0");
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(timeStamp);
                 ref.child("pTitle").setValue(title);
                 ref.child("pDesc").setValue(description);
                 ref.child("type").setValue(type);
-                ref.child("views").setValue("0");
+//                ref.child("views").setValue("0");
                 Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
                         .show();
                 et_desc.setText("");
@@ -268,12 +273,14 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                         if (uriTask.isSuccessful()) {
                             //If edit post then in any scenerio we can either change image type title and desc nothing else than that
                             if (edit.equals("EditPost")) {
+                                DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
+                                databaseReference.child(timeStamp).setValue("0");
                                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(timeStamp);
                                 ref.child("pTitle").setValue(title);
                                 ref.child("pDesc").setValue(description);
                                 ref.child("type").setValue(type);
                                 ref.child("pImage").setValue(downloadUri);
-                                ref.child("views").setValue("0");
+//                                ref.child("views").setValue("0");
                                 Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
                                         .show();
                                 et_desc.setText("");
@@ -295,7 +302,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                                 hashMap.put("pLikes", "0");
                                 hashMap.put("pComments", "0");
                                 hashMap.put("type", type);
-                                hashMap.put("views","0");
+//                                hashMap.put("views","0");
 
                                 //Reference of the admin pending post when user post for the first time then it should pass through the admin
                                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");
@@ -341,12 +348,14 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         } else {
             //If its edit post then we need to set the values of only title content type and image
             if (edit.equals("EditPost")) {
+                DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
+                databaseReference.child(timeStamp).setValue("0");
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(timeStamp);
                 ref.child("pTitle").setValue(title);
                 ref.child("pDesc").setValue(description);
                 ref.child("type").setValue(type);
                 ref.child("pImage").setValue("noImage");
-                ref.child("views").setValue("0");
+//                ref.child("views").setValue("0");
                     Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
                             .show();
                 et_desc.setText("");
@@ -368,7 +377,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 hashMap.put("pLikes", "0");
                 hashMap.put("pComments", "0");
                 hashMap.put("type", type);
-                hashMap.put("views","0");
+//                hashMap.put("views","0");
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");
                 ref.child(timeStamp).setValue(hashMap)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -376,7 +385,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                             public void onSuccess(Void aVoid) {
 //                            pd.dismiss();
                                 progressBar.setVisibility(View.GONE);
-                                    Toast.makeText(getActivity(), "Post Passesd to Admin!", Toast.LENGTH_SHORT)
+                                    Toast.makeText(getActivity(), "Post Passed to Admin!", Toast.LENGTH_SHORT)
                                             .show();
                                 et_desc.setText("");
                                 et_title.setText("");

@@ -48,13 +48,13 @@ public class UserBookmarkFragment extends Fragment {
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(layoutManager);
-       /* loadBookmarks(new OnDataReceiveCallback() {
+        loadBookmarks(new OnDataReceiveCallback() {
             @Override
             public void onDataReceived(List<modelpost> bookmarkList) {
                 adapterPost = new AdapterPost(getContext(), bookmarkList);
                 recyclerView.setAdapter(adapterPost);
             }
-        });*/
+        });
         return view;
     }
 
@@ -80,12 +80,12 @@ public class UserBookmarkFragment extends Fragment {
                             modelpost post;
                             if (hashMap.get("pLikes") == null && hashMap.get("pTime").equals(timestamp)) {
                                 post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                        hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0", hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("views"));
+                                        hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0", hashMap.get("pComments").toString(), hashMap.get("type").toString());
                                 bookmarkList.add(post);
                                 callback.onDataReceived(bookmarkList);
                             } else if (hashMap.get("pTime").equals(timestamp)) {
                                 post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                        hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(), hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("views"));
+                                        hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(), hashMap.get("pComments").toString(), hashMap.get("type").toString());
                                 bookmarkList.add(post);
                                 callback.onDataReceived(bookmarkList);
                             }

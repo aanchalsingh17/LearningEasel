@@ -86,8 +86,28 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         pTimeStamp = postList.get(position).getpTime();
         pId = postList.get(position).getpId();
         final String pLikes=postList.get(position).getpLikes();
-        final String viewsCount=postList.get(position).getViews();
         String pComments=postList.get(position).getpComments();
+        final String[] viewsCount = new String[1];
+
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
+        databaseReference.child(pTimeStamp).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                viewsCount[0] =snapshot.getValue().toString();
+                int viewsCnt = Integer.parseInt(viewsCount[0]);
+                System.out.println(viewsCnt + "= views");
+                viewsCnt++;
+
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Views");
+                ref.child(pTimeStamp).setValue(Integer.toString(viewsCnt));
+                holder.views.setText(viewsCount[0]);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
 
 
@@ -105,7 +125,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
         holder.pName.setText(uName);
         holder.pType.setText(pType);
-        holder.views.setText(viewsCount);
+        holder.views.setText(viewsCount[0]);
         if(url.equals("empty"))
             holder.url.setImageResource(R.drawable.ic_action_account);
         else
@@ -115,6 +135,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
 
         String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
+
+
+
 
         if(pComments==null)
             pComments="0";

@@ -105,8 +105,9 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
                 hashMap.put("type",pType);
                 hashMap.put("url",url);
                 hashMap.put("pName",uName);
-                hashMap.put("views","0");
                 hashMap.put("pComments","0");
+                DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
+                databaseReference.child(pTimeStamp).setValue("0");
                 reference.child(pTimeStamp).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

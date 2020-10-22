@@ -137,12 +137,12 @@ public class HomeFragment extends Fragment {
                     if (hashMap.get("pLikes") == null) {
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                 hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                hashMap.get("pComments").toString(), hashMap.get("type").toString(), hashMap.get("views"));
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString());
                         modelpostList.add(post);
                     } else  {
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                 hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                hashMap.get("pComments").toString(), hashMap.get("type").toString(), hashMap.get("views"));
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString());
                         modelpostList.add(post);
                     }
 
@@ -179,12 +179,12 @@ public class HomeFragment extends Fragment {
                     if (hashMap.get("pLikes") == null && interest.contains(hashMap.get("type"))) {
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                 hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                hashMap.get("pComments").toString(),hashMap.get("type").toString(),hashMap.get("views"));
+                                hashMap.get("pComments").toString(),hashMap.get("type").toString());
                         modelpostList.add(post);
                     } else if(interest.contains(hashMap.get("type"))) {
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                 hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                hashMap.get("pComments").toString(),hashMap.get("type").toString(),hashMap.get("views"));
+                                hashMap.get("pComments").toString(),hashMap.get("type").toString());
                         modelpostList.add(post);
                     }
 
@@ -265,12 +265,12 @@ public class HomeFragment extends Fragment {
                         if (hashMap.get("pLikes") == null && interest.contains(hashMap.get("type"))) {
                             post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                     hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                    hashMap.get("pComments").toString(), hashMap.get("type").toString(), hashMap.get("views"));
+                                    hashMap.get("pComments").toString(), hashMap.get("type").toString());
                             modelpostList.add(post);
                         } else if (interest.contains(hashMap.get("type"))) {
                             post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                     hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                    hashMap.get("pComments").toString(), hashMap.get("type").toString(), hashMap.get("views"));
+                                    hashMap.get("pComments").toString(), hashMap.get("type").toString());
                             modelpostList.add(post);
                         }
 

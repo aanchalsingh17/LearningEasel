@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.ProgressBar;
 
 import com.example.learningeasle.R;
 import com.example.learningeasle.model.AdapterPost;
@@ -21,6 +23,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.core.OrderBy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +36,8 @@ public class AdminPostFragment extends Fragment {
     List<modelpost> modelpostList;
     AdapterAdminPost adapteradminPost;
     View view;
+    ProgressBar progressBar;
+    String oldestpost = "";
     public AdminPostFragment() {
         // Required empty public constructor
     }
@@ -53,46 +59,99 @@ public class AdminPostFragment extends Fragment {
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
         recyclerView = view.findViewById(R.id.postsRecyclerview);
+        progressBar = view.findViewById(R.id.progressBar_loading);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setStackFromEnd(true);
-        layoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
         setHasOptionsMenu(true);
-        getAllPost();
+        loadStartingPost();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
+                    progressBar.setVisibility(View.VISIBLE);
+                    //After all the posts are scrolled load the few more posts from the firebase
+                    getAllPost();
+                }
+            }
+        });
+
         return  view;
+    }
+
+    private void loadStartingPost() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+        reference.limitToFirst(4).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                modelpostList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
+                    modelpost post;
+                    oldestpost = dataSnapshot.getKey();
+                    if (hashMap.get("pLikes") == null) {
+                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                        modelpostList.add(post);
+                    } else  {
+                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                        modelpostList.add(post);
+                    }
+
+
+                }
+
+                adapteradminPost = new AdapterAdminPost(getContext(),modelpostList);
+                recyclerView.setAdapter(adapteradminPost);
+                progressDialog.dismiss();
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void getAllPost() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-        reference.addValueEventListener(new ValueEventListener() {
+        final boolean[] first = {true};
+        reference.orderByKey().startAt(oldestpost).limitToFirst(4).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        modelpostList.clear();
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
-                            modelpost post;
-                            if (hashMap.get("pLikes") == null) {
-                                post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                        hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                        hashMap.get("pComments").toString(), hashMap.get("type").toString());
-                                modelpostList.add(post);
-                            } else  {
-                                post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                        hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                        hashMap.get("pComments").toString(), hashMap.get("type").toString());
-                                modelpostList.add(post);
-                            }
-
-
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
+                    modelpost post;
+                    oldestpost = dataSnapshot.getKey();
+                    if(!first[0]) {
+                        if (hashMap.get("pLikes") == null) {
+                            post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                    hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
+                                    hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                            modelpostList.add(post);
+                        } else {
+                            post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                    hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
+                                    hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                            modelpostList.add(post);
                         }
-
-                        adapteradminPost = new AdapterAdminPost(getContext(),modelpostList);
-                        recyclerView.setAdapter(adapteradminPost);
-                        progressDialog.dismiss();
-                        // progressBar.setVisibility(View.INVISIBLE);
+                    }else{
+                        first[0] = false;
                     }
 
+
+                }
+
+                adapteradminPost = new AdapterAdminPost(getContext(),modelpostList);
+                recyclerView.setAdapter(adapteradminPost);
+                adapteradminPost.notifyDataSetChanged();
+                progressBar.setVisibility(View.INVISIBLE);
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

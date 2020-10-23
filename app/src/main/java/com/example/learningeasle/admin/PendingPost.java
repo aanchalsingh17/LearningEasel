@@ -1,5 +1,4 @@
 package com.example.learningeasle.admin;
-
 import android.app.ProgressDialog;
 import android.os.Bundle;
 
@@ -8,17 +7,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
-import com.example.learningeasle.ProfileFragments.UserFollowersFragment;
 import com.example.learningeasle.R;
-import com.example.learningeasle.model.ModelUsers;
 import com.example.learningeasle.model.modelpost;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -60,8 +53,6 @@ public class PendingPost extends Fragment {
         progressDialog.show();
         recyclerView = view.findViewById(R.id.postsRecyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setStackFromEnd(true);
-        layoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
         setHasOptionsMenu(true);
@@ -69,37 +60,34 @@ public class PendingPost extends Fragment {
         loadAllPendingPost();
         return  view;
     }
-    public interface OnDataReceiveCall {
-        void onDataReceived(List<modelpost> modelList);
-    }
     private void loadAllPendingPost() {
 
 
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");
-                 reference.addValueEventListener(new ValueEventListener() {
-                     @Override
-                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                         modelpostList.clear();
-                         for(DataSnapshot ds:snapshot.getChildren()){
-                             HashMap<Object,String> hashMap = (HashMap<Object, String>) ds.getValue();
-                             modelpost post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                     hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                     "0", hashMap.get("type").toString());
-                             modelpostList.add(post);
-                             //onDataReceiveCallback.onDataReceived(modelpostList);
-                         }
-                         adapterPendingPost = new AdapterPendingPost(getActivity(),modelpostList);
-                         recyclerView.setAdapter(adapterPendingPost);
-                         progressDialog.dismiss();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                modelpostList.clear();
+                for(DataSnapshot ds:snapshot.getChildren()){
+                    HashMap<Object,String> hashMap = (HashMap<Object, String>) ds.getValue();
+                    modelpost post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                            hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
+                            "0", hashMap.get("type").toString());
+                    modelpostList.add(post);
+                    //onDataReceiveCallback.onDataReceived(modelpostList);
+                }
+                adapterPendingPost = new AdapterPendingPost(getActivity(),modelpostList);
+                recyclerView.setAdapter(adapterPendingPost);
+                progressDialog.dismiss();
 
-                     }
+            }
 
-                     @Override
-                     public void onCancelled(@NonNull DatabaseError error) {
-                         progressDialog.dismiss();
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                progressDialog.dismiss();
 
-                     }
-                 });
+            }
+        });
 
     }
 }

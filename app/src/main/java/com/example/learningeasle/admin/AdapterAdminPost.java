@@ -3,6 +3,7 @@ package com.example.learningeasle.admin;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,7 +69,7 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
         String pLikes = postList.get(position).getpLikes();
         final String[] viewsCount = new String[1];
 
-        DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Views");
+       /* DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Views");
         databaseReference.child(pTimeStamp).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -87,7 +88,7 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        });*/
 
 
         holder.uName.setText(uName);
@@ -140,6 +141,24 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Before deleting the post delete it from the bookmarks section of the users;
+                final DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Users");
+                ref.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot ds:snapshot.getChildren()){
+                            String path = ds.getKey();
+                            if(ds.child("Bookmarks").hasChild(pTimeStamp)){
+                                ref.child(path).child("Bookmarks").child(pTimeStamp).removeValue();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
                 if (pImage.equals("noImage")) {
                     final ProgressDialog pd = new ProgressDialog(context);
                     pd.setMessage("Deleting....");

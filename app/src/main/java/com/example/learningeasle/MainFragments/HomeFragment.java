@@ -93,14 +93,23 @@ public class HomeFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         recyclerView = view.findViewById(R.id.postsRecyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setStackFromEnd(true);
-        layoutManager.setReverseLayout(true);
+        //layoutManager.setStackFromEnd(true);
+        //layoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
         setHasOptionsMenu(true);
         interest=new ArrayList<>();
         getUserDetails();
-
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(newState==AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
+                    progressBar.setVisibility(View.VISIBLE);
+                    loadPosts();
+                }
+            }
+        });
 
 
         return view;
@@ -170,7 +179,8 @@ public class HomeFragment extends Fragment {
                                     if(dataSnapshot.getValue().equals("1"))
                                         interest.add(dataSnapshot.getKey());
                                 }
-                                loadPosts();
+                                //loadPosts();
+                                getStartingPost();
                             }
 
                             @Override
@@ -194,34 +204,37 @@ public class HomeFragment extends Fragment {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         final boolean[] start = {true};
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.orderByKey().startAt(oldestPost).limitToFirst(4).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                modelpostList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
 //                    if(FirebaseDatabase.getInstance().getReference(""))
                     oldestPost = dataSnapshot.getKey();
                         modelpost post;
-                        if (hashMap.get("pLikes") == null && interest.contains(hashMap.get("type"))) {
-                            post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                    hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                    hashMap.get("pComments").toString(), hashMap.get("type").toString());
-                            modelpostList.add(post);
-                        } else if (interest.contains(hashMap.get("type"))) {
-                            post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                    hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                    hashMap.get("pComments").toString(), hashMap.get("type").toString());
-                            modelpostList.add(post);
+                        if(!start[0]) {
+                            if (hashMap.get("pLikes") == null && interest.contains(hashMap.get("type"))) {
+                                post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                        hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
+                                        hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                                modelpostList.add(post);
+                            } else if (interest.contains(hashMap.get("type"))) {
+                                post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                        hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
+                                        hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                                modelpostList.add(post);
+                            }
+                        }else{
+                            start[0] = false;
                         }
-
 
                 }
 
                 adapterPost = new AdapterPost(getActivity(), modelpostList);
                 recyclerView.setAdapter(adapterPost);
-                progressDialog.dismiss();
-               // progressBar.setVisibility(View.INVISIBLE);
+                adapterPost.notifyDataSetChanged();
+                //progressDialog.dismiss();
+                progressBar.setVisibility(View.INVISIBLE);
             }
 
             @Override

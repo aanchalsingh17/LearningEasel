@@ -104,18 +104,19 @@ public class UserBookmarkFragment extends Fragment {
 
                             final HashMap<Object, String> hashMap = (HashMap<Object, String>) snapshot.getValue();
                             modelpost post;
-                            if (hashMap.get("pLikes") == null && hashMap.get("pTime").equals(timestamp)) {
-                                post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                        hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0", hashMap.get("pComments").toString(), hashMap.get("type").toString());
-                                bookmarkList.add(post);
-                                callback.onDataReceived(bookmarkList);
-                            } else if (hashMap.get("pTime").equals(timestamp)) {
-                                post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                        hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(), hashMap.get("pComments").toString(), hashMap.get("type").toString());
-                                bookmarkList.add(post);
-                                callback.onDataReceived(bookmarkList);
-                                System.out.println("bookmarks size " + bookmarkList.size());
-                            }
+                                if (hashMap.get("pLikes") == null && hashMap.get("pTime").equals(timestamp)) {
+                                    post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                            hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0", hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                                    bookmarkList.add(post);
+                                    callback.onDataReceived(bookmarkList);
+                                } else if (hashMap.get("pTime").equals(timestamp)) {
+                                    post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                            hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(), hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                                    bookmarkList.add(post);
+                                    callback.onDataReceived(bookmarkList);
+                                    System.out.println("bookmarks size " + bookmarkList.size());
+                                }
+
 
                         }
 

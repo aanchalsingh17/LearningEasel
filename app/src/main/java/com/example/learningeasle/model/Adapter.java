@@ -88,7 +88,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         String pComments=postList.get(position).getpComments();
         final String[] viewsCount = new String[1];
 
-        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
+      /*  DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
         databaseReference.child(pTimeStamp).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -106,7 +106,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        });*/
 
 
 
@@ -230,6 +230,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
     private void beginDelete(final String pId, String pImage, final String pTimeStamp) {
 
+        //Begin delete accordingly if post contain the image than first delete the image from the storage section
+        //then delete the post from the realtime database;
         if(pImage.equals("noImage")){
             final ProgressDialog pd = new ProgressDialog(context);
             pd.setMessage("Deleting....");
@@ -295,6 +297,28 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         }
     }
 
+    private void deletefromBookmarks(final String pTimeStamp) {
+        final DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Users");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds:snapshot.getChildren()){
+                    String path = ds.getKey();
+                    if(ds.child("Bookmarks").hasChild(pTimeStamp)){
+                        ref.child(path).child("Bookmarks").child(pTimeStamp).removeValue();
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+        });
+    }
 
     private void shareImageAndText(String pTitle, String pDescription, Bitmap bitmap) {
         String shareBody=pTitle+"\n"+pDescription;
@@ -407,7 +431,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                                 String time = postList.get(getAdapterPosition()).pTime;
                                 String pImage = postList.get(getAdapterPosition()).pImage;
                                 String pId = postList.get(getAdapterPosition()).pId;
-                                beginDelete(pId, pImage, time);
+                                //Before deleting the post delete it from the bookmarks section of the users;
+                                deletefromBookmarks(time);
+                                //Then delete the post;
+                                beginDelete(pId,pImage,time);
+
                             }
                         }
                     });
@@ -417,6 +445,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             });
         }
     }
+
+
+
     public interface  EditClick{
         public void onEditClick(int position,String Uid,String pTimeStamp,String post,String title,String content,String url,String pLikes,String pComment);
     }

@@ -238,8 +238,10 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.hasChild(pTimeStamp)) {
                             reference.child(pTimeStamp).removeValue();
+                            holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_bookmark_border_24));
                         } else {
                             reference.child(pTimeStamp).setValue(pId);
+                            holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.bookmarked));
                         }
                     }
 
@@ -270,9 +272,10 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.child("Bookmarks").hasChild(pTimeStamp)){
-                    holder.boookmark.setBackgroundColor(R.drawable.swipe_button_background);
+                    holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.bookmarked));
                 }else{
-                    holder.boookmark.setBackgroundColor(R.drawable.ic_bookmarks);
+
+                    holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_bookmark_border_24));
                 }
             }
 

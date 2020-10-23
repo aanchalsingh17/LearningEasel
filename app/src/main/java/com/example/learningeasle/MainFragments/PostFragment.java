@@ -291,7 +291,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                                 startActivity(intent);
                             } else {
                                 //Otherwise we are publishing the post
-                                HashMap<Object, String> hashMap = new HashMap<>();
+                                HashMap<Object, Object> hashMap = new HashMap<>();
                                 hashMap.put("pId", firebaseUser.getUid());
                                 hashMap.put("pImage", downloadUri);
                                 hashMap.put("pTitle", title);
@@ -302,6 +302,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                                 hashMap.put("pLikes", "0");
                                 hashMap.put("pComments", "0");
                                 hashMap.put("type", type);
+                                hashMap.put("order",-System.currentTimeMillis());
 //                                hashMap.put("views","0");
 
                                 //Reference of the admin pending post when user post for the first time then it should pass through the admin
@@ -366,7 +367,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent);
             } else {
                 //otherwise publish the new post
-                HashMap<Object, String> hashMap = new HashMap<>();
+                HashMap<Object, Object> hashMap = new HashMap<>();
                 hashMap.put("pId", firebaseUser.getUid());
                 hashMap.put("pImage", "noImage");
                 hashMap.put("pTitle", title);
@@ -377,7 +378,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 hashMap.put("pLikes", "0");
                 hashMap.put("pComments", "0");
                 hashMap.put("type", type);
-//                hashMap.put("views","0");
+                hashMap.put("order",-System.currentTimeMillis());
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");
                 ref.child(timeStamp).setValue(hashMap)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {

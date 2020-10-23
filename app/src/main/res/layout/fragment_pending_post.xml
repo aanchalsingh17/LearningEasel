@@ -7,25 +7,41 @@
     tools:context=".admin.PendingPost">
 
     <!-- TODO: Update blank fragment layout -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/postsRecyclerview"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <ProgressBar
-        android:id="@+id/progressBar_loading"
-        style="@style/MyProgressBarRectangle"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dp"
-        android:visibility="invisible"
+        app:menu="@menu/interests">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="4dp">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/postsRecyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <ProgressBar
+                android:id="@+id/progressBar_loading"
+                style="@style/MyProgressBarRectangle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="40dp"
+                android:visibility="invisible"
+                android:layout_marginStart="100dp"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:visibility="invisible" />
+        </LinearLayout>
 
 
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="invisible" />
+        <!-- TODO: Update blank fragment layout -->
+
+
+    </androidx.core.widget.NestedScrollView>
 
 </FrameLayout>

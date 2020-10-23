@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="0dp"
                 android:background="@null"
-                android:src="@drawable/ic_bookmarks"/>
+                android:src="@drawable/bookmarked"/>
         </LinearLayout>
 
         <TextView

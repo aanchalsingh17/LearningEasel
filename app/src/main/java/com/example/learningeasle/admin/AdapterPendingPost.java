@@ -95,7 +95,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");//.child(pTimeStamp);
                 ref.child(pTimeStamp).removeValue();
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-                HashMap<Object,String> hashMap = new HashMap<>();
+                HashMap<Object,Object> hashMap = new HashMap<>();
                 hashMap.put("pId",pId);
                 hashMap.put("pTitle",pTitle);
                 hashMap.put("pDesc",pDescription);
@@ -106,6 +106,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
                 hashMap.put("url",url);
                 hashMap.put("pName",uName);
                 hashMap.put("pComments","0");
+                hashMap.put("order",-Long.parseLong(pTimeStamp));
                 DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
                 databaseReference.child(pTimeStamp).setValue("0");
                 reference.child(pTimeStamp).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {

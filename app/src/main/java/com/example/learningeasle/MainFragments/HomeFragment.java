@@ -161,7 +161,7 @@ public class HomeFragment extends Fragment {
 
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot db:snapshot.getChildren()) {
@@ -204,7 +204,7 @@ public class HomeFragment extends Fragment {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         final boolean[] start = {true};
-        ref.orderByKey().startAt(oldestPost).limitToFirst(4).addValueEventListener(new ValueEventListener() {
+        ref.orderByKey().startAt(oldestPost).limitToFirst(4).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {

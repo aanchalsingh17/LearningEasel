@@ -1,7 +1,9 @@
 package com.example.learningeasle.admin;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,8 @@ import com.bumptech.glide.signature.ObjectKey;
 import com.example.learningeasle.R;
 import com.example.learningeasle.ViewImage;
 import com.example.learningeasle.model.modelpost;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -58,6 +62,22 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
        final String  pTimeStamp = pendingpostList.get(position).getpTime();
         final String pId = pendingpostList.get(position).getpId();
         final String pType = pendingpostList.get(position).getpType();
+
+        //Initialise Shimmer
+        Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
+                .setBaseColor(Color.parseColor("#F3F3F3"))
+                .setBaseAlpha(1)
+                .setHighlightColor(Color.parseColor("#E7E7E7"))
+                .setHighlightAlpha(1)
+                .setDropoff(50)
+                .build();
+        //Initialise shimmer Drawable
+        ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
+        shimmerDrawable.setShimmer(shimmer);
+
+
+
+
         //Setting al the data at the specified position of holder;
         holder.uName.setText(uName);
         holder.pDescpType.setText(pType);
@@ -73,12 +93,12 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
             holder.pImage.setVisibility(View.GONE);
         }else{
             holder.pImage.setVisibility(View.VISIBLE);
-            Picasso.get().load(pImage).placeholder(R.drawable.ic_default).fit().centerCrop().into(holder.pImage);
+            Picasso.get().load(pImage).placeholder(shimmerDrawable).fit().centerCrop().into(holder.pImage);
         }
         if (url.equals("empty"))
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
-            Picasso.get().load(url).into(holder.uDp);
+            Picasso.get().load(url).placeholder(shimmerDrawable).into(holder.uDp);
         //If Admin Publishes the post then change the reference of the post in the database
         holder.pImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,8 +133,14 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
                     @Override
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(context,"Post Published !!",Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(context,NotificationReceiver.class);
+                        intent.putExtra("title",pTitle);
+                        intent.putExtra("Action","passed");
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,1,intent,0);
+
                     }
                 });
+
             }
         });
         //If admin cancel the post then delete the post from the pending post list and dont publish it

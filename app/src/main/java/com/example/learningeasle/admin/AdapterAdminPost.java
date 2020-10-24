@@ -3,6 +3,7 @@ package com.example.learningeasle.admin;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.provider.ContactsContract;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -21,6 +22,8 @@ import com.example.learningeasle.PostDetailActivity;
 import com.example.learningeasle.R;
 import com.example.learningeasle.model.AdapterPost;
 import com.example.learningeasle.model.modelpost;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -69,7 +72,20 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
         String pLikes = postList.get(position).getpLikes();
         final String[] viewsCount = new String[1];
 
-       /* DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Views");
+        //Initialise Shimmer
+        Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
+                .setBaseColor(Color.parseColor("#F3F3F3"))
+                .setBaseAlpha(1)
+                .setHighlightColor(Color.parseColor("#E7E7E7"))
+                .setHighlightAlpha(1)
+                .setDropoff(50)
+                .build();
+        //Initialise shimmer Drawable
+        ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
+        shimmerDrawable.setShimmer(shimmer);
+
+
+        DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Views");
         databaseReference.child(pTimeStamp).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -88,7 +104,7 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });*/
+        });
 
 
         holder.uName.setText(uName);
@@ -97,7 +113,7 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
         if (url.equals("empty"))
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
-            Picasso.get().load(url).into(holder.uDp);
+            Picasso.get().load(url).placeholder(shimmerDrawable).into(holder.uDp);
         final Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
 
@@ -114,7 +130,7 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
         } else {
             try {
                 holder.pImage.setVisibility(View.VISIBLE);
-                Picasso.get().load(pImage).placeholder(R.drawable.ic_default).fit().centerCrop().into(holder.pImage);
+                Picasso.get().load(pImage).placeholder(shimmerDrawable).fit().centerCrop().into(holder.pImage);
             } catch (Exception e) {
             }
         }

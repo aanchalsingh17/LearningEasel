@@ -31,6 +31,7 @@ import com.example.learningeasle.PickInterests;
 import com.example.learningeasle.R;
 import com.example.learningeasle.model.AdapterPost;
 import com.example.learningeasle.model.modelpost;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -64,6 +65,7 @@ public class HomeFragment extends Fragment {
     ArrayList<String> interest;
     ProgressBar progressBar;
     String oldestPost = "";
+    ShimmerFrameLayout shimmerFrameLayout;
     int CurrentItems, totalItems, ViewedItems;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -81,17 +83,18 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
          progressBar = view.findViewById(R.id.progressBar_loading);
 //        progressBar.setVisibility(View.VISIBLE);
-        progressDialog = new ProgressDialog(getContext());
+        /*progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading...");
         progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
+        progressDialog.show();*/
         firebaseAuth = FirebaseAuth.getInstance();
         recyclerView = view.findViewById(R.id.postsRecyclerview);
+        shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         //layoutManager.setStackFromEnd(true);
         //layoutManager.setReverseLayout(true);
@@ -143,7 +146,10 @@ public class HomeFragment extends Fragment {
 
                 adapterPost = new AdapterPost(getActivity(), modelpostList);
                 recyclerView.setAdapter(adapterPost);
-                progressDialog.dismiss();
+                recyclerView.setVisibility(View.VISIBLE);
+               // progressDialog.dismiss();
+               shimmerFrameLayout.stopShimmer();
+               shimmerFrameLayout.setVisibility(View.GONE);
             }
 
             @Override
@@ -180,6 +186,8 @@ public class HomeFragment extends Fragment {
                                         interest.add(dataSnapshot.getKey());
                                 }
                                 //loadPosts();
+
+                                shimmerFrameLayout.startShimmer();
                                 getStartingPost();
                             }
 

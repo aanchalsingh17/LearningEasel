@@ -16,6 +16,7 @@ import com.example.learningeasle.R;
 import com.example.learningeasle.model.AdapterBookmark;
 import com.example.learningeasle.model.AdapterPost;
 import com.example.learningeasle.model.modelpost;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,6 +34,7 @@ public class UserBookmarkFragment extends Fragment {
     RecyclerView recyclerView;
     List<modelpost> bookmarkList, filteredList;
     AdapterBookmark adapterBookmark;
+    ShimmerFrameLayout shimmerFrameLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class UserBookmarkFragment extends Fragment {
         recyclerView = view.findViewById(R.id.bookmarkRecyclerview);
         bookmarkList = new ArrayList<>();
         filteredList = new ArrayList<>();
+        shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
@@ -54,8 +57,6 @@ public class UserBookmarkFragment extends Fragment {
 
 
         final HashMap<String, Boolean> hashMap = new HashMap<>();
-
-
 
 
         loadBookmarks(new OnDataReceiveCallback() {

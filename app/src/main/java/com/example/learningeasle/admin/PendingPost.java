@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.example.learningeasle.R;
 import com.example.learningeasle.model.modelpost;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,7 +30,7 @@ public class PendingPost extends Fragment {
     RecyclerView recyclerView;
     List<modelpost> modelpostList;
     AdapterPendingPost adapterPendingPost;
-
+    ShimmerFrameLayout shimmerFrameLayout;
     public PendingPost() {
         // Required empty public constructor
     }
@@ -47,16 +48,13 @@ public class PendingPost extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pending_post, container, false);
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Loading...");
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
         recyclerView = view.findViewById(R.id.postsRecyclerview);
+        shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
         setHasOptionsMenu(true);
-
+        shimmerFrameLayout.startShimmer();
         loadAllPendingPost();
         return  view;
     }
@@ -78,7 +76,9 @@ public class PendingPost extends Fragment {
                 }
                 adapterPendingPost = new AdapterPendingPost(getActivity(),modelpostList);
                 recyclerView.setAdapter(adapterPendingPost);
-                progressDialog.dismiss();
+                recyclerView.setVisibility(View.VISIBLE);
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
 
             }
 

@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import com.example.learningeasle.R;
 import com.example.learningeasle.model.AdapterPost;
 import com.example.learningeasle.model.modelpost;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,6 +39,7 @@ public class AdminPostFragment extends Fragment {
     View view;
     ProgressBar progressBar;
     String oldestpost = "";
+    ShimmerFrameLayout shimmerFrameLayout;
     public AdminPostFragment() {
         // Required empty public constructor
     }
@@ -54,16 +56,14 @@ public class AdminPostFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view =  inflater.inflate(R.layout.fragment_admin_post, container, false);
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Loading...");
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
         recyclerView = view.findViewById(R.id.postsRecyclerview);
         progressBar = view.findViewById(R.id.progressBar_loading);
+        shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
         setHasOptionsMenu(true);
+        shimmerFrameLayout.startShimmer();
         loadStartingPost();
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -107,7 +107,10 @@ public class AdminPostFragment extends Fragment {
 
                 adapteradminPost = new AdapterAdminPost(getContext(),modelpostList);
                 recyclerView.setAdapter(adapteradminPost);
-                progressDialog.dismiss();
+                //progressDialog.dismiss();
+                recyclerView.setVisibility(View.VISIBLE);
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
             }
 
 

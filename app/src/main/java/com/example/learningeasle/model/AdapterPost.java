@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.text.format.DateFormat;
@@ -26,6 +27,8 @@ import com.example.learningeasle.PostDetailActivity;
 import com.example.learningeasle.R;
 import com.example.learningeasle.UserDetails.UserProfile;
 import com.example.learningeasle.ViewImage;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -85,6 +88,17 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         final String pType = postList.get(position).getpType();
         String pLikes = postList.get(position).getpLikes();
 
+        //Initialise Shimmer
+        Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
+                .setBaseColor(Color.parseColor("#F3F3F3"))
+                .setBaseAlpha(1)
+                .setHighlightColor(Color.parseColor("#E7E7E7"))
+                .setHighlightAlpha(1)
+                .setDropoff(50)
+                .build();
+        //Initialise shimmer Drawable
+        ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
+        shimmerDrawable.setShimmer(shimmer);
 
         System.out.println(uName+" "+pTitle+" "+pDescription+" "+pTimeStamp);
 
@@ -138,7 +152,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         if (url.equals("empty"))
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
-            Picasso.get().load(url).into(holder.uDp);
+            Picasso.get().load(url).placeholder(shimmerDrawable).into(holder.uDp);
         final Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
 
@@ -155,7 +169,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         } else {
             try {
                 holder.pImage.setVisibility(View.VISIBLE);
-                Picasso.get().load(pImage).placeholder(R.drawable.ic_default).fit().centerCrop().into(holder.pImage);
+                Picasso.get().load(pImage).placeholder(shimmerDrawable).fit().centerCrop().into(holder.pImage);
             } catch (Exception e) {
             }
         }

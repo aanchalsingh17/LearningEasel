@@ -17,6 +17,7 @@ import com.example.learningeasle.MainFragments.PostFragment;
 import com.example.learningeasle.R;
 import com.example.learningeasle.model.Adapter;
 import com.example.learningeasle.model.modelpost;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,6 +36,7 @@ public class UserPostsFragment extends Fragment {
     List<modelpost> modelpostList;
     Adapter adapterPost;
     String userID;
+    ShimmerFrameLayout shimmerFrameLayout;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,11 +48,13 @@ public class UserPostsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_user_posts, container, false);
         postlist = view.findViewById(R.id.posts);
+        shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
         postlist.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
+        shimmerFrameLayout.startShimmer();
         loadPosts();
         return  view;
     }
@@ -80,6 +84,9 @@ public class UserPostsFragment extends Fragment {
 
                 adapterPost = new Adapter(getActivity(), modelpostList, editClick);
                 postlist.setAdapter(adapterPost);
+                shimmerFrameLayout.stopShimmer();
+                postlist.setVisibility(View.VISIBLE);
+                shimmerFrameLayout.setVisibility(View.GONE);
             }
 
             @Override

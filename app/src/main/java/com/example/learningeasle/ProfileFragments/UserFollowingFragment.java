@@ -67,24 +67,6 @@ public class UserFollowingFragment extends Fragment {
                 follows.setAdapter(adapterfollow);
             }
         });
-        follows.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if(newState== AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
-                    loading.setVisibility(View.VISIBLE);
-                    loadList(new OnDataReceiveCallback() {
-                        @Override
-                        public void onDataReceived(List<ModelUsers> usersList) {
-                            loading.setVisibility(View.INVISIBLE);
-                            adapterfollow = new AdapterUsers(getActivity(),usersList);
-                            adapterfollow.notifyDataSetChanged();
-                            follows.setAdapter(adapterfollow);
-                        }
-                    });
-                }
-            }
-        });
         return view;
     }
 
@@ -97,9 +79,8 @@ public class UserFollowingFragment extends Fragment {
 
 
         reference = FirebaseDatabase.getInstance().getReference().child("Users").child(Uid).child("Following");
-        if(first) {
             progressBar.setVisibility(View.VISIBLE);
-            reference.limitToLast(5).addListenerForSingleValueEvent(new ValueEventListener() {
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -136,51 +117,6 @@ public class UserFollowingFragment extends Fragment {
                     progressBar.setVisibility(View.GONE);
                 }
             });
-            first = false;
-        }else{
-           // loading.setVisibility(View.VISIBLE);
-            final boolean[] start = {true};
-            reference.orderByKey().startAt(oldestfollowing).limitToLast(5).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.getChildrenCount() == 0) {
-                        loading.setVisibility(View.GONE);
-                        callback.onDataReceived(usersList);
-                    }
-                    System.out.println(snapshot.getChildrenCount() + " = size");
-                    for (DataSnapshot ds : snapshot.getChildren()) {
-                        if (!start[0]) {
-                            final String userid = (String) ds.getValue();
-                            oldestfollowing = ds.getKey();
-                            System.out.println(userid + " = user of list");
-                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
-                            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    HashMap<Object, String> hashMap = (HashMap<Object, String>) snapshot.getValue();
-                                    ModelUsers users = new ModelUsers(hashMap.get("Id"), hashMap.get("Name"), hashMap.get("Url"), hashMap.get("email"), hashMap.get("phone"), hashMap.get("status"));
-                                    usersList.add(users);
-                                    callback.onDataReceived(usersList);
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-                                    loading.setVisibility(View.INVISIBLE);
-                                }
-                            });
-                        }else{
-                            start[0] = false;
-                        }
-                    }
-                   // loading.setVisibility(View.INVISIBLE);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    loading.setVisibility(View.INVISIBLE);
-                }
-            });
-        }
 
     }
 }

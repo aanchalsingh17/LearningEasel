@@ -58,7 +58,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     String myId;
     View view;
     boolean processLike = false;
-    String pId;
+
     public AdapterPost(Context context, List<modelpost> postList) {
         this.context = context;
         this.postList = postList;
@@ -84,7 +84,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         final String pDescription = postList.get(position).getpDesc();
         final String pImage = postList.get(position).getpImage();
         final String pTimeStamp = postList.get(position).getpTime();
-        pId = postList.get(position).getpId();
+        final String pId = postList.get(position).getpId();
         final String pType = postList.get(position).getpType();
         String pLikes = postList.get(position).getpLikes();
 
@@ -100,7 +100,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
         shimmerDrawable.setShimmer(shimmer);
 
-        System.out.println(uName+" "+pTitle+" "+pDescription+" "+pTimeStamp);
+        System.out.println(pTitle+" "+pDescription+" "+pName);
+
 
 
         final String[] viewsCount = new String[1];

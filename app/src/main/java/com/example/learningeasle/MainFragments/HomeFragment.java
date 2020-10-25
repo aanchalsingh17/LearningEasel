@@ -62,7 +62,7 @@ public class HomeFragment extends Fragment {
     List<modelpost> modelpostList;
     AdapterPost adapterPost;
     String email;
-    ArrayList<String> interest;
+    ArrayList<String> interest, following;
     ProgressBar progressBar;
     String oldestPost = "";
     ShimmerFrameLayout shimmerFrameLayout;
@@ -86,7 +86,7 @@ public class HomeFragment extends Fragment {
                              final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-         progressBar = view.findViewById(R.id.progressBar_loading);
+        progressBar = view.findViewById(R.id.progressBar_loading);
 //        progressBar.setVisibility(View.VISIBLE);
         /*progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading...");
@@ -101,13 +101,14 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
         setHasOptionsMenu(true);
-        interest=new ArrayList<>();
+        interest = new ArrayList<>();
+        following = new ArrayList<>();
         getUserDetails();
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if(newState==AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
                     progressBar.setVisibility(View.VISIBLE);
                     loadPosts();
                 }
@@ -117,9 +118,10 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
+
     private void getStartingPost() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-        ref.limitToFirst(3).addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.limitToFirst(10).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelpostList.clear();
@@ -129,15 +131,17 @@ public class HomeFragment extends Fragment {
 //                    if(FirebaseDatabase.getInstance().getReference(""))
                     oldestPost = dataSnapshot.getKey();
                     modelpost post;
-                    if (hashMap.get("pLikes") == null && interest.contains(hashMap.get("type"))) {
+                    System.out.println(hashMap.get("pId"));
+                    if (hashMap.get("pLikes") == null && (interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId")))) {
+//                        System.out.println(hashMap.get("pId"));
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                 hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                hashMap.get("pComments").toString(),hashMap.get("type").toString());
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString());
                         modelpostList.add(post);
-                    } else if(interest.contains(hashMap.get("type"))) {
+                    } else if (interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId"))) {
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                 hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                hashMap.get("pComments").toString(),hashMap.get("type").toString());
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString());
                         modelpostList.add(post);
                     }
 
@@ -147,9 +151,9 @@ public class HomeFragment extends Fragment {
                 adapterPost = new AdapterPost(getActivity(), modelpostList);
                 recyclerView.setAdapter(adapterPost);
                 recyclerView.setVisibility(View.VISIBLE);
-               // progressDialog.dismiss();
-               shimmerFrameLayout.stopShimmer();
-               shimmerFrameLayout.setVisibility(View.GONE);
+                // progressDialog.dismiss();
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
             }
 
             @Override
@@ -165,30 +169,48 @@ public class HomeFragment extends Fragment {
         final String pId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
-
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot db:snapshot.getChildren()) {
+                for (final DataSnapshot db : snapshot.getChildren()) {
                     HashMap<Object, String> hashMap = (HashMap<Object, String>) db.getValue();
                     if (hashMap.get("Id").equals(pId)) {
-                        email=hashMap.get("email");
-                        email=email.substring(0,email.length()-4);
+                        email = hashMap.get("email");
+                        email = email.substring(0, email.length() - 4);
 
                         interest.clear();
-                        DatabaseReference ref1=FirebaseDatabase.getInstance().getReference("Users").child(db.getKey()).child(email);
-                        ref1.addValueEventListener(new ValueEventListener() {
+                        DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("Users").child(db.getKey()).child("Following");
+                        ref2.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
-                                    if(dataSnapshot.getValue().equals("1"))
-                                        interest.add(dataSnapshot.getKey());
+                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                    following.add(dataSnapshot.getKey());
+                                    System.out.println(dataSnapshot.getKey() + " = key");
                                 }
-                                //loadPosts();
+
+                                DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference("Users").child(db.getKey()).child(email);
+                                ref1.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                            if (dataSnapshot.getValue().equals("1"))
+                                                interest.add(dataSnapshot.getKey());
+                                        }
+                                        //loadPosts();
+
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
 
                                 shimmerFrameLayout.startShimmer();
                                 getStartingPost();
+
                             }
 
                             @Override
@@ -196,6 +218,7 @@ public class HomeFragment extends Fragment {
 
                             }
                         });
+
 
                     }
                 }
@@ -219,22 +242,22 @@ public class HomeFragment extends Fragment {
                     final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
 //                    if(FirebaseDatabase.getInstance().getReference(""))
                     oldestPost = dataSnapshot.getKey();
-                        modelpost post;
-                        if(!start[0]) {
-                            if (hashMap.get("pLikes") == null && interest.contains(hashMap.get("type"))) {
-                                post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                        hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                        hashMap.get("pComments").toString(), hashMap.get("type").toString());
-                                modelpostList.add(post);
-                            } else if (interest.contains(hashMap.get("type"))) {
-                                post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                        hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                        hashMap.get("pComments").toString(), hashMap.get("type").toString());
-                                modelpostList.add(post);
-                            }
-                        }else{
-                            start[0] = false;
+                    modelpost post;
+                    if (!start[0]) {
+                        if (hashMap.get("pLikes") == null && (interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId")))) {
+                            post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                    hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
+                                    hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                            modelpostList.add(post);
+                        } else if ((interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId")))) {
+                            post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                    hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
+                                    hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                            modelpostList.add(post);
                         }
+                    } else {
+                        start[0] = false;
+                    }
 
                 }
 
@@ -256,8 +279,8 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.interests,menu);
-        MenuItem menuItem=menu.findItem(R.id.interests);
+        inflater.inflate(R.menu.interests, menu);
+        MenuItem menuItem = menu.findItem(R.id.interests);
 //        Button button= (Button) menuItem.getActionView();
         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override

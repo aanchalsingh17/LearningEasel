@@ -70,7 +70,7 @@ public class UserProfile extends AppCompatActivity {
                         .child(curruid);
                 final DatabaseReference reffollowers = FirebaseDatabase.getInstance().getReference("Users")
                         .child(Id);
-                  reffollowing.addValueEventListener(new ValueEventListener() {
+                  reffollowing.addListenerForSingleValueEvent(new ValueEventListener() {
                       @Override
                       public void onDataChange(@NonNull DataSnapshot snapshot) {
                           if(snapshot.child("Following").hasChild(Id)){

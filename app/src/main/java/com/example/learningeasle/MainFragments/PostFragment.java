@@ -35,6 +35,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.learningeasle.MainActivity;
 import com.example.learningeasle.R;
+import com.example.learningeasle.ViewAttachement;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -69,16 +70,16 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     View view;
     UploadTask uploadTask;
      EditText et_title, et_desc;
-    FloatingActionButton post_btn,video_btn,view_attached,pdf_btn;
+    FloatingActionButton post_btn,video_btn,view_attached,pdf_btn,audio_btn,view_btn;
     ImageView img_post;
     String pName, url="empty";
-    Uri image_rui = null,videouri=null,pdfuri=null;
+    Uri image_rui = null,videouri=null,pdfuri=null,audiouri=null;
     ProgressDialog pd;
     ProgressBar progressBar;
     String edit,id,time,title,des,image,email;
     String pLikes="0",pComments="0";
     Spinner spinner;
-    String videourl="empty",pdfUrl="empty";
+    String videourl="empty",pdfUrl="empty",audiourrl="empty";
     ArrayAdapter<String> adapter;
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
@@ -90,7 +91,8 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     ArrayList<String> interests;
     ProgressDialog progressDialog;
     private int PDF_REQUEST = 1004;
-
+    private int AUDIO_REQUEST=104;
+    boolean visible = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -129,15 +131,28 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         video_btn = view.findViewById(R.id.video_upload);
         view_attached = view.findViewById(R.id.view_attached);
         pdf_btn = view.findViewById(R.id.pdf_upload);
-
+        view_btn = view.findViewById(R.id.view);
+        audio_btn = view.findViewById(R.id.audio_upload);
 
         //When attached button is clicked make visiblity of video n pdf button visible
 
         view_attached.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                video_btn.setVisibility(View.VISIBLE);
-                pdf_btn.setVisibility(View.VISIBLE);
+                //If views are visible make them invisible and vice-versa
+                if(!visible) {
+                    video_btn.setVisibility(View.VISIBLE);
+                    pdf_btn.setVisibility(View.VISIBLE);
+                    view_btn.setVisibility(View.VISIBLE);
+                    audio_btn.setVisibility(View.VISIBLE);
+                    visible = true;
+                }else{
+                    video_btn.setVisibility(View.INVISIBLE);
+                    pdf_btn.setVisibility(View.INVISIBLE);
+                    view_btn.setVisibility(View.INVISIBLE);
+                    audio_btn.setVisibility(View.INVISIBLE);
+                    visible = false;
+                }
             }
         });
         //pdfbtn is clicked pdf attachment work started
@@ -161,6 +176,30 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         reference = FirebaseStorage.getInstance().getReference();
         spinner = (Spinner) view.findViewById(R.id.spinner);
 
+        view_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent view_page = new Intent(getActivity(), ViewAttachement.class);
+                if(videouri==null){
+                    view_page.putExtra("videourl","empty");
+                }else{
+                    view_page.putExtra("videourl",videouri.toString());
+                }
+                if(pdfuri==null){
+                    view_page.putExtra("pdfurl","empty");
+                }
+                else{
+                    view_page.putExtra("pdfurl",pdfuri.toString());
+                }
+
+                if(audiouri==null){
+                    view_page.putExtra("audiourl","empty");
+                }else{
+                    view_page.putExtra("audiourl",audiouri.toString());
+                }
+                startActivity(view_page);
+            }
+        });
 
         getUserDetails();
         progressDialog = new ProgressDialog(getActivity());
@@ -181,6 +220,16 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         }
 //        imgclick(view);
 //        postclick(view);
+        //audio_btn is clicked upload audio file
+        audio_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("audio/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent,AUDIO_REQUEST);
+            }
+        });
         trigger();
 
         // Inflate the layout for this fragment
@@ -350,6 +399,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                                 hashMap.put("type", type);
                                 hashMap.put("videourl",videourl);
                                 hashMap.put("pdfurl",pdfUrl);
+                                hashMap.put("audiourl",audiourrl);
                                 hashMap.put("order",-System.currentTimeMillis());
 //                                hashMap.put("views","0");
 
@@ -428,6 +478,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 hashMap.put("type", type);
                 hashMap.put("videourl",videourl);
                 hashMap.put("pdfurl",pdfUrl);
+                hashMap.put("audiourl",audiourrl);
                 hashMap.put("order",-System.currentTimeMillis());
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");
                 ref.child(timeStamp).setValue(hashMap)
@@ -599,7 +650,39 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 uploadPdf(pdfuri);
             }
         }
+        if(resultCode==RESULT_OK){
+            if(requestCode==AUDIO_REQUEST){
+                audiouri = data.getData();
+                uploadAudio(audiouri);
+            }
+        }
 
+    }
+
+    private void uploadAudio(Uri audiouri) {
+        if(audiouri!=null){
+            final String timeStamp;
+            //If post is to be edited then timestamp is going to be the time stamp of the post to be edited not the current timestamp
+            if (edit.equals("EditPost"))
+                timeStamp = time;
+            else
+                timeStamp = String.valueOf(System.currentTimeMillis());
+
+            final StorageReference des = reference.child("Audio/"+ timeStamp + "/" + "audio."+getExt(audiouri));
+            uploadTask = des.putFile(audiouri);
+            des.putFile(audiouri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    des.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                             audiourrl= uri.toString();
+                            Toast.makeText(getActivity(),"Audio File Attached",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        }
     }
 
     private void uploadPdf(Uri pdfuri) {

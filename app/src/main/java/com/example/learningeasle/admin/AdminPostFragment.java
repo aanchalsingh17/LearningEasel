@@ -101,12 +101,14 @@ public class AdminPostFragment extends Fragment {
                     if (hashMap.get("pLikes") == null) {
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                 hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString());
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString(),
+                                hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString(),hashMap.get("audiourl").toString());
                         modelpostList.add(post);
                     } else  {
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                 hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString());
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("videourl").toString(),
+                                hashMap.get("pdfurl").toString(),hashMap.get("audiourl").toString());
                         modelpostList.add(post);
                     }
 
@@ -142,12 +144,14 @@ public class AdminPostFragment extends Fragment {
                         if (hashMap.get("pLikes") == null) {
                             post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                     hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                    hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString());
+                                    hashMap.get("pComments").toString(), hashMap.get("type").toString(),
+                                    hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString(),hashMap.get("audiourl").toString());
                             modelpostList.add(post);
                         } else {
                             post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                     hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                    hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString());
+                                    hashMap.get("pComments").toString(), hashMap.get("type").toString(),
+                                    hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString(),hashMap.get("audiourl").toString());
                             modelpostList.add(post);
                         }
                     }else{

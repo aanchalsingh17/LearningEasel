@@ -57,6 +57,7 @@ public class FullView extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_full_view);
         image = findViewById(R.id.fullview);
         user = FirebaseAuth.getInstance().getCurrentUser();

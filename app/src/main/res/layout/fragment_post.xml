@@ -37,7 +37,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+
             android:layout_marginBottom="5dp"
+
             android:background="@drawable/interest_shaper"
             android:fontFamily="@font/ubuntu"
             android:hint="Add a title.."
@@ -81,6 +83,7 @@
 
 
     </LinearLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/post_button"
         android:layout_width="wrap_content"

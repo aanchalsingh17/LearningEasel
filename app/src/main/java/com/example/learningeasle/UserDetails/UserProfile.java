@@ -111,7 +111,6 @@ public class UserProfile extends AppCompatActivity {
 
             }
         });
-
     }
 
     private void loadposts() {

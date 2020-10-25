@@ -132,7 +132,7 @@ public class HomeFragment extends Fragment {
 
 
     private void getStartingPost() {
-        query.limitToFirst(10).addListenerForSingleValueEvent(new ValueEventListener() {
+        query.limitToFirst(10).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelpostList.clear();
@@ -183,7 +183,7 @@ public class HomeFragment extends Fragment {
 
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (final DataSnapshot db : snapshot.getChildren()) {
@@ -248,7 +248,7 @@ public class HomeFragment extends Fragment {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         final boolean[] start = {true};
-        query.startAt(oldestPost).limitToFirst(4).addListenerForSingleValueEvent(new ValueEventListener() {
+        query.startAt(oldestPost).limitToFirst(4).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {

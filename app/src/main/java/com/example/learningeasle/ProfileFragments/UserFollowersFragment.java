@@ -89,24 +89,26 @@ public class UserFollowersFragment extends Fragment {
                     progressBar.setVisibility(View.GONE);
                     callback.onDataReceived(usersList);
                 }
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    final String uid = (String) ds.getValue();
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(uid);
-                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            HashMap<Object, String> hashMap = (HashMap<Object, String>) snapshot.getValue();
-                            ModelUsers users = new ModelUsers(hashMap.get("Id"), hashMap.get("Name"), hashMap.get("Url"), hashMap.get("email"), hashMap.get("phone"), hashMap.get("status"));
-                            usersList.add(users);
-                            callback.onDataReceived(usersList);
-                        }
+                else {
+                    for (DataSnapshot ds : snapshot.getChildren()) {
+                        final String uid = (String) ds.getValue();
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(uid);
+                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                HashMap<Object, String> hashMap = (HashMap<Object, String>) snapshot.getValue();
+                                ModelUsers users = new ModelUsers(hashMap.get("Id"), hashMap.get("Name"), hashMap.get("Url"), hashMap.get("email"), hashMap.get("phone"), hashMap.get("status"));
+                                usersList.add(users);
+                                callback.onDataReceived(usersList);
+                            }
 
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            progressBar.setVisibility(View.GONE);
-                        }
-                    });
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        });
+                    }
                 }
 
             }

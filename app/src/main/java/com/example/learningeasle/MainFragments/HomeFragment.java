@@ -28,6 +28,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.learningeasle.PickInterests;
+import com.example.learningeasle.PushNotifications.Token;
 import com.example.learningeasle.R;
 import com.example.learningeasle.model.AdapterPost;
 import com.example.learningeasle.model.modelpost;
@@ -37,6 +38,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,6 +48,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -101,6 +104,14 @@ public class HomeFragment extends Fragment {
         interest = new ArrayList<>();
         following = new ArrayList<>();
 
+
+        System.out.println(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        FirebaseUser firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
+        String refreshToken= FirebaseInstanceId.getInstance().getToken();
+        System.out.println(refreshToken+" refresh");
+        Token token= new Token(refreshToken);
+        FirebaseDatabase.getInstance().getReference("Tokens").child(firebaseUser.getUid()).setValue(token);
+
         query = FirebaseDatabase.getInstance().getReference("Posts")
                 .orderByChild("order");
         getUserDetails();
@@ -118,6 +129,7 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
+
 
     private void getStartingPost() {
         query.limitToFirst(10).addListenerForSingleValueEvent(new ValueEventListener() {

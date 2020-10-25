@@ -171,8 +171,7 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
                 android:paddingRight="4dp"
-                android:drawableLeft="@drawable/ic_views"
-                android:text="100"/>
+                android:drawableLeft="@drawable/ic_views"/>
         </LinearLayout>
 
         <View

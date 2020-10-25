@@ -20,6 +20,7 @@
     <string name="menu_follow">Following</string>
     <string name="menu_post">Post</string>
     <string name="interest_prompt">Choose an Interest</string>
+    <string name="default_notification_channel_id">alarm_channel_id_01</string>
 
     <string-array name="interests">
         <item>Science</item>

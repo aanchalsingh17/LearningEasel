@@ -183,12 +183,12 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             @Override
             public void onClick(View view) {
 //                Toast.makeText(context, "Like", Toast.LENGTH_SHORT).show();
-                final int pLikes;
+                final int[] pLikes = new int[1];
                 String likes = postList.get(position).getpLikes();
                 if (likes == null)
-                    pLikes = 0;
+                    pLikes[0] = 0;
                 else
-                    pLikes = Integer.parseInt(postList.get(position).getpLikes());
+                    pLikes[0] = Integer.parseInt(postList.get(position).getpLikes());
                 processLike = true;
                 final String stamp = postList.get(position).getpTime();
                 postsref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -197,12 +197,12 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 //
 //                        if (processLike)
                             if (snapshot.child(stamp).child("Likes").hasChild(myId)) {
-                                postsref.child(stamp).child("pLikes").setValue("" + (pLikes - 1));
+                                postsref.child(stamp).child("pLikes").setValue("" + (pLikes[0] - 1));
                                 postsref.child(stamp).child("Likes").child(myId).removeValue();
                                 processLike = false;
                             } else {
 
-                                postsref.child(stamp).child("pLikes").setValue("" + (pLikes + 1));
+                                postsref.child(stamp).child("pLikes").setValue("" + (pLikes[0] + 1));
                                 postsref.child(stamp).child("Likes").child(myId).setValue("Liked");
                                 processLike = false;
                             }

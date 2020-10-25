@@ -13,9 +13,12 @@ import com.example.learningeasle.MainFragments.HomeFragment;
 import com.example.learningeasle.MainFragments.PostFragment;
 import com.example.learningeasle.MainFragments.ProfileFragment;
 import com.example.learningeasle.MainFragments.UsersFragment;
+import com.example.learningeasle.PushNotifications.Token;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.scrollable, new HomeFragment(), "H").commit();
 
     }
+
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener listener1 =
             new BottomNavigationView.OnNavigationItemSelectedListener() {

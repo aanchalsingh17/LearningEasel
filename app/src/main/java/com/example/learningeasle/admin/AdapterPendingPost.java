@@ -1,45 +1,38 @@
 package com.example.learningeasle.admin;
 
-import android.app.AlarmManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.signature.ObjectKey;
-import com.example.learningeasle.MainActivity;
+import com.example.learningeasle.PushNotifications.APIService;
+import com.example.learningeasle.PushNotifications.Client;
+import com.example.learningeasle.PushNotifications.Data;
+import com.example.learningeasle.PushNotifications.NotificationSender;
+import com.example.learningeasle.PushNotifications.MyResponse;
 import com.example.learningeasle.R;
 import com.example.learningeasle.ViewAttachement;
 import com.example.learningeasle.ViewImage;
-import com.example.learningeasle.model.ModelUsers;
 import com.example.learningeasle.model.modelpost;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
@@ -50,6 +43,7 @@ import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.PendingHolder> {
 
@@ -58,10 +52,12 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
     View view;
     boolean notify;
     String userId;
-    String pTitle;
+
+    private APIService apiService;
     public AdapterPendingPost(Context context, List<modelpost> pendingpostList) {
         this.context = context;
         this.pendingpostList = pendingpostList;
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
     }
 
@@ -76,7 +72,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
     public void onBindViewHolder(@NonNull PendingHolder holder, int position) {
         final String uName = pendingpostList.get(position).getpName();
         final String url = pendingpostList.get(position).getuImage();
-         pTitle = pendingpostList.get(position).getpTitle();
+         final String pTitle = pendingpostList.get(position).getpTitle();
         final String pDescription = pendingpostList.get(position).getpDesc();
         final String pImage = pendingpostList.get(position).getpImage();
        final String  pTimeStamp = pendingpostList.get(position).getpTime();
@@ -159,6 +155,18 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
                     }
                 });
 
+                FirebaseDatabase.getInstance().getReference().child("Tokens").child(pId).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String usertoken=dataSnapshot.getValue(String.class);
+                        sendNotifications(usertoken, "Admin published your post - "+pTitle,pDescription);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
         //If admin cancel the post then delete the post from the pending post list and dont publish it
@@ -181,6 +189,18 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
                     }
                 });
 
+                FirebaseDatabase.getInstance().getReference().child("Tokens").child(pId).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String usertoken=dataSnapshot.getValue(String.class);
+                        sendNotifications(usertoken, "Admin disapproved your post - "+pTitle,pDescription);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
         if(!videourl.equals("empty")){
@@ -196,6 +216,26 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
         });
     }
 
+
+    public void sendNotifications(String usertoken, String title, String message) {
+        Data data = new Data(title, message);
+        NotificationSender sender = new NotificationSender(data, usertoken);
+        apiService.sendNotifcation(sender).enqueue(new Callback<MyResponse>() {
+            @Override
+            public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().isSuccessful != 1) {
+                        Toast.makeText(context, "Failed ", Toast.LENGTH_LONG);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MyResponse> call, Throwable t) {
+
+            }
+        });
+    }
 
     @Override
     public int getItemCount() {

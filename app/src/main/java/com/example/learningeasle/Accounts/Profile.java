@@ -85,6 +85,7 @@ public class Profile extends AppCompatActivity {
                 askCameraPermission();
             }
         });
+        //Register is Clicked move forward to next activity
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,7 +98,7 @@ public class Profile extends AppCompatActivity {
         });
 
     }
-
+   //Update the Image Url in Realtmedatabase
     private void registerUser() {
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         ref.addValueEventListener(new ValueEventListener() {
@@ -162,7 +163,7 @@ public class Profile extends AppCompatActivity {
         return profileimage;
     }
 
-
+    //Take the picture and retrieve its uri
     private void dispatchTakePictureIntent() {
         Intent TakePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (TakePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -219,7 +220,7 @@ public class Profile extends AppCompatActivity {
             progressDialog.setMessage("Saving...");
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
-
+           //Uploading the image to Cloud Storage
             final StorageReference fileref = storagereference.child("Users/" + fUser.getUid() + "/Images.jpeg");
 
 

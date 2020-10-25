@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,12 +20,13 @@ import com.example.learningeasle.model.AdapterPost;
 import com.example.learningeasle.model.modelpost;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.core.OrderBy;
 
 import java.util.ArrayList;
@@ -38,8 +40,10 @@ public class AdminPostFragment extends Fragment {
     AdapterAdminPost adapteradminPost;
     View view;
     ProgressBar progressBar;
-    String oldestpost = "";
+    long oldestpost;
     ShimmerFrameLayout shimmerFrameLayout;
+    Query query;
+    String oldestLiked;
     public AdminPostFragment() {
         // Required empty public constructor
     }
@@ -64,8 +68,12 @@ public class AdminPostFragment extends Fragment {
         modelpostList = new ArrayList<>();
         setHasOptionsMenu(true);
         shimmerFrameLayout.startShimmer();
+        //Creating a Firebase Query to order my posts child in decreasing order of their time stamp
+        query = FirebaseDatabase.getInstance().getReference("Posts")//.orderByKey();
+                .orderByChild("order");
         loadStartingPost();
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+       recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -81,24 +89,24 @@ public class AdminPostFragment extends Fragment {
     }
 
     private void loadStartingPost() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-        reference.limitToFirst(4).addListenerForSingleValueEvent(new ValueEventListener() {
+        query.limitToFirst(5).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelpostList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
+                    final HashMap<Object, Object> hashMap = (HashMap<Object, Object>) dataSnapshot.getValue();
                     modelpost post;
-                    oldestpost = dataSnapshot.getKey();
+                    oldestpost = (long) hashMap.get("order");
+                  //  oldestLiked = (String) hashMap.get("pLikes");
                     if (hashMap.get("pLikes") == null) {
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                 hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString());
                         modelpostList.add(post);
                     } else  {
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                 hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString());
                         modelpostList.add(post);
                     }
 
@@ -122,25 +130,24 @@ public class AdminPostFragment extends Fragment {
     }
 
     private void getAllPost() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
         final boolean[] first = {true};
-        reference.orderByKey().startAt(oldestpost).limitToFirst(4).addListenerForSingleValueEvent(new ValueEventListener() {
+        query.startAt(oldestpost).limitToFirst(4).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
+                    final HashMap<Object, Object> hashMap = (HashMap<Object, Object>) dataSnapshot.getValue();
                     modelpost post;
-                    oldestpost = dataSnapshot.getKey();
+                    oldestpost = (long) hashMap.get("order");
                     if(!first[0]) {
                         if (hashMap.get("pLikes") == null) {
                             post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                     hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                    hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                                    hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString());
                             modelpostList.add(post);
                         } else {
                             post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                     hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                    hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                                    hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString());
                             modelpostList.add(post);
                         }
                     }else{
@@ -154,6 +161,38 @@ public class AdminPostFragment extends Fragment {
                 recyclerView.setAdapter(adapteradminPost);
                 adapteradminPost.notifyDataSetChanged();
                 progressBar.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        query.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                if(getActivity()!=null) {
+                    getActivity().finish();
+                    getActivity().overridePendingTransition(0, 0);
+                    startActivity(getActivity().getIntent());
+                    getActivity().overridePendingTransition(0, 0);
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
             }
 
             @Override

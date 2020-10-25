@@ -20,7 +20,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.learningeasle.PostDetailActivity;
 import com.example.learningeasle.R;
 import com.example.learningeasle.UserDetails.UserProfile;
+import com.example.learningeasle.ViewAttachement;
 import com.example.learningeasle.ViewImage;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -62,7 +64,12 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
         final String pTimeStamp = postList.get(position).getpTime();
         final String pId = postList.get(position).getpId();
         final String pType = postList.get(position).getpType();
+        final String videourl = postList.get(position).getVideourl();
 
+        if (!videourl.equals("empty")) {
+            holder.attachement.setVisibility(View.VISIBLE);
+
+        }
 
         System.out.println(pTitle+" in bookmarks "+pDescription);
 
@@ -120,6 +127,14 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
 
             }
         });
+        holder.attachement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl",videourl);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -131,7 +146,7 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
 
         ImageView uDp,pImage;
         TextView uName, pTime, pTitle, pDesc,pType;
-
+        FloatingActionButton attachement;
         public MyHolder(@NonNull View itemView) {
             super(itemView);
             uDp = itemView.findViewById(R.id.uDp);
@@ -141,6 +156,7 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
             pTitle = itemView.findViewById(R.id.ptitle);
             pDesc = itemView.findViewById(R.id.pdesc);
             pType=itemView.findViewById(R.id.pType);
+            attachement = itemView.findViewById(R.id.view_attached);
         }
     }
 }

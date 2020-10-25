@@ -125,10 +125,12 @@ public class UserProfile extends AppCompatActivity {
                     modelpost post = null;
                     if (hashMap.get("pLikes") == null && hashMap.get("pId").equals(Id)) {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
-                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), "0",hashMap.get("pComments"),hashMap.get("type"));
+                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), "0",hashMap.get("pComments"),hashMap.get("type"),
+                                hashMap.get("videourl"),hashMap.get("pdfurl"));
                     } else if (hashMap.get("pId").equals(Id)) {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
-                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), hashMap.get("pLikes"),hashMap.get("pComments"),hashMap.get("type"));
+                                hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), hashMap.get("pLikes"),
+                                hashMap.get("pComments"),hashMap.get("type"),hashMap.get("videourl"),hashMap.get("pdfurl"));
                     }
                     if(post!=null)
                         modelpostList.add(post);

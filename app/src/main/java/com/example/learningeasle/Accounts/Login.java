@@ -121,6 +121,7 @@ public class Login extends AppCompatActivity {
             });
 
         }
+        //Checking the status of the check box whether its checked or not
         admin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -133,6 +134,7 @@ public class Login extends AppCompatActivity {
 
             }
         });
+        //Login button is clicked check the credentials ans perform accordingly
         loginBtn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -264,7 +266,7 @@ public class Login extends AppCompatActivity {
             }
         });
     }
-
+    //After Google SignIn task is Completed and user info in the Database Users Section
     private void addUserInfo(final FirebaseUser user) {
         final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
         if (account != null) {
@@ -306,7 +308,8 @@ public class Login extends AppCompatActivity {
                         myRef.child("Architecture").setValue("0");
 
                         System.out.println("pick");
-
+                        //If signing in for the first time using gmail then go to PickInterests Activity otherwise
+                        //Skip this and go to main Activity
                         startActivity(new Intent(Login.this, PickInterests.class));
                         finish();
 
@@ -350,7 +353,9 @@ public class Login extends AppCompatActivity {
                               reference.addValueEventListener(new ValueEventListener() {
                                   @Override
                                   public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                                     //If admin login is true means user want to log in as admin
+                                      //check whether user is admin or not and perform accordingly
+                                      //If admin login in false then go to else part
                                       if (adminlogin) {
                                           if (snapshot.hasChild(fUser.getUid())) {
                                               Toast.makeText(Login.this, "Welcome Admin!!", Toast.LENGTH_SHORT).show();

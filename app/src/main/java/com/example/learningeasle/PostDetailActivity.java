@@ -190,7 +190,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
                     modelComment = new ModelComment(hashMap.get("cId"), hashMap.get("comment"), hashMap.get("timeStamp"),
                             hashMap.get("uId"),
-                            hashMap.get("uDp"), hashMap.get("uName"));
+                            hashMap.get("uDp"), hashMap.get("uName"),hashMap.get("postId"));
 
                     commentList.add(modelComment);
 
@@ -262,7 +262,7 @@ public class PostDetailActivity extends AppCompatActivity {
         hashMap.put("uId", myId);
         hashMap.put("uDp", myDp);
         hashMap.put("uName", myName);
-
+        hashMap.put("postId",postId);
         ref.child(timeStamp).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {

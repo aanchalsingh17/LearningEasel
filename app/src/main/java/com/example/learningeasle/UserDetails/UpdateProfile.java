@@ -229,7 +229,6 @@ public class UpdateProfile extends AppCompatActivity {
                 File f = new File(currentPhotoPath);
                 imageuri = Uri.fromFile(f);
 
-
                 profileimage.setImageURI(imageuri);
                 uploadImageToFirebase(imageuri);
 
@@ -251,16 +250,16 @@ public class UpdateProfile extends AppCompatActivity {
                         @Override
                         public void onSuccess(Uri uri) {
                             Picasso.get().load(uri).into(profileimage);
-                            url = uri.toString();
                             progressDialog.dismiss();
+                            String url = uri.toString();
                             updateDetails("image");
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             profileimage.setImageResource(R.drawable.ic_action_account);
-                            url = "empty";
                             progressDialog.dismiss();
+                            url = "empty";
                             updateDetails("image");
 
                         }
@@ -271,7 +270,7 @@ public class UpdateProfile extends AppCompatActivity {
     }
 
     public void updateDetails(final String type) {
-        if(type.equals("details")){
+        if (type.equals("details")) {
             progressDialog = new ProgressDialog(UpdateProfile.this);
             progressDialog.setMessage("Updating...");
             progressDialog.setCanceledOnTouchOutside(false);
@@ -290,50 +289,53 @@ public class UpdateProfile extends AppCompatActivity {
         hashmap.put("Id", userId);
         hashmap.put("Name", name);
         hashmap.put("Url", url);
-        System.out.println(url+"url");
+        System.out.println(url + "url");
         hashmap.put("email", email);
         hashmap.put("phone", phone);
         hashmap.put("status", status);
         db.child(userId).updateChildren(hashmap);
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Posts");
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    HashMap<String, Object> hashMap = (HashMap<String, Object>) ds.getValue();
-                       if (hashMap.get("pComments").equals("0")) {
-                       } else {
-                           HashMap<String, Object> hashMap1 = (HashMap<String, Object>) hashMap.get("Comments");
 
-                           for (String key : hashMap1.keySet()) {
-                               HashMap<String, Object> hashMap2 = (HashMap<String, Object>) hashMap1.get(key);
+            final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Posts");
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot ds : snapshot.getChildren()) {
+                        HashMap<String, Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                        if (hashMap.get("pComments") != null && !hashMap.get("pComments").equals("0")) {
+                            HashMap<String, Object> hashMap1 = (HashMap<String, Object>) hashMap.get("Comments");
+                            if (hashMap1 != null) {
+                                for (String key : hashMap1.keySet()) {
+                                    HashMap<String, Object> hashMap2 = (HashMap<String, Object>) hashMap1.get(key);
 //                            System.out.println(hashMap2+"...........");
-                               if (hashMap2.get("uId").equals(userId)) {
-                                   hashMap2.put("uName", name);
-                                   databaseReference.child(ds.getKey()).child("Comments").child(key).updateChildren(hashMap2);
+                                    if (hashMap2.get("uId").equals(userId)) {
+                                        hashMap2.put("uName", name);
+                                        databaseReference.child(ds.getKey()).child("Comments").child(key).updateChildren(hashMap2);
 //                                System.out.println(hashMap2+"./././././");
-                               }
-                           }
-                       }
+                                    }
+                                }
+                            }
 
+                        }
 
-                    if (hashMap.get("pId").equals(userId)) {
-                        hashMap.put("pName", name);
-                        hashMap.put("url", url);
+                        if (hashMap.get("pId").equals(userId)) {
+                            hashMap.put("pName", name);
+                            hashMap.put("url", url);
 
-                        databaseReference.child(ds.getKey()).updateChildren(hashMap);
+                            databaseReference.child(ds.getKey()).updateChildren(hashMap);
 
+                        }
+                        if (type.equals("details"))
+                            progressDialog.dismiss();
                     }
-                    if(type.equals("details"))
-                        progressDialog.dismiss();
+
                 }
 
-            }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                }
+            });
 
-            }
-        });
     }
-}
+    }
+

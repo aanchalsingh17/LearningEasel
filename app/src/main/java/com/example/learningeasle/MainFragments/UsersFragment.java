@@ -30,6 +30,7 @@ import androidx.appcompat.widget.SearchView;
 import com.example.learningeasle.R;
 import com.example.learningeasle.model.AdapterUsers;
 import com.example.learningeasle.model.ModelUsers;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,7 +50,7 @@ public class UsersFragment extends Fragment {
     View view;
     ProgressBar progressBar;
     String oldestUSer = "";
-
+    ShimmerFrameLayout shimmerFrameLayout;
     int CurrentItems, totalItems, ViewedItems;
     int start = 0;
 
@@ -69,13 +70,14 @@ public class UsersFragment extends Fragment {
         final LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         users.setLayoutManager(manager);
         usersList = new ArrayList<>();
-
+        shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
         progressBar = view.findViewById(R.id.progressBar_loading);
         setHasOptionsMenu(true);
         // getAllUsers();
         adapterUsers = new AdapterUsers(getActivity(), usersList);
         users.setAdapter(adapterUsers);
         //Get starting users
+        shimmerFrameLayout.startShimmer();
         getFirstUsers();
         users.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -120,6 +122,9 @@ public class UsersFragment extends Fragment {
                 }
                 adapterUsers = new AdapterUsers(getActivity(), usersList);
                 users.setAdapter(adapterUsers);
+                users.setVisibility(View.VISIBLE);
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
             }
 
             @Override
@@ -212,7 +217,7 @@ public class UsersFragment extends Fragment {
                 adapterUsers = new AdapterUsers(getActivity(), usersList);
                 users.setAdapter(adapterUsers);
                 adapterUsers.notifyDataSetChanged();
-                progressBar.setVisibility(View.INVISIBLE);
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override

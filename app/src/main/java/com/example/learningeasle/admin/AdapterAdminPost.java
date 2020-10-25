@@ -16,16 +16,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.learningeasle.PostDetailActivity;
 import com.example.learningeasle.R;
+import com.example.learningeasle.ViewAttachement;
 import com.example.learningeasle.model.AdapterPost;
 import com.example.learningeasle.model.modelpost;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -71,7 +75,7 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
         final String pType = postList.get(position).getpType();
         String pLikes = postList.get(position).getpLikes();
         final String[] viewsCount = new String[1];
-
+        final String videourl = postList.get(position).getVideourl();
         //Initialise Shimmer
         Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
                 .setBaseColor(Color.parseColor("#F3F3F3"))
@@ -84,6 +88,9 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
         ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
         shimmerDrawable.setShimmer(shimmer);
 
+       if(!videourl.equals("empty")){
+           holder.attachement.setVisibility(View.VISIBLE);
+       }
 
         DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Views");
         databaseReference.child(pTimeStamp).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -229,9 +236,16 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
                         }
                     });
                 }
-
         }
 
+        });
+        holder.attachement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl",videourl);
+                context.startActivity(intent);
+            }
         });
     }
 
@@ -245,7 +259,7 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
         ImageView uDp,pImage,delete;
         TextView uName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment,pType,views;
         Button comment_btn;
-
+        FloatingActionButton attachement;
         public MyHolder(@NonNull View itemView) {
             super(itemView);
             uDp = itemView.findViewById(R.id.uDp);
@@ -260,6 +274,7 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
             pType=itemView.findViewById(R.id.pType);
             views=itemView.findViewById(R.id.viewCount);
             delete = itemView.findViewById(R.id.delete);
+            attachement = itemView.findViewById(R.id.view_attached);
 
         }
 

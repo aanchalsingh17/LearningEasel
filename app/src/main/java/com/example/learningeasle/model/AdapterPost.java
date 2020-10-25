@@ -1,8 +1,6 @@
 package com.example.learningeasle.model;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -19,34 +17,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.learningeasle.PostDetailActivity;
 import com.example.learningeasle.R;
 import com.example.learningeasle.UserDetails.UserProfile;
+import com.example.learningeasle.ViewAttachement;
 import com.example.learningeasle.ViewImage;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -87,7 +80,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         final String pId = postList.get(position).getpId();
         final String pType = postList.get(position).getpType();
         String pLikes = postList.get(position).getpLikes();
-
+        final String videourl = postList.get(position).getVideourl();
+        final String pdfurl = postList.get(position).getPdfurl();
         //Initialise Shimmer
         Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
                 .setBaseColor(Color.parseColor("#F3F3F3"))
@@ -102,7 +96,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
         System.out.println(pTitle+" "+pDescription+" "+pName);
 
-
+        if(!videourl.equals("empty")||!(pdfurl.equals("empty"))){
+            holder.attached.setVisibility(View.VISIBLE);
+        }
 
         final String[] viewsCount = new String[1];
 
@@ -276,6 +272,15 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
             }
         });
+        holder.attached.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent  = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl",videourl);
+                intent.putExtra("pdfurl",pdfurl);
+                context.startActivity(intent);
+            }
+        });
 
     }
 
@@ -376,7 +381,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         TextView uName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment,pType,views;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
-
+        FloatingActionButton attached;
         public MyHolder(@NonNull View itemView) {
             super(itemView);
             uDp = itemView.findViewById(R.id.uDp);
@@ -394,6 +399,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             boookmark = itemView.findViewById(R.id.bookmarks);
             pType=itemView.findViewById(R.id.pType);
             views=itemView.findViewById(R.id.viewCount);
+            attached=itemView.findViewById(R.id.view_attached);
 
         }
 

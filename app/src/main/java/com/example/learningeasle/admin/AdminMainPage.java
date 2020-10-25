@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -15,9 +16,12 @@ import com.example.learningeasle.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class AdminMainPage extends AppCompatActivity {
-
+    String userId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +31,24 @@ public class AdminMainPage extends AppCompatActivity {
         navigationView.setOnNavigationItemSelectedListener(listener);
         //By default in the starting load the main page
         getSupportFragmentManager().beginTransaction().replace(R.id.scroll,new AdminPostFragment(),"H").commit();
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
+
+    @Override
+    protected void onResume() {
+        checkUserStatus();
+        super.onResume();
+    }
+
+    private void checkUserStatus() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user!=null){
+            userId = user.getUid();
+            SharedPreferences sharedPreferences = getSharedPreferences("SP_USER",MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("Current_USERID",userId);
+            editor.apply();
+        }
     }
     private BottomNavigationView.OnNavigationItemSelectedListener listener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override

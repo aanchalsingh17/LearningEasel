@@ -57,6 +57,7 @@ public class Register extends AppCompatActivity {
         fUser           =   fAuth_reg.getCurrentUser();
         fStore          = FirebaseFirestore.getInstance();
 
+        //If fuser is not null start main Activity
         if(fUser!= null) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
@@ -70,6 +71,7 @@ public class Register extends AppCompatActivity {
                 final String fullName = name_reg.getText().toString();
                 final String phone    = phone_reg.getText().toString();
 
+                //Throw error if any of the fields is invalid
                 if(TextUtils.isEmpty(fullName)){
                     name_reg.setError("Username is Required.");
                     return;
@@ -104,7 +106,7 @@ public class Register extends AppCompatActivity {
                 editor.putString("email_Id",email);
                 editor.commit();
                 progressBar_reg.setVisibility(View.VISIBLE);
-
+               //Create user with the email and password
                 fAuth_reg.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -126,6 +128,7 @@ public class Register extends AppCompatActivity {
 
                             Toast.makeText(Register.this, "User Created.", Toast.LENGTH_SHORT).show();
 
+                            //User Data Added to  Firebase
                             userID = fAuth_reg.getCurrentUser().getUid();   int j=email.length()-4;
                             final String username=email.substring(0,j);                                                          //user id stored
                             final HashMap<Object, String> hashMap = new HashMap<>();
@@ -142,8 +145,6 @@ public class Register extends AppCompatActivity {
 
                                         }
                                     });
-                                  DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
-                                  reference.child(userID).setValue("admin");
 
                             // after registration redirect to main class
 //                                sharedPreferences=getSharedPreferences("MyPref", Context.MODE_PRIVATE);
@@ -154,7 +155,7 @@ public class Register extends AppCompatActivity {
                             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                             FirebaseUser users = firebaseAuth.getCurrentUser();
                             final FirebaseDatabase database = FirebaseDatabase.getInstance();
-
+                           //Users Interest field also added to firebase
                             final DatabaseReference myRef=database.getReference().child("Users").child(userID).child(username);
                             myRef.child("Science").setValue("0");
                             myRef.child("Medication").setValue("0");
@@ -166,6 +167,7 @@ public class Register extends AppCompatActivity {
                             myRef.child("Economics").setValue("0");
                             myRef.child("Architecture").setValue("0");
 
+                            //After Registration is done redirect to profile class to upload profile photo
                             startActivity(new Intent(getApplicationContext(), Profile.class));
                             overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                             finish();

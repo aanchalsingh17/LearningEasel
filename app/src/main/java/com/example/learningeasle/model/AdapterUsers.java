@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.learningeasle.R;
 import com.example.learningeasle.UserDetails.UserProfile;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -54,6 +56,21 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
           final String curruid = FirebaseAuth.getInstance().getCurrentUser().getUid();
           holder.name.setText(userName);
           holder.email.setText(email);
+
+
+        //Initialise Shimmer
+        Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
+                .setBaseColor(Color.parseColor("#F3F3F3"))
+                .setBaseAlpha(1)
+                .setHighlightColor(Color.parseColor("#E7E7E7"))
+                .setHighlightAlpha(1)
+                .setDropoff(50)
+                .build();
+        //Initialise shimmer Drawable
+        ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
+        shimmerDrawable.setShimmer(shimmer);
+
+
 //          System.out.println(userName+" jsr "+email);
          DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
          databaseReference.addValueEventListener(new ValueEventListener() {
@@ -72,7 +89,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
          if(url.equals("empty"))
            holder.profile.setImageResource(R.drawable.ic_action_account);
          else
-           Picasso.get().load(url).into(holder.profile);
+           Picasso.get().load(url).placeholder(shimmerDrawable).into(holder.profile);
          //Setting the follower i.e if current user is following the user of holder or not
           setFollower(holder,curruid,Uid);
           //Following and unfollowing the user from the holder view

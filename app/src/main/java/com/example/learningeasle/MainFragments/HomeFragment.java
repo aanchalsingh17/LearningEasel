@@ -41,6 +41,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -64,8 +65,9 @@ public class HomeFragment extends Fragment {
     String email;
     ArrayList<String> interest, following;
     ProgressBar progressBar;
-    String oldestPost = "";
+    long oldestPost;
     ShimmerFrameLayout shimmerFrameLayout;
+    Query query;
     int CurrentItems, totalItems, ViewedItems;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -87,11 +89,6 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         progressBar = view.findViewById(R.id.progressBar_loading);
-//        progressBar.setVisibility(View.VISIBLE);
-        /*progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Loading...");
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();*/
         firebaseAuth = FirebaseAuth.getInstance();
         recyclerView = view.findViewById(R.id.postsRecyclerview);
         shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
@@ -103,6 +100,9 @@ public class HomeFragment extends Fragment {
         setHasOptionsMenu(true);
         interest = new ArrayList<>();
         following = new ArrayList<>();
+
+        query = FirebaseDatabase.getInstance().getReference("Posts")
+                .orderByChild("order");
         getUserDetails();
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -120,34 +120,35 @@ public class HomeFragment extends Fragment {
     }
 
     private void getStartingPost() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-        ref.limitToFirst(10).addListenerForSingleValueEvent(new ValueEventListener() {
+        query.limitToFirst(10).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelpostList.clear();
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
+                    final HashMap<Object, Object> hashMap = (HashMap<Object, Object>) dataSnapshot.getValue();
 //                    if(FirebaseDatabase.getInstance().getReference(""))
-                    oldestPost = dataSnapshot.getKey();
+                    oldestPost = (long) hashMap.get("order");
                     modelpost post;
                     System.out.println(hashMap.get("pId"));
                     if (hashMap.get("pLikes") == null && (interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId")))) {
 //                        System.out.println(hashMap.get("pId"));
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                 hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString());
                         modelpostList.add(post);
                     } else if (interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId"))) {
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                 hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString());
                         modelpostList.add(post);
                     }
 
 
                 }
-
+                if(modelpostList.size()==0){
+                    loadPosts();
+                }
                 adapterPost = new AdapterPost(getActivity(), modelpostList);
                 recyclerView.setAdapter(adapterPost);
                 recyclerView.setVisibility(View.VISIBLE);
@@ -235,24 +236,24 @@ public class HomeFragment extends Fragment {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         final boolean[] start = {true};
-        ref.orderByKey().startAt(oldestPost).limitToFirst(4).addListenerForSingleValueEvent(new ValueEventListener() {
+        query.startAt(oldestPost).limitToFirst(4).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
+                    final HashMap<Object, Object> hashMap = (HashMap<Object, Object>) dataSnapshot.getValue();
 //                    if(FirebaseDatabase.getInstance().getReference(""))
-                    oldestPost = dataSnapshot.getKey();
+                    oldestPost = (long) hashMap.get("order");
                     modelpost post;
                     if (!start[0]) {
                         if (hashMap.get("pLikes") == null && (interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId")))) {
                             post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                     hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                    hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                                    hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString());
                             modelpostList.add(post);
                         } else if ((interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId")))) {
                             post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                     hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                    hashMap.get("pComments").toString(), hashMap.get("type").toString());
+                                    hashMap.get("pComments").toString(), hashMap.get("type").toString(),hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString());
                             modelpostList.add(post);
                         }
                     } else {
@@ -260,7 +261,9 @@ public class HomeFragment extends Fragment {
                     }
 
                 }
-
+                if(modelpostList.size()==0){
+                    loadPosts();
+                }
                 adapterPost = new AdapterPost(getActivity(), modelpostList);
                 recyclerView.setAdapter(adapterPost);
                 adapterPost.notifyDataSetChanged();

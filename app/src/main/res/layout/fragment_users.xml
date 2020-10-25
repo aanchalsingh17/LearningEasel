@@ -19,9 +19,17 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/usersrecyclerview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="gone">
 
         </androidx.recyclerview.widget.RecyclerView>
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <include
+                layout="@layout/shimmer_user_layout"/>
+        </com.facebook.shimmer.ShimmerFrameLayout>
         <ProgressBar
             android:id="@+id/progressBar_loading"
             style="@style/MyProgressBarRectangle"

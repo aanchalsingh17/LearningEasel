@@ -3,10 +3,10 @@ package com.example.learningeasle.model;
 import android.net.Uri;
 
 public class modelpost {
-    String pId, pTitle, pDesc, pTime, pImage,pName,url,pLikes,pComments,pType;
+    String pId, pTitle, pDesc, pTime, pImage,pName,url,pLikes,pComments,pType,videourl,pdfurl;
 
     public modelpost(String pId, String pImage, String pTitle, String pDesc, String pTime, String uName,
-                     String url,String pLikes,String pComments,String pType) {
+                     String url,String pLikes,String pComments,String pType,String videourl,String pdfurl) {
         this.pId = pId;
         this.pImage = pImage;
         this.pTitle = pTitle;
@@ -17,9 +17,25 @@ public class modelpost {
         this.pLikes=pLikes;
         this.pComments=pComments;
         this.pType=pType;
+        this.videourl = videourl;
+        this.pdfurl = pdfurl;
     }
 
+    public String getPdfurl() {
+        return pdfurl;
+    }
 
+    public void setPdfurl(String pdfurl) {
+        this.pdfurl = pdfurl;
+    }
+
+    public String getVideourl() {
+        return videourl;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public String getpComments() {
         return pComments;

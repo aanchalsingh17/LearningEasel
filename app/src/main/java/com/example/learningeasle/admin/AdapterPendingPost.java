@@ -1,9 +1,13 @@
 package com.example.learningeasle.admin;
 
+import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,18 +19,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.signature.ObjectKey;
+import com.example.learningeasle.MainActivity;
 import com.example.learningeasle.R;
+import com.example.learningeasle.ViewAttachement;
 import com.example.learningeasle.ViewImage;
+import com.example.learningeasle.model.ModelUsers;
 import com.example.learningeasle.model.modelpost;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
@@ -34,11 +48,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+
 public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.PendingHolder> {
 
     Context context;
     List<modelpost> pendingpostList;
     View view;
+    boolean notify;
+    String userId;
+    String pTitle;
     public AdapterPendingPost(Context context, List<modelpost> pendingpostList) {
         this.context = context;
         this.pendingpostList = pendingpostList;
@@ -56,13 +76,14 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
     public void onBindViewHolder(@NonNull PendingHolder holder, int position) {
         final String uName = pendingpostList.get(position).getpName();
         final String url = pendingpostList.get(position).getuImage();
-        final String pTitle = pendingpostList.get(position).getpTitle();
+         pTitle = pendingpostList.get(position).getpTitle();
         final String pDescription = pendingpostList.get(position).getpDesc();
         final String pImage = pendingpostList.get(position).getpImage();
        final String  pTimeStamp = pendingpostList.get(position).getpTime();
         final String pId = pendingpostList.get(position).getpId();
         final String pType = pendingpostList.get(position).getpType();
-
+        final String videourl = pendingpostList.get(position).getVideourl();
+        final String pdfurl = pendingpostList.get(position).getPdfurl();
         //Initialise Shimmer
         Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
                 .setBaseColor(Color.parseColor("#F3F3F3"))
@@ -126,6 +147,8 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
                 hashMap.put("url",url);
                 hashMap.put("pName",uName);
                 hashMap.put("pComments","0");
+                hashMap.put("videourl",videourl);
+                hashMap.put("pdfurl",pdfurl);
                 hashMap.put("order",-Long.parseLong(pTimeStamp));
                 DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
                 databaseReference.child(pTimeStamp).setValue("0");
@@ -133,11 +156,6 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
                     @Override
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(context,"Post Published !!",Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(context,NotificationReceiver.class);
-                        intent.putExtra("title",pTitle);
-                        intent.putExtra("Action","passed");
-                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,1,intent,0);
-
                     }
                 });
 
@@ -165,7 +183,19 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
 
             }
         });
+        if(!videourl.equals("empty")){
+            holder.attachement.setVisibility(View.VISIBLE);
+        }
+        holder.attachement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl",videourl);
+                context.startActivity(intent);
+            }
+        });
     }
+
 
     @Override
     public int getItemCount() {
@@ -177,6 +207,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
         ImageView uDp,pImage;
         TextView uName, pTime, pTitle, pDescpType,pDes;
         Button publish,cancel;
+        FloatingActionButton attachement;
         public PendingHolder(@NonNull View itemView) {
             super(itemView);
             uDp = itemView.findViewById(R.id.uDp);
@@ -188,6 +219,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
             pDes = itemView.findViewById(R.id.pdesc);
             publish = itemView.findViewById(R.id.publish);
             cancel = itemView.findViewById(R.id.cancel);
+            attachement = itemView.findViewById(R.id.view_attached);
         }
     }
 }

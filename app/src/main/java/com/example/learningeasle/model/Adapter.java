@@ -26,9 +26,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.learningeasle.PostDetailActivity;
 import com.example.learningeasle.MainFragments.PostFragment;
 import com.example.learningeasle.R;
+import com.example.learningeasle.ViewAttachement;
 import com.example.learningeasle.ViewImage;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -86,6 +88,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         String pId = postList.get(position).getpId();
         final String pLikes=postList.get(position).getpLikes();
         String pComments=postList.get(position).getpComments();
+        final String videourl = postList.get(position).getVideourl();
         final String[] viewsCount = new String[1];
 
       /*  DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
@@ -108,7 +111,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             }
         });*/
 
-
+       if(!videourl.equals("empty")){
+           holder.attachement.setVisibility(View.VISIBLE);
+       }
 
         PostFragment postFragment = new PostFragment();
         Bundle bundle = new Bundle();
@@ -224,6 +229,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                 intent.putExtra("image",pImage);
                 context.startActivity(intent);
 
+            }
+        });
+        holder.attachement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl",videourl);
+                context.startActivity(intent);
             }
         });
     }
@@ -396,7 +409,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
         EditClick editClick;
-
+       FloatingActionButton attachement;
         public PostHolder(@NonNull View itemView, final EditClick editClick) {
             super(itemView);
             url=itemView.findViewById(R.id.uDp);
@@ -413,6 +426,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             comment_btn = itemView.findViewById(R.id.comment);
             pType=itemView.findViewById(R.id.pType);
             views=itemView.findViewById(R.id.viewCount);
+            attachement = itemView.findViewById(R.id.view_attached);
             this.editClick = editClick;
             morebtn.setOnClickListener(new View.OnClickListener() {
                 @Override

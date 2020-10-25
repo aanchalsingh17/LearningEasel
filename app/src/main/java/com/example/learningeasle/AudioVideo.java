@@ -89,12 +89,7 @@ public class AudioVideo extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent,108);
     }
-    //defineType;
-    private  String getExt(Uri uri){
-        ContentResolver contentResolver = getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        return  mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
-    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -110,38 +105,6 @@ public class AudioVideo extends AppCompatActivity {
     }
 
     private void uploadVideo(Uri videouri) {
-        if(videouri!=null){
-            final StorageReference des = reference.child(System.currentTimeMillis() + "." +getExt(videouri));
-            uploadTask = des.putFile(videouri);
-            des.putFile(videouri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    des.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            databaseReference.child("Video").child(String.valueOf(System.currentTimeMillis())).setValue(uri.toString());
-                        }
-                    });
-                }
-            });
-            Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if(!task.isSuccessful()){
-                        throw task.getException();
-                    }
-                    return  reference.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if(task.isSuccessful()) {
-                        Uri dowmloadurl = task.getResult();
-                        String path = databaseReference.push().getKey();
-                        databaseReference.child(path).setValue(dowmloadurl.toString());
-                    }
-                }
-            });
-        }
+
     }
 }

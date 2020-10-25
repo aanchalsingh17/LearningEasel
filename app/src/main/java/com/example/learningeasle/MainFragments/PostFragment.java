@@ -2,6 +2,7 @@ package com.example.learningeasle.MainFragments;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,6 +35,8 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.learningeasle.MainActivity;
 import com.example.learningeasle.R;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -58,30 +62,34 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static android.app.Activity.RESULT_OK;
+
 public class PostFragment extends Fragment implements View.OnClickListener {
 
     View view;
-
+    UploadTask uploadTask;
      EditText et_title, et_desc;
-    FloatingActionButton post_btn;
+    FloatingActionButton post_btn,video_btn,view_attached,pdf_btn;
     ImageView img_post;
     String pName, url="empty";
-    Uri image_rui = null;
+    Uri image_rui = null,videouri=null,pdfuri=null;
     ProgressDialog pd;
     ProgressBar progressBar;
     String edit,id,time,title,des,image,email;
     String pLikes="0",pComments="0";
     Spinner spinner;
+    String videourl="empty",pdfUrl="empty";
     ArrayAdapter<String> adapter;
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
     private static final int IMAGE_PICK_CAMERA_CODE = 300;
     private static final int IMAGE_PICK_GALLERY_CODE = 400;
-
+    StorageReference reference;
     String[] cameraPermissions;
     String[] storagePermissions;
     ArrayList<String> interests;
     ProgressDialog progressDialog;
+    private int PDF_REQUEST = 1004;
 
 
     @Override
@@ -118,6 +126,30 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         post_btn = view.findViewById(R.id.post_button);
         img_post = view.findViewById(R.id.img);
         progressBar = view.findViewById(R.id.progressBar_addPost);
+        video_btn = view.findViewById(R.id.video_upload);
+        view_attached = view.findViewById(R.id.view_attached);
+        pdf_btn = view.findViewById(R.id.pdf_upload);
+
+
+        //When attached button is clicked make visiblity of video n pdf button visible
+
+        view_attached.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                video_btn.setVisibility(View.VISIBLE);
+                pdf_btn.setVisibility(View.VISIBLE);
+            }
+        });
+        //pdfbtn is clicked pdf attachment work started
+        pdf_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.setType("application/pdf");
+                startActivityForResult(intent,PDF_REQUEST);
+            }
+        });
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.
                 WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.
@@ -126,7 +158,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
         adapter= new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_list_item_1);
 
-
+        reference = FirebaseStorage.getInstance().getReference();
         spinner = (Spinner) view.findViewById(R.id.spinner);
 
 
@@ -135,6 +167,12 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         progressDialog.setMessage("Please Wait...");
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
+        video_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseVideo(v);
+            }
+        });
         if(edit.equals("EditPost")){
             et_title.setText(title);
             et_desc.setText(des);
@@ -147,6 +185,14 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
         // Inflate the layout for this fragment
 
+
+    }
+
+    private void chooseVideo(View v) {
+            Intent intent = new Intent();
+            intent.setType("video/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(intent,108);
 
     }
 
@@ -302,6 +348,8 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                                 hashMap.put("pLikes", "0");
                                 hashMap.put("pComments", "0");
                                 hashMap.put("type", type);
+                                hashMap.put("videourl",videourl);
+                                hashMap.put("pdfurl",pdfUrl);
                                 hashMap.put("order",-System.currentTimeMillis());
 //                                hashMap.put("views","0");
 
@@ -378,6 +426,8 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 hashMap.put("pLikes", "0");
                 hashMap.put("pComments", "0");
                 hashMap.put("type", type);
+                hashMap.put("videourl",videourl);
+                hashMap.put("pdfurl",pdfUrl);
                 hashMap.put("order",-System.currentTimeMillis());
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");
                 ref.child(timeStamp).setValue(hashMap)
@@ -536,7 +586,77 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK){
+            if(requestCode==108){
 
+                videouri = data.getData();
+                uploadVideo(videouri);
+            }
+        }
+        if(resultCode==RESULT_OK){
+            if(requestCode==PDF_REQUEST){
+                pdfuri = data.getData();
+                uploadPdf(pdfuri);
+            }
+        }
+
+    }
+
+    private void uploadPdf(Uri pdfuri) {
+        if(pdfuri!=null) {
+            final String timeStamp;
+            //If post is to be edited then timestamp is going to be the time stamp of the post to be edited not the current timestamp
+            if (edit.equals("EditPost"))
+                timeStamp = time;
+            else
+                timeStamp = String.valueOf(System.currentTimeMillis());
+
+            final StorageReference des = reference.child("Pdf/"+ timeStamp + "/" + "Pdf."+getExt(pdfuri));
+            uploadTask = des.putFile(pdfuri);
+            des.putFile(pdfuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    des.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            pdfUrl = uri.toString();
+                            Toast.makeText(getActivity(),"Pdf File Attached",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    //defineType;
+    private  String getExt(Uri uri){
+        ContentResolver contentResolver = getActivity().getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return  mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+    }
+    private void uploadVideo(Uri videouri) {
+        if(videouri!=null){
+            final String timeStamp;
+            //If post is to be edited then timestamp is going to be the time stamp of the post to be edited not the current timestamp
+            if(edit.equals("EditPost"))
+                timeStamp = time;
+            else
+                timeStamp= String.valueOf(System.currentTimeMillis());
+            final StorageReference des = reference.child("Video/"+ timeStamp + "/" + "video."+getExt(videouri));
+            uploadTask = des.putFile(videouri);
+            des.putFile(videouri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    des.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            videourl = uri.toString();
+                            Toast.makeText(getActivity(),"Video File Attached",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        }
     }
 
 

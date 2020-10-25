@@ -15,9 +15,13 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".admin.AdminMainPage"></activity>
+        <activity android:name=".ViewAttachement"></activity>
+        <activity
+            android:name=".admin.AdminMainPage"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SplashActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,22 +29,39 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserDetails.UserProfile" />
-        <activity android:name=".UserDetails.UpdateProfile" />
-        <activity android:name=".FullView" />
-        <activity android:name=".ViewImage" />
-        <activity android:name=".PostDetailActivity" />
-        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".UserDetails.UserProfile"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UserDetails.UpdateProfile"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FullView"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ViewImage"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PostDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".PickInterests"
-            android:label="Your Interests" />
-        <activity android:name=".Accounts.Profile" />
+            android:label="Your Interests"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Accounts.Profile"
+            android:screenOrientation="portrait" />
         <activity android:name=".AudioVideo" />
         <activity
             android:name=".Accounts.Register"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme2" />
         <activity
             android:name=".Accounts.Login"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme2" />
 
         <provider
@@ -53,9 +74,11 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <receiver android:name=".admin.NotificationReceiver"
+        <receiver
+            android:name=".admin.NotificationReceiver"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.learningeasle.fileprovider"

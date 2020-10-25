@@ -37,5 +37,16 @@
             android:layout_below="@+id/comment1"
             android:layout_toEndOf="@+id/avtar1"/>
 
+        <TextView
+            android:id="@+id/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="320dp"
+            android:layout_marginTop="40dp"
+            android:text="Delete"
+            android:textColor="#DA0909"
+            android:textSize="14sp"
+            android:visibility="invisible"/>
+
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

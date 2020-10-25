@@ -31,6 +31,8 @@ public class PendingPost extends Fragment {
     List<modelpost> modelpostList;
     AdapterPendingPost adapterPendingPost;
     ShimmerFrameLayout shimmerFrameLayout;
+
+    boolean notify = false;
     public PendingPost() {
         // Required empty public constructor
     }
@@ -54,6 +56,9 @@ public class PendingPost extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
         setHasOptionsMenu(true);
+
+        //create api service
+
         shimmerFrameLayout.startShimmer();
         loadAllPendingPost();
         return  view;
@@ -70,7 +75,7 @@ public class PendingPost extends Fragment {
                     HashMap<Object,String> hashMap = (HashMap<Object, String>) ds.getValue();
                     modelpost post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                             hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                            "0", hashMap.get("type").toString());
+                            "0", hashMap.get("type").toString(),hashMap.get("videourl").toString(),hashMap.get("pdfurl").toString());
                     modelpostList.add(post);
                     //onDataReceiveCallback.onDataReceived(modelpostList);
                 }
@@ -84,7 +89,7 @@ public class PendingPost extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                progressDialog.dismiss();
+               // progressDialog.dismiss();
 
             }
         });

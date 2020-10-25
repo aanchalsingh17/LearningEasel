@@ -89,6 +89,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         final String pLikes=postList.get(position).getpLikes();
         String pComments=postList.get(position).getpComments();
         final String videourl = postList.get(position).getVideourl();
+        final String audiourl = postList.get(position).getAudiourl();
+        final String pdfurl = postList.get(position).getPdfurl();
         final String[] viewsCount = new String[1];
 
       /*  DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
@@ -111,7 +113,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             }
         });*/
 
-       if(!videourl.equals("empty")){
+       if(!videourl.equals("empty")||!(audiourl.equals("empty"))||!(pdfurl.equals("empty"))){
            holder.attachement.setVisibility(View.VISIBLE);
        }
 
@@ -236,6 +238,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             public void onClick(View v) {
                 Intent intent = new Intent(context, ViewAttachement.class);
                 intent.putExtra("videourl",videourl);
+                intent.putExtra("audiourl",audiourl);
+                intent.putExtra("pdfurl",pdfurl);
                 context.startActivity(intent);
             }
         });

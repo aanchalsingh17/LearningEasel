@@ -65,8 +65,9 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
         final String pId = postList.get(position).getpId();
         final String pType = postList.get(position).getpType();
         final String videourl = postList.get(position).getVideourl();
-
-        if (!videourl.equals("empty")) {
+         final String pdfurl = postList.get(position).getPdfurl();
+         final String audiourl = postList.get(position).getAudiourl();
+        if (!videourl.equals("empty")||!pdfurl.equals("empty")||!audiourl.equals("empty")) {
             holder.attachement.setVisibility(View.VISIBLE);
 
         }
@@ -132,6 +133,8 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
             public void onClick(View v) {
                 Intent intent = new Intent(context, ViewAttachement.class);
                 intent.putExtra("videourl",videourl);
+                intent.putExtra("audiourl",audiourl);
+                intent.putExtra("pdfurl",pdfurl);
                 context.startActivity(intent);
             }
         });

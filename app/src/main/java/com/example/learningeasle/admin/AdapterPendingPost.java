@@ -80,6 +80,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
         final String pType = pendingpostList.get(position).getpType();
         final String videourl = pendingpostList.get(position).getVideourl();
         final String pdfurl = pendingpostList.get(position).getPdfurl();
+        final String audiourl = pendingpostList.get(position).getAudiourl();
         //Initialise Shimmer
         Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
                 .setBaseColor(Color.parseColor("#F3F3F3"))
@@ -145,6 +146,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
                 hashMap.put("pComments","0");
                 hashMap.put("videourl",videourl);
                 hashMap.put("pdfurl",pdfurl);
+                hashMap.put("audiourl",audiourl);
                 hashMap.put("order",-Long.parseLong(pTimeStamp));
                 DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
                 databaseReference.child(pTimeStamp).setValue("0");
@@ -203,7 +205,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
                 });
             }
         });
-        if(!videourl.equals("empty")){
+        if(!videourl.equals("empty")||!(audiourl.equals("empty"))||!(pdfurl.equals("empty"))){
             holder.attachement.setVisibility(View.VISIBLE);
         }
         holder.attachement.setOnClickListener(new View.OnClickListener() {
@@ -211,6 +213,8 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
             public void onClick(View v) {
                 Intent intent = new Intent(context, ViewAttachement.class);
                 intent.putExtra("videourl",videourl);
+                intent.putExtra("audiourl",audiourl);
+                intent.putExtra("pdfurl",pdfurl);
                 context.startActivity(intent);
             }
         });

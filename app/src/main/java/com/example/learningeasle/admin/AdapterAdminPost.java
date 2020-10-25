@@ -76,6 +76,8 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
         String pLikes = postList.get(position).getpLikes();
         final String[] viewsCount = new String[1];
         final String videourl = postList.get(position).getVideourl();
+        final String audiourl = postList.get(position).getAudiourl();
+        final String pdfurl = postList.get(position).getPdfurl();
         //Initialise Shimmer
         Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
                 .setBaseColor(Color.parseColor("#F3F3F3"))
@@ -88,7 +90,7 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
         ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
         shimmerDrawable.setShimmer(shimmer);
 
-       if(!videourl.equals("empty")){
+       if(!videourl.equals("empty")||!(audiourl.equals("empty"))||!(pdfurl.equals("empty"))){
            holder.attachement.setVisibility(View.VISIBLE);
        }
 
@@ -244,6 +246,8 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
             public void onClick(View v) {
                 Intent intent = new Intent(context, ViewAttachement.class);
                 intent.putExtra("videourl",videourl);
+                intent.putExtra("audiourl",audiourl);
+                intent.putExtra("pdfurl",pdfurl);
                 context.startActivity(intent);
             }
         });

@@ -29,6 +29,7 @@ import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,7 +56,10 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     public AdapterPost(Context context, List<modelpost> postList) {
         this.context = context;
         this.postList = postList;
-        myId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if(user!=null){
+                    myId = user.getUid();
+                }
         postsref = FirebaseDatabase.getInstance().getReference().child("Posts");
     }
 
@@ -82,6 +86,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String pLikes = postList.get(position).getpLikes();
         final String videourl = postList.get(position).getVideourl();
         final String pdfurl = postList.get(position).getPdfurl();
+        final String audiourl = postList.get(position).getAudiourl();
         //Initialise Shimmer
         Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
                 .setBaseColor(Color.parseColor("#F3F3F3"))
@@ -96,7 +101,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
         System.out.println(pTitle+" "+pDescription+" "+pName);
 
-        if(!videourl.equals("empty")||!(pdfurl.equals("empty"))){
+        if(!videourl.equals("empty")||!(pdfurl.equals("empty"))||!(audiourl.equals("empty"))){
             holder.attached.setVisibility(View.VISIBLE);
         }
 
@@ -278,6 +283,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 Intent intent  = new Intent(context, ViewAttachement.class);
                 intent.putExtra("videourl",videourl);
                 intent.putExtra("pdfurl",pdfurl);
+                intent.putExtra("audiourl",audiourl);
                 context.startActivity(intent);
             }
         });

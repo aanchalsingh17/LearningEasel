@@ -1,9 +1,13 @@
 package com.example.learningeasle.MainFragments;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -73,6 +79,8 @@ public class HomeFragment extends Fragment {
     long oldestPost;
     ShimmerFrameLayout shimmerFrameLayout;
     Query query;
+
+    private int BATTERY_OPTIMIZATIONS_REQUEST_CODE=7;
     int CurrentItems, totalItems, ViewedItems;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -106,11 +114,10 @@ public class HomeFragment extends Fragment {
         interest = new ArrayList<>();
         following = new ArrayList<>();
 
+        checkForBatteryOptimizations();
 
-        System.out.println(FirebaseAuth.getInstance().getCurrentUser().getUid());
         FirebaseUser firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
         String refreshToken= FirebaseInstanceId.getInstance().getToken();
-        System.out.println(refreshToken+" refresh");
         Token token= new Token(refreshToken);
         FirebaseDatabase.getInstance().getReference("Tokens").child(firebaseUser.getUid()).setValue(token);
 
@@ -132,6 +139,38 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+    private void checkForBatteryOptimizations(){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
+            PowerManager powerManager= (PowerManager) getContext().getSystemService(Context.POWER_SERVICE);
+            if(!powerManager.isIgnoringBatteryOptimizations(getContext().getPackageName())){
+                AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
+                builder.setTitle("Warning");
+                builder.setMessage("Battery optimization is enabled. It may interrupt running background services. ");
+                builder.setPositiveButton("Disable", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent=new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                        startActivityForResult(intent,BATTERY_OPTIMIZATIONS_REQUEST_CODE);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == BATTERY_OPTIMIZATIONS_REQUEST_CODE){
+            checkForBatteryOptimizations();
+        }
+    }
 
     private void getStartingPost() {
         query.limitToFirst(15).addListenerForSingleValueEvent(new ValueEventListener() {

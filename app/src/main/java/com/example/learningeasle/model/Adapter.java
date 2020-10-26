@@ -66,7 +66,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         myId= FirebaseAuth.getInstance().getCurrentUser().getUid();
         likesRef= FirebaseDatabase.getInstance().getReference().child("Likes");
         postsref= FirebaseDatabase.getInstance().getReference().child("Posts");
-        //
     }
 
     @NonNull
@@ -364,6 +363,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                     String path = ds.getKey();
                     if(ds.child("Bookmarks").hasChild(pTimeStamp)){
                         ref.child(path).child("Bookmarks").child(pTimeStamp).removeValue();
+                        beginDelete(pId,pImage,pTimeStamp);
+                    }
+                    else {
                         beginDelete(pId,pImage,pTimeStamp);
                     }
                 }

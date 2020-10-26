@@ -59,7 +59,6 @@
         <activity
             android:name=".Accounts.Profile"
             android:screenOrientation="portrait" />
-        <activity android:name=".AudioVideo" />
         <activity
             android:name=".Accounts.Register"
             android:screenOrientation="portrait"

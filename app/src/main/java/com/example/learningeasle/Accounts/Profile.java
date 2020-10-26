@@ -191,8 +191,6 @@ public class Profile extends AppCompatActivity {
                 //setting the image view to the user selected image using its URI
                 image.setImageURI(imageuri);
                 uploadImageToFirebase(imageuri);
-                //uplaod iamge to firebase by calling the below method and passing the image uri as parameter
-                ///url= imageuri.toString();
             }
 
         }
@@ -203,11 +201,6 @@ public class Profile extends AppCompatActivity {
                 imageuri = Uri.fromFile(f);
                 image.setImageURI(imageuri);
                 uploadImageToFirebase(imageuri);
-                //  url = imageuri.toString();
-//                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//                Uri contenturi = Uri.fromFile(f);
-//                mediaScanIntent.setData(contenturi);
-//                this.sendBroadcast(mediaScanIntent);
             }
         }
     }

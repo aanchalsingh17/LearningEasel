@@ -113,18 +113,6 @@ public class Register extends AppCompatActivity {
                         if(task.isSuccessful()){
                             FirebaseUser fuser = fAuth_reg.getCurrentUser();
                              final String Uid = fuser.getUid();
-                            //send email verification link
-                            fuser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Toast.makeText(Register.this, "Verification email has been sent.", Toast.LENGTH_SHORT).show();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d("tag","onFailure : Email not sent "+ e.getMessage());
-                                }
-                            });
 
                             Toast.makeText(Register.this, "User Created.", Toast.LENGTH_SHORT).show();
 

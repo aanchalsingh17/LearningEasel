@@ -1,6 +1,7 @@
 package com.example.learningeasle.model;
 
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -59,6 +61,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
     boolean processLike=false;
     private EditClick edit;
     View view;
+    String audiourl, pdfurl,videourl;
     public Adapter(Context context, List<modelpost> postList,EditClick editClick) {
         this.context = context;
         this.postList = postList;
@@ -87,9 +90,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         String pId = postList.get(position).getpId();
         final String pLikes=postList.get(position).getpLikes();
         String pComments=postList.get(position).getpComments();
-        final String videourl = postList.get(position).getVideourl();
-        final String audiourl = postList.get(position).getAudiourl();
-        final String pdfurl = postList.get(position).getPdfurl();
+         videourl = postList.get(position).getVideourl();
+         audiourl = postList.get(position).getAudiourl();
+         pdfurl = postList.get(position).getPdfurl();
         final String[] viewsCount = new String[1];
 
       /*  DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
@@ -284,9 +287,50 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         });
 
     }
+    //defineType;
+    private  String getExt(Uri uri){
+        ContentResolver contentResolver = context.getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return  mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+    }
+    private void beginDelete(final String pId, String pImage, final String pTimeStamp,String videourl,String audiourl,String pdfurl) {
 
-    private void beginDelete(final String pId, String pImage, final String pTimeStamp) {
+        //First of all Delete the attachements from the storage if their and also the view count of the post from realtime database
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
+        databaseReference.child(pTimeStamp).removeValue();
+        StorageReference reference = FirebaseStorage.getInstance().getReference();
+        if(!videourl.equals("empty")){
+            StorageReference videoref = FirebaseStorage.getInstance().getReferenceFromUrl(videourl);
+            final StorageReference des =  reference.child("Video/"+ pTimeStamp + "/" + "video."+getExt(Uri.parse(videourl)));
+            videoref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(context,"Attached Video File Deleted Successfully",Toast.LENGTH_SHORT).show();
+                }
+            });
 
+        }
+        if(!audiourl.equals("empty")){
+
+            StorageReference audioref = FirebaseStorage.getInstance().getReferenceFromUrl(audiourl);
+            final StorageReference des = reference.child("Audio/"+ pTimeStamp + "/" + "audio."+getExt(Uri.parse(audiourl)));
+            audioref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(context,"Attached Audio File Deleted Successfully",Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        if(!pdfurl.equals("empty")){
+            StorageReference pdfref = FirebaseStorage.getInstance().getReferenceFromUrl(pdfurl);
+            final StorageReference des = reference.child("Pdf/"+ pTimeStamp + "/" + "Pdf."+getExt(Uri.parse(pdfurl)));
+            pdfref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(context,"Attached Pdf File Deleted Successfully",Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
         //Begin delete accordingly if post contain the image than first delete the image from the storage section
         //then delete the post from the realtime database;
         if(pImage.equals("noImage")){
@@ -354,7 +398,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         }
     }
 
-    private void deletefromBookmarks(final String pTimeStamp, final String pImage, final String pId) {
+    private void deletefromBookmarks(final String pTimeStamp, final String pImage, final String pId, final String videourl, final String audiourl, final String pdfurl) {
         final DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Users");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -363,10 +407,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                     String path = ds.getKey();
                     if(ds.child("Bookmarks").hasChild(pTimeStamp)){
                         ref.child(path).child("Bookmarks").child(pTimeStamp).removeValue();
-                        beginDelete(pId,pImage,pTimeStamp);
+                        beginDelete(pId,pImage,pTimeStamp,videourl,audiourl,pdfurl);
                     }
                     else {
-                        beginDelete(pId,pImage,pTimeStamp);
+                        beginDelete(pId,pImage,pTimeStamp,videourl,audiourl,pdfurl);
                     }
                 }
 
@@ -496,9 +540,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                                 String time = postList.get(getAdapterPosition()).pTime;
                                 String pImage = postList.get(getAdapterPosition()).pImage;
                                 String pId = postList.get(getAdapterPosition()).pId;
+                                String videourl = postList.get(getAdapterPosition()).getVideourl();
+                                String audiourl = postList.get(getAdapterPosition()).getAudiourl();
+                                String pdfurl = postList.get(getAdapterPosition()).getPdfurl();
                                 //Before deleting the post delete it from the bookmarks section of the users;
-                                deletefromBookmarks(time,pImage,pId);
-                                //Then delete the post;
+                                deletefromBookmarks(time,pImage,pId,videourl,audiourl,pdfurl);
 
                             }
                         }

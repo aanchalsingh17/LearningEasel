@@ -81,6 +81,7 @@ public class ProfileFragment extends Fragment {
         fAuth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
         setProfile();
+        //Edit profile btn is clicked go to update profile Activity
         editprofile.setOnClickListener(
 
                 new View.OnClickListener() {
@@ -92,7 +93,7 @@ public class ProfileFragment extends Fragment {
         return view;
 
     }
-
+   //On activity created load the fragments of the profile
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -142,10 +143,11 @@ public class ProfileFragment extends Fragment {
     }
 
 
-
+    //Set the User profile with all the posts of user and personal info
     private void setProfile() {
         profile.setImageResource(R.drawable.ic_action_account);
         DatabaseReference db = FirebaseDatabase.getInstance().getReference("Users");
+        //set profile image from the url
         db.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -175,6 +177,7 @@ public class ProfileFragment extends Fragment {
         });
         userID = fAuth.getCurrentUser().getUid();                                                           //user id stored
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        //Set user details on the profile
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

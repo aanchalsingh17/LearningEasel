@@ -105,6 +105,7 @@ public class HomeFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         recyclerView = view.findViewById(R.id.postsRecyclerview);
         shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
+        //Set the layout manager of the recycler view
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         //layoutManager.setStackFromEnd(true);
         //layoutManager.setReverseLayout(true);
@@ -114,6 +115,7 @@ public class HomeFragment extends Fragment {
         interest = new ArrayList<>();
         following = new ArrayList<>();
 
+        //Check for battery optimizations if not enabled than show alert dialog
         checkForBatteryOptimizations();
 
         FirebaseUser firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
@@ -121,13 +123,16 @@ public class HomeFragment extends Fragment {
         Token token= new Token(refreshToken);
         FirebaseDatabase.getInstance().getReference("Tokens").child(firebaseUser.getUid()).setValue(token);
 
+        //Order the post according to the timestamp to get the latest  post on top
         query = FirebaseDatabase.getInstance().getReference("Posts")
                 .orderByChild("order");
         getUserDetails();
+        //Adding the scroll listener on the recyler view to acheive lazyloading
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+                //Scroll state changed load few more posts
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
                     progressBar.setVisibility(View.VISIBLE);
                     loadPosts();
@@ -172,20 +177,22 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    //Get the few starting post from the query and then on demand load more
     private void getStartingPost() {
         query.limitToFirst(15).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //Clear the model post list and load the post from the starting
                 modelpostList.clear();
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     final HashMap<Object, Object> hashMap = (HashMap<Object, Object>) dataSnapshot.getValue();
-//                    if(FirebaseDatabase.getInstance().getReference(""))
+                    //Get the oldest post id to acheive lazy loading
                     oldestPost = (long) hashMap.get("order");
                     modelpost post;
                     System.out.println(hashMap.get("pId"));
+                    //Create new Model Post of the loads and add it to the list
                     if (hashMap.get("pLikes") == null && (interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId")))) {
-//                        System.out.println(hashMap.get("pId"));
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                 hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
                                 hashMap.get("pComments").toString(), hashMap.get("type").toString(),
@@ -204,10 +211,10 @@ public class HomeFragment extends Fragment {
                 if(modelpostList.size()==0){
                     loadPosts();
                 }
+                //Create adapter set the recycler view and make recycler view visible and shimmerframelayout gone
                 adapterPost = new AdapterPost(getActivity(), modelpostList);
                 recyclerView.setAdapter(adapterPost);
                 recyclerView.setVisibility(View.VISIBLE);
-                // progressDialog.dismiss();
                 shimmerFrameLayout.stopShimmer();
                 shimmerFrameLayout.setVisibility(View.GONE);
             }
@@ -221,6 +228,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    //Get the user details to Filter the posts
     public void getUserDetails() {
         final String pId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -286,6 +294,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    //Load few more post starting from the oldest posts
     private void loadPosts() {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
@@ -295,7 +304,6 @@ public class HomeFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     final HashMap<Object, Object> hashMap = (HashMap<Object, Object>) dataSnapshot.getValue();
-//                    if(FirebaseDatabase.getInstance().getReference(""))
                     oldestPost = (long) hashMap.get("order");
                     modelpost post;
                     if (!start[0]) {
@@ -323,14 +331,11 @@ public class HomeFragment extends Fragment {
                 adapterPost = new AdapterPost(getActivity(), modelpostList);
                 recyclerView.setAdapter(adapterPost);
                 adapterPost.notifyDataSetChanged();
-                //progressDialog.dismiss();
                 progressBar.setVisibility(View.INVISIBLE);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-//                Toast.makeText(getActivity(),"Error Loading",Toast.LENGTH_SHORT).show();
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
 
 
         });

@@ -7,7 +7,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.EditText;
@@ -99,21 +101,29 @@ public class ChatDetailsActivity extends AppCompatActivity {
                     System.out.println(ds.getKey()+"{{{{{{{{{{{");
                     if(ds.getKey().equals(hisUid)) {
                         String name = "" + ds.child("Name").getValue();
-                        hisImage = "" + ds.child("Url").getValue();
-                        nameTV.setText(name);
-                        String onlineStatus=""+ds.child("onlineStatus").getValue();
-                        if(onlineStatus.equals("online"))
-                        {
-                            statusTV.setText(onlineStatus);
+                        String typingStatus=""+ds.child("typingTo").getValue();
+                        if(typingStatus.equals(myUid)){
+                            statusTV.setText("typing..");
                         }
                         else
                         {
-                            Calendar calendar = Calendar.getInstance(Locale.getDefault());
-                            calendar.setTimeInMillis(Long.parseLong(onlineStatus));
+                            String onlineStatus=""+ds.child("onlineStatus").getValue();
+                            if(onlineStatus.equals("online"))
+                            {
+                                statusTV.setText(onlineStatus);
+                            }
+                            else
+                            {
+                                Calendar calendar = Calendar.getInstance(Locale.getDefault());
+                                calendar.setTimeInMillis(Long.parseLong(onlineStatus));
 
-                            String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
-                            statusTV.setText("Last seen at: "+pTime);
+                                String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
+                                statusTV.setText("Last seen at: "+pTime);
+                            }
                         }
+                        hisImage = "" + ds.child("Url").getValue();
+                        nameTV.setText(name);
+
 
                         try {
                             Picasso.get().load(hisImage).placeholder(R.drawable.ic_action_profile).into(profileIV);
@@ -146,6 +156,29 @@ sendbtn.setOnClickListener(new View.OnClickListener() {
     }
 });
 
+messageET.addTextChangedListener(new TextWatcher() {
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+if(s.toString().trim().length()==0)
+{
+ checkTypingStatus("noOne");
+}
+else{
+    checkTypingStatus(hisUid);
+}
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
+    }
+});
 readMessages();
 seenMessage();
 
@@ -154,6 +187,12 @@ seenMessage();
         DatabaseReference dbRef=FirebaseDatabase.getInstance().getReference("Users").child(myUid);
         HashMap<String,Object>hashMap=new HashMap<>();
         hashMap.put("onlineStatus",status);
+        dbRef.updateChildren(hashMap);
+    }
+    private void checkTypingStatus(String typing){
+        DatabaseReference dbRef=FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+        HashMap<String,Object>hashMap=new HashMap<>();
+        hashMap.put("typingTo",typing);
         dbRef.updateChildren(hashMap);
     }
 
@@ -236,6 +275,7 @@ seenMessage();
         super.onPause();
         String timestamp=String.valueOf(System.currentTimeMillis());
         checkOnlineStatus(timestamp);
+        checkTypingStatus("noOne");
         userRefForSeen.removeEventListener(seenListener);
     }
 

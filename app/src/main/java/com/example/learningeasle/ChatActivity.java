@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ProgressBar;
 
+import com.example.learningeasle.model.AdapterChatDisplay;
 import com.example.learningeasle.model.AdapterUsers;
 import com.example.learningeasle.model.ModelUsers;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -32,7 +33,7 @@ import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
     RecyclerView users;
-    AdapterUsers adapterUsers;
+    AdapterChatDisplay adapterChatDisplay;
     List<ModelUsers> usersList;
     View view;
     ProgressBar progressBar;
@@ -53,8 +54,8 @@ public class ChatActivity extends AppCompatActivity {
         shimmerFrameLayout =findViewById(R.id.shimmer_layout);
         progressBar = findViewById(R.id.progressBar_loading);
         // getAllUsers();
-        adapterUsers = new AdapterUsers(getApplicationContext(), usersList);
-        users.setAdapter(adapterUsers);
+        adapterChatDisplay = new AdapterChatDisplay(getApplicationContext(), usersList);
+        users.setAdapter(adapterChatDisplay);
         //Get starting users
         shimmerFrameLayout.startShimmer();
         getFirstUsers();
@@ -97,8 +98,8 @@ public class ChatActivity extends AppCompatActivity {
                         usersList.add(users);
 
                 }
-                adapterUsers = new AdapterUsers(getApplicationContext(), usersList);
-                users.setAdapter(adapterUsers);
+                adapterChatDisplay = new AdapterChatDisplay(getApplicationContext(), usersList);
+                users.setAdapter(adapterChatDisplay);
                 users.setVisibility(View.VISIBLE);
                 shimmerFrameLayout.stopShimmer();
                 shimmerFrameLayout.setVisibility(View.GONE);
@@ -136,9 +137,9 @@ public class ChatActivity extends AppCompatActivity {
                     }
 
                 }
-                adapterUsers = new AdapterUsers(getApplicationContext(), usersList);
-                users.setAdapter(adapterUsers);
-                adapterUsers.notifyDataSetChanged();
+                adapterChatDisplay = new AdapterChatDisplay(getApplicationContext(), usersList);
+                users.setAdapter(adapterChatDisplay);
+                adapterChatDisplay.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
             }
 

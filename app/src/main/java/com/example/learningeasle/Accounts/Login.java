@@ -288,6 +288,7 @@ public class Login extends AppCompatActivity {
                         hashMap.put("Url", "empty");
                         hashMap.put("onlineStatus","online");
                         hashMap.put("email",account.getEmail());
+                        hashMap.put("typingTo","none");
                         hashMap.put("phone","");
                         hashMap.put("status","");
                         reference.child(user.getUid()).setValue(hashMap);

@@ -18,6 +18,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.learningeasle.ChatDetailsActivity;
+import com.example.learningeasle.MainFragments.UsersFragment;
+import com.example.learningeasle.ProfileFragments.UserPostsFragment;
 import com.example.learningeasle.R;
 import com.example.learningeasle.UserDetails.UserProfile;
 import com.facebook.shimmer.Shimmer;
@@ -124,7 +126,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
           holder.itemView.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
-                  Intent intent = new Intent(context, ChatDetailsActivity.class);
+                  Intent intent = new Intent(context, UserProfile.class);
                   intent.putExtra("Id",Uid);
                   context.startActivity(intent);
               }

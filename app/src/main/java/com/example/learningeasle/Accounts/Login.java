@@ -286,6 +286,7 @@ public class Login extends AppCompatActivity {
                         hashMap.put("Name",account.getDisplayName());
                         hashMap.put("Id",user.getUid());
                         hashMap.put("Url", "empty");
+
                         hashMap.put("email",account.getEmail());
                         hashMap.put("phone","");
                         hashMap.put("status","");

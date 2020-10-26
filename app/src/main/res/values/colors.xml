@@ -12,4 +12,5 @@
     <color name="text">#DEFFFFFF</color>
     <color name="allTabs">#18415C</color>
     <color name="tabSelected">#152238</color>
+    <color name="colorWhite">#f2f2f2</color>
 </resources>

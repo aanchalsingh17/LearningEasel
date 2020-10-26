@@ -96,7 +96,7 @@ public class UserBookmarkFragment extends Fragment {
 
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(timestamp);
 
-                    ref.addValueEventListener(new ValueEventListener() {
+                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
 

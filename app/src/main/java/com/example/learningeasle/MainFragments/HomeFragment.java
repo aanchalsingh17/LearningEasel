@@ -203,7 +203,6 @@ public class HomeFragment extends Fragment {
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                     following.add(dataSnapshot.getKey());
-                                    System.out.println(dataSnapshot.getKey() + " = key");
                                 }
 
                                 DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference("Users").child(db.getKey()).child(email);

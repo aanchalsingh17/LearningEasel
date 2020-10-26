@@ -355,7 +355,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         }
     }
 
-    private void deletefromBookmarks(final String pTimeStamp) {
+    private void deletefromBookmarks(final String pTimeStamp, final String pImage, final String pId) {
         final DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Users");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -364,6 +364,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                     String path = ds.getKey();
                     if(ds.child("Bookmarks").hasChild(pTimeStamp)){
                         ref.child(path).child("Bookmarks").child(pTimeStamp).removeValue();
+                        beginDelete(pId,pImage,pTimeStamp);
                     }
                 }
 
@@ -494,9 +495,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                                 String pImage = postList.get(getAdapterPosition()).pImage;
                                 String pId = postList.get(getAdapterPosition()).pId;
                                 //Before deleting the post delete it from the bookmarks section of the users;
-                                deletefromBookmarks(time);
+                                deletefromBookmarks(time,pImage,pId);
                                 //Then delete the post;
-                                beginDelete(pId,pImage,time);
 
                             }
                         }

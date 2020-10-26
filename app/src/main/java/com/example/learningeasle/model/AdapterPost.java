@@ -99,8 +99,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
         shimmerDrawable.setShimmer(shimmer);
 
-        System.out.println(pTitle+" "+pDescription+" "+pName);
-
         if(!videourl.equals("empty")||!(pdfurl.equals("empty"))||!(audiourl.equals("empty"))){
             holder.attached.setVisibility(View.VISIBLE);
         }

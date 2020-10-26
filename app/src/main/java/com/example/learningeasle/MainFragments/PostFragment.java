@@ -80,6 +80,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     String pLikes="0",pComments="0";
     Spinner spinner;
     String videourl="empty",pdfUrl="empty",audiourrl="empty";
+     String timeStamp;
     ArrayAdapter<String> adapter;
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
@@ -134,6 +135,8 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         view_btn = view.findViewById(R.id.view);
         audio_btn = view.findViewById(R.id.audio_upload);
 
+        //Initialise timestamp here
+        timeStamp= String.valueOf(System.currentTimeMillis());
         //When attached button is clicked make visiblity of video n pdf button visible
 
         view_attached.setOnClickListener(new View.OnClickListener() {
@@ -176,28 +179,32 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         reference = FirebaseStorage.getInstance().getReference();
         spinner = (Spinner) view.findViewById(R.id.spinner);
 
+        //When view btn is clicked then pass the url of files and show them in viewattached class
         view_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent view_page = new Intent(getActivity(), ViewAttachement.class);
-                if(videouri==null){
-                    view_page.putExtra("videourl","empty");
-                }else{
-                    view_page.putExtra("videourl",videouri.toString());
-                }
-                if(pdfuri==null){
-                    view_page.putExtra("pdfurl","empty");
-                }
-                else{
-                    view_page.putExtra("pdfurl",pdfUrl);
-                }
+                if (videouri == null && audiouri == null && pdfuri == null) {
+                   // Toast.makeText(this, "File Not Attached!!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent view_page = new Intent(getActivity(), ViewAttachement.class);
+                    if (videouri == null) {
+                        view_page.putExtra("videourl", "empty");
+                    } else {
+                        view_page.putExtra("videourl", videouri.toString());
+                    }
+                    if (pdfuri == null) {
+                        view_page.putExtra("pdfurl", "empty");
+                    } else {
+                        view_page.putExtra("pdfurl", pdfUrl);
+                    }
 
-                if(audiouri==null){
-                    view_page.putExtra("audiourl","empty");
-                }else{
-                    view_page.putExtra("audiourl",audiourrl);
+                    if (audiouri == null) {
+                        view_page.putExtra("audiourl", "empty");
+                    } else {
+                        view_page.putExtra("audiourl", audiourrl);
+                    }
+                    startActivity(view_page);
                 }
-                startActivity(view_page);
             }
         });
 
@@ -206,12 +213,14 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         progressDialog.setMessage("Please Wait...");
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
+        //Video btn is clicked choose video from the external source and upload it to firebase
         video_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 chooseVideo(v);
             }
         });
+        //If its edit post means we already have some title and content retrieved from the intent
         if(edit.equals("EditPost")){
             et_title.setText(title);
             et_desc.setText(des);
@@ -237,6 +246,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    //Choose video using intent
     private void chooseVideo(View v) {
             Intent intent = new Intent();
             intent.setType("video/*");
@@ -245,6 +255,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    //Get user details to show only those channels which user follow show that he will be able to post in only those channels
     public void getUserDetails() {
         final String pId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -321,12 +332,12 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         // String UserId = firebaseUser.getUid();
-        final String timeStamp;
+
         //If post is to be edited then timestamp is going to be the time stamp of the post to be edited not the current timestamp
         if(edit.equals("EditPost"))
             timeStamp = time;
-        else
-            timeStamp= String.valueOf(System.currentTimeMillis());
+
+
         String filePathAndName = "Posts/" + "post_" + timeStamp;
         final String type=spinner.getSelectedItem().toString();
 
@@ -346,6 +357,16 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 ref.child("pDesc").setValue(description);
                 ref.child("type").setValue(type);
 //                ref.child("views").setValue("0");
+                //If any of the url is not equal to empty means new file being attached from the device
+                if(!videourl.equals("empty")){
+                    ref.child("videourl").setValue(videourl);
+                }
+                if(!audiourrl.equals("empty")){
+                    ref.child("audiourl").setValue(audiourrl);
+                }
+                if(!pdfUrl.equals("pdfurl")){
+                    ref.child("pdfurl").setValue(pdfUrl);
+                }
                 Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
                         .show();
                 et_desc.setText("");
@@ -376,6 +397,16 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                                 ref.child("type").setValue(type);
                                 ref.child("pImage").setValue(downloadUri);
 //                                ref.child("views").setValue("0");
+                                //If any of the url is not equal to empty means new file being attached from the device
+                                if(!videourl.equals("empty")){
+                                    ref.child("videourl").setValue(videourl);
+                                }
+                                if(!audiourrl.equals("empty")){
+                                    ref.child("audiourl").setValue(audiourrl);
+                                }
+                                if(!pdfUrl.equals("pdfurl")){
+                                    ref.child("pdfurl").setValue(pdfUrl);
+                                }
                                 Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
                                         .show();
                                 et_desc.setText("");
@@ -454,6 +485,16 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 ref.child("pDesc").setValue(description);
                 ref.child("type").setValue(type);
                 ref.child("pImage").setValue("noImage");
+                //If any of the url is not equal to empty means new file being attached from the device
+                if(!videourl.equals("empty")){
+                    ref.child("videourl").setValue(videourl);
+                }
+                if(!audiourrl.equals("empty")){
+                    ref.child("audiourl").setValue(audiourrl);
+                }
+                if(!pdfUrl.equals("pdfurl")){
+                    ref.child("pdfurl").setValue(pdfUrl);
+                }
 //                ref.child("views").setValue("0");
                     Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
                             .show();
@@ -510,7 +551,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         }
 
     }
-
+   //When image view is clicked show the image dialog show that user will be able to pick the image either from the camera or gallery
     private void Image_dialog() {
         String[] options = {"Camera", "Gallery"};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -533,6 +574,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             }
         });
         builder.create().show();
+        //Getting the person name and udp url to upload on the firebase
        DatabaseReference db = FirebaseDatabase.getInstance().getReference("Users");
        db.addValueEventListener(new ValueEventListener() {
            @Override
@@ -552,7 +594,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
            }
        });
     }
-
+   //Clicking the image from the camera when camera option is selected from the dialog
     private void pickFromCamera() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Images.Media.TITLE, "Temp Pick");
@@ -560,26 +602,30 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         image_rui = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, image_rui);
+        //Start activity for result with request code
         startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
     }
-
+   //Pick image from the gallery with image view in the intent and with request code of the gallery
     private void pickFromGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
     }
 
+    //Check if permission is granted to select from EXTERNAL_STORAGE and then perform accordingly
     private boolean checkStoragePermission() {
         boolean reuslt = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.
                 WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
         return reuslt;
     }
 
+    //If permission is not granted ask for the permission
     private void requestStoragePermission() {
         ActivityCompat.requestPermissions(getActivity(), storagePermissions,
                 STORAGE_REQUEST_CODE);
     }
 
+    //Check for camera permission
     private boolean checkCameraPermission() {
         boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.
                 CAMERA) == (PackageManager.PERMISSION_GRANTED);
@@ -588,11 +634,13 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         return result && result1;
     }
 
+    //If camera permission in not given ask for camera permission
     private void requestCameraPermission() {
         ActivityCompat.requestPermissions(getActivity(), cameraPermissions,
                 CAMERA_REQUEST_CODE);
     }
 
+    //After request is made and some action is performed then perform accordingly
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -629,6 +677,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == -1) {
+            //If image is picked from gallery then create is uri and then set it into image view
             if (requestCode == IMAGE_PICK_GALLERY_CODE) {
                 image_rui = data.getData();
                 img_post.setImageURI(image_rui);
@@ -637,6 +686,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+        //IF request code is of video then retrieve video uri form data and upload it onto the storage
         if(resultCode==RESULT_OK){
             if(requestCode==108){
 
@@ -644,12 +694,14 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 uploadVideo(videouri);
             }
         }
+        //IF request code is of pdf then retrieve pdfuri from data and upload it onto the storage
         if(resultCode==RESULT_OK){
             if(requestCode==PDF_REQUEST){
                 pdfuri = data.getData();
                 uploadPdf(pdfuri);
             }
         }
+        //If request code is of audio then retrieve the audiouri from data and upload it onto storage
         if(resultCode==RESULT_OK){
             if(requestCode==AUDIO_REQUEST){
                 audiouri = data.getData();
@@ -660,14 +712,20 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     }
 
     private void uploadAudio(Uri audiouri) {
+        //If storage Permission in not given then go for that first
+        if(!checkStoragePermission()){
+            requestStoragePermission();
+        }
         if(audiouri!=null){
-            final String timeStamp;
             //If post is to be edited then timestamp is going to be the time stamp of the post to be edited not the current timestamp
+            final ProgressDialog progressDialog;
+            progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setMessage("Attaching File...");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
             if (edit.equals("EditPost"))
                 timeStamp = time;
-            else
-                timeStamp = String.valueOf(System.currentTimeMillis());
-
+            //Upload the audio file onto the storage then download the file and save its uri upload onto the realtimedatabse
             final StorageReference des = reference.child("Audio/"+ timeStamp + "/" + "audio."+getExt(audiouri));
             uploadTask = des.putFile(audiouri);
             des.putFile(audiouri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -677,6 +735,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                         @Override
                         public void onSuccess(Uri uri) {
                              audiourrl= uri.toString();
+                             progressDialog.dismiss();
                             Toast.makeText(getActivity(),"Audio File Attached",Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -687,15 +746,20 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
     private void uploadPdf(Uri pdfuri) {
         if(pdfuri!=null) {
-            final String timeStamp;
             //If post is to be edited then timestamp is going to be the time stamp of the post to be edited not the current timestamp
             if (edit.equals("EditPost"))
                 timeStamp = time;
-            else
-                timeStamp = String.valueOf(System.currentTimeMillis());
+
+            //Show the progress dialog until file is not attached
+            final ProgressDialog progressDialog;
+            progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setMessage("Attaching File...");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
 
             final StorageReference des = reference.child("Pdf/"+ timeStamp + "/" + "Pdf."+getExt(pdfuri));
             uploadTask = des.putFile(pdfuri);
+            //Upload the pdf file onto the storage then download the file and save its uri to upload onto the realtimedatabse
             des.putFile(pdfuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -703,6 +767,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                         @Override
                         public void onSuccess(Uri uri) {
                             pdfUrl = uri.toString();
+                            progressDialog.dismiss();
                             Toast.makeText(getActivity(),"Pdf File Attached",Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -719,14 +784,19 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     }
     private void uploadVideo(Uri videouri) {
         if(videouri!=null){
-            final String timeStamp;
             //If post is to be edited then timestamp is going to be the time stamp of the post to be edited not the current timestamp
             if(edit.equals("EditPost"))
                 timeStamp = time;
-            else
-                timeStamp= String.valueOf(System.currentTimeMillis());
+            //Show the progress dialog until the video is not attached
+            final ProgressDialog progressDialog;
+            progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setMessage("Attaching File...");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+
             final StorageReference des = reference.child("Video/"+ timeStamp + "/" + "video."+getExt(videouri));
             uploadTask = des.putFile(videouri);
+            //Upload the video file onto the storage then download the file and save its uri upload onto the realtimedatabse
             des.putFile(videouri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -734,6 +804,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                         @Override
                         public void onSuccess(Uri uri) {
                             videourl = uri.toString();
+                            progressDialog.dismiss();
                             Toast.makeText(getActivity(),"Video File Attached",Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -749,6 +820,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             case R.id.img:
                 Image_dialog();
                 break;
+                //IF post btn is clicked then post the post in different cases
             case R.id.post_button:
                 String title = et_title.getText().toString().trim();
                 String description = et_desc.getText().toString().trim();

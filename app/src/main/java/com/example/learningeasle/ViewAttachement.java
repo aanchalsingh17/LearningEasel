@@ -2,6 +2,7 @@ package com.example.learningeasle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.media.Image;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -51,9 +52,11 @@ public class ViewAttachement extends AppCompatActivity {
         playerSeekbar = findViewById(R.id.seekbar_player);
         playerSeekbar.setMax(100);
         player = findViewById(R.id.player);
+        //Get the url of the views to be shown
         String url = getIntent().getStringExtra("videourl");
         String pdfurl = getIntent().getStringExtra("pdfurl");
          audiourl = getIntent().getStringExtra("audiourl");
+         //if videourl is non empty then make it visible and load the video from the url
         if (!url.equals("empty")) {
             frameLayout.setVisibility(View.VISIBLE);
             videoView.setVisibility(View.VISIBLE);
@@ -63,15 +66,19 @@ public class ViewAttachement extends AppCompatActivity {
             Uri uri = Uri.parse(url);
             videoView.setVideoURI(uri);
         }
+        //If pdfurl is not empty then make it visible and load the pdf from the url
         if (!pdfurl.equals("empty")) {
             pdfView.setVisibility(View.VISIBLE);
            // Uri pdfuri = Uri.parse(pdfurl);
             new RetrievePDFStream().execute(pdfurl);
 
         }
+
+        //If audiourl is not empty then make it visible and load the audio from the url
         if(!audiourl.equals("empty")){
             player.setVisibility(View.VISIBLE);
         }
+        //ImagePlayPause to play and pause the audio file
         imageplaypause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,7 +97,17 @@ public class ViewAttachement extends AppCompatActivity {
       preparemediaplayer();
 
     }
+    //Upon BackPressing Stop the mediaPlayer
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.stop();
+        }
+    }
+
     private  void preparemediaplayer(){
+        //Setting the data source  i.e. audiourl to the media player
         try{
             mediaPlayer.setDataSource(audiourl);
             mediaPlayer.prepare();
@@ -99,6 +116,7 @@ public class ViewAttachement extends AppCompatActivity {
 
         }
     }
+    //TO update the seekbar text and to move the seekbar tint
     private  Runnable updater = new Runnable() {
         @Override
         public void run() {
@@ -108,11 +126,13 @@ public class ViewAttachement extends AppCompatActivity {
         }
     };
     private  void updateSeekBar(){
+        //If media player is running then keep on updating the seekbar
         if(mediaPlayer.isPlaying()){
             playerSeekbar.setProgress((int)(((float) mediaPlayer.getCurrentPosition()/ mediaPlayer.getDuration())*100));
             handler.postDelayed(updater,1000);
         }
     }
+    //duration of file given by mediaplayer will be in milliseconds converting it in the form of hour:minute:seconds
     private String millisecondsToTimer(long milliseconds){
         String timerString = "";
         String secondsString;
@@ -130,8 +150,20 @@ public class ViewAttachement extends AppCompatActivity {
         timerString = timerString + minutes + ":" +secondsString;
         return  timerString;
     }
+    //Retrieving the pdf stream
      class RetrievePDFStream extends AsyncTask<String, Void, InputStream> {
-        @Override
+        ProgressDialog progressDialog;
+         @Override
+         protected void onPreExecute() {
+
+             progressDialog = new ProgressDialog(ViewAttachement.this);
+             progressDialog.setMessage("Downloading File...");
+             progressDialog.setCanceledOnTouchOutside(false);
+             progressDialog.show();
+             super.onPreExecute();
+         }
+
+         @Override
         protected InputStream doInBackground(String... strings) {
             InputStream inputStream = null;
 
@@ -152,6 +184,7 @@ public class ViewAttachement extends AppCompatActivity {
         @Override
         protected void onPostExecute(InputStream inputStream) {
             pdfView.fromStream(inputStream).load();
+            progressDialog.dismiss();
         }
     }
 }

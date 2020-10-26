@@ -73,10 +73,9 @@ public class UsersFragment extends Fragment {
         shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
         progressBar = view.findViewById(R.id.progressBar_loading);
         setHasOptionsMenu(true);
-        // getAllUsers();
         adapterUsers = new AdapterUsers(getActivity(), usersList);
         users.setAdapter(adapterUsers);
-        //Get starting users
+        //Get starting users and start shimmering until users name is not loaded
         shimmerFrameLayout.startShimmer();
         getFirstUsers();
         users.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -104,7 +103,7 @@ public class UsersFragment extends Fragment {
         return view;
     }
 
-    //Loading the first dew users in the starting
+    //Loading the first few users in the starting
     private void getFirstUsers() {
         final FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
@@ -120,6 +119,7 @@ public class UsersFragment extends Fragment {
                         usersList.add(users);
 
                 }
+                //Set adapter to the recycler view make recycler view visible and shimmerframelayout gone
                 adapterUsers = new AdapterUsers(getActivity(), usersList);
                 users.setAdapter(adapterUsers);
                 users.setVisibility(View.VISIBLE);
@@ -142,6 +142,7 @@ public class UsersFragment extends Fragment {
         SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setQueryHint("Whom are you looking for?");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            //when query text is submitted if somthing is entered then use it otherwise load all the users
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if (!TextUtils.isEmpty(query.trim())) {
@@ -151,6 +152,7 @@ public class UsersFragment extends Fragment {
                 return false;
             }
 
+            //If on Searching while user is typing
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (!TextUtils.isEmpty(newText.trim()))
@@ -170,6 +172,7 @@ public class UsersFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 usersList.clear();
+                //If text entered is present in the any of the users name or email then add that user in the list
                 for (DataSnapshot db : snapshot.getChildren()) {
                     HashMap<Object, String> hashMap = (HashMap<Object, String>) db.getValue();
                     ModelUsers users = new ModelUsers(hashMap.get("Id"), hashMap.get("Name"), hashMap.get("Url"), hashMap.get("email"), hashMap.get("phone"), hashMap.get("status"));
@@ -193,6 +196,7 @@ public class UsersFragment extends Fragment {
 
     }
 
+    //Get few more users from the database starting at the oldestUser
     private void getAllUsers() {
         //current user;
 
@@ -217,7 +221,7 @@ public class UsersFragment extends Fragment {
                 adapterUsers = new AdapterUsers(getActivity(), usersList);
                 users.setAdapter(adapterUsers);
                 adapterUsers.notifyDataSetChanged();
-                progressBar.setVisibility(View.GONE);
+                progressBar.setVisibility(View.INVISIBLE);
             }
 
             @Override

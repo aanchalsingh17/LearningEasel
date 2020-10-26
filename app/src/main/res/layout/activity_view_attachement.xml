@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ViewAttachement"
-    android:background="@drawable/ic_music"
+
     >
 
     <com.github.barteksc.pdfviewer.PDFView
@@ -47,6 +47,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        android:background="@drawable/music"
         android:orientation="vertical">
 
         <LinearLayout

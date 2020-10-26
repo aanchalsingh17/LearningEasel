@@ -59,7 +59,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
 
     String hisUid;
-    String myUid;
+    String myUid,myName;
     String hisImage;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference usersDbRef;
@@ -71,6 +71,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
     AdapterChat adapterChat;
 
     private APIService apiService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,12 +106,27 @@ public class ChatDetailsActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         usersDbRef = firebaseDatabase.getReference("Users");
 
+        usersDbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds:snapshot.getChildren()){
+                    if(ds.getKey().equals(myUid)){
+                        myName= (String) ds.child("Name").getValue();
+                    }
+                }
+            }
 
-        usersDbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+        usersDbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    System.out.println(ds.getKey() + "{{{{{{{{{{{");
                     if (ds.getKey().equals(hisUid)) {
                         name = "" + ds.child("Name").getValue();
                         String typingStatus = "" + ds.child("typingTo").getValue();
@@ -130,6 +146,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
                         }
                         hisImage = "" + ds.child("Url").getValue();
                         nameTV.setText(name);
+
+                        System.out.println(name + "in name");
 
 
                         try {
@@ -160,8 +178,9 @@ public class ChatDetailsActivity extends AppCompatActivity {
                     FirebaseDatabase.getInstance().getReference().child("Tokens").child(hisUid).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            String usertoken=dataSnapshot.getValue(String.class);
-                            sendNotifications(usertoken, name,message);
+
+                            String usertoken = dataSnapshot.getValue(String.class);
+                            sendNotifications(usertoken, myName, message);
                         }
 
                         @Override
@@ -202,6 +221,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
     }
 
     public void sendNotifications(String usertoken, String title, String message) {
+        System.out.println(name + " " + title + " in 1st name");
         Data data = new Data(title, message);
         NotificationSender sender = new NotificationSender(data, usertoken);
         apiService.sendNotifcation(sender).enqueue(new Callback<MyResponse>() {

@@ -26,8 +26,11 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
+
         title=remoteMessage.getData().get("Title");
         message=remoteMessage.getData().get("Message");
+
+        System.out.println(title+" title");
         Drawable myDrawable = getResources().getDrawable(R.drawable.logo_large);
         Bitmap bitmap = ((BitmapDrawable) myDrawable).getBitmap();
 

@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.learningeasle.ChatActivity;
 import com.example.learningeasle.PickInterests;
 import com.example.learningeasle.PushNotifications.Token;
 import com.example.learningeasle.R;
@@ -51,6 +52,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.internal.$Gson$Preconditions;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -132,7 +134,7 @@ public class HomeFragment extends Fragment {
 
 
     private void getStartingPost() {
-        query.limitToFirst(10).addValueEventListener(new ValueEventListener() {
+        query.limitToFirst(15).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelpostList.clear();
@@ -185,7 +187,7 @@ public class HomeFragment extends Fragment {
 
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (final DataSnapshot db : snapshot.getChildren()) {
@@ -250,7 +252,7 @@ public class HomeFragment extends Fragment {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         final boolean[] start = {true};
-        query.startAt(oldestPost).limitToFirst(4).addValueEventListener(new ValueEventListener() {
+        query.startAt(oldestPost).limitToFirst(15).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -299,21 +301,21 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.interests, menu);
-        MenuItem menuItem = menu.findItem(R.id.interests);
-//        Button button= (Button) menuItem.getActionView();
-        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.chat:
+                startActivity(new Intent(getContext(), ChatActivity.class));
+                getActivity().finish();
+                return true;
+            case R.id.interests:
                 startActivity(new Intent(getContext(), PickInterests.class));
                 getActivity().finish();
-                return false;
-            }
-        });
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item); // important line
     }
 }

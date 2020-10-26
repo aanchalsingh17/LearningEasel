@@ -226,7 +226,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         holder.pTime.setText(pTime);
         holder.pTitle.setText(pTitle);
         holder.pDesc.setText(pDescription);
-
+        holder.pTotalLikes.setText(pLikes + " Likes");
 
         setLikes(holder, pTimeStamp);
 
@@ -270,7 +270,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
             }
         });
-        holder.pTotalLikes.setText(pLikes + " Likes");
+
         setBookmark(holder, myId, pId, pTimeStamp);
         holder.comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -390,7 +390,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     }
 
     private void setLikes(final MyHolder holder, final String pTimeStamp) {
-       postsref.addListenerForSingleValueEvent(new ValueEventListener() {
+       postsref.addValueEventListener(
+               new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -400,6 +401,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                                 0);
                         holder.like_btn.setText("Liked");
                     }
+
                      else {
                         holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like, 0, 0,
                                 0);

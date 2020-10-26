@@ -6,5 +6,11 @@
         android:title="Interests"
         app:showAsAction="always"
         android:icon="@drawable/ic_school" />
+    <item
+        android:id="@+id/chat"
+        android:title="Chat"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_chatting" />
+
 
 </menu>

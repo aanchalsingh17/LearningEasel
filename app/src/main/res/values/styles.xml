@@ -1,13 +1,24 @@
 <resources>
     <!-- Base application theme. -->
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimaryDark">#152238</item>
+
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#18415C</item>
+
         <item name="colorPrimaryDark">#152238</item>
         <item name="colorAccent">@color/colorAccent</item>
+
     </style>
     <style name="AppTheme2" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+
+
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">#152238</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -22,5 +33,6 @@
         <item name="android:textColorPrimary">@color/text</item>
         <item name="android:background">@color/colorPrimaryDark</item>
     </style>
+
 
 </resources>

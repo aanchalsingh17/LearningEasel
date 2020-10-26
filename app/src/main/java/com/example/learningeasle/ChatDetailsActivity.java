@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -30,8 +31,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class ChatDetailsActivity extends AppCompatActivity {
 
@@ -43,6 +46,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
     EditText messageET;
     ImageButton sendbtn;
     FirebaseAuth firebaseAuth;
+
     String hisUid;
     String myUid;
     String hisImage;
@@ -97,6 +101,20 @@ public class ChatDetailsActivity extends AppCompatActivity {
                         String name = "" + ds.child("Name").getValue();
                         hisImage = "" + ds.child("Url").getValue();
                         nameTV.setText(name);
+                        String onlineStatus=""+ds.child("onlineStatus").getValue();
+                        if(onlineStatus.equals("online"))
+                        {
+                            statusTV.setText(onlineStatus);
+                        }
+                        else
+                        {
+                            Calendar calendar = Calendar.getInstance(Locale.getDefault());
+                            calendar.setTimeInMillis(Long.parseLong(onlineStatus));
+
+                            String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
+                            statusTV.setText("Last seen at: "+pTime);
+                        }
+
                         try {
                             Picasso.get().load(hisImage).placeholder(R.drawable.ic_action_profile).into(profileIV);
                         } catch (Exception e) {
@@ -127,10 +145,16 @@ sendbtn.setOnClickListener(new View.OnClickListener() {
 
     }
 });
-System.out.println("hereherehereherhrheherhrehrehrhe");
+
 readMessages();
-        System.out.println("hereherehereherhrheherhrehrehrhe");
 seenMessage();
+
+    }
+    private void checkOnlineStatus(String status){
+        DatabaseReference dbRef=FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+        HashMap<String,Object>hashMap=new HashMap<>();
+        hashMap.put("onlineStatus",status);
+        dbRef.updateChildren(hashMap);
     }
 
     private void seenMessage() {
@@ -202,8 +226,22 @@ seenMessage();
     }
 
     @Override
+    protected void onStart() {
+        checkOnlineStatus("online");
+        super.onStart();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
+        String timestamp=String.valueOf(System.currentTimeMillis());
+        checkOnlineStatus(timestamp);
         userRefForSeen.removeEventListener(seenListener);
+    }
+
+    @Override
+    protected void onResume() {
+        checkOnlineStatus("online");
+        super.onResume();
     }
 }

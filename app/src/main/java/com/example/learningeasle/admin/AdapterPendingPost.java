@@ -69,7 +69,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PendingHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final PendingHolder holder, int position) {
         final String uName = pendingpostList.get(position).getpName();
         final String url = pendingpostList.get(position).getuImage();
          final String pTitle = pendingpostList.get(position).getpTitle();
@@ -211,13 +211,50 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
         holder.attachement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!videourl.equals("empty")){
+                    holder.video_btn.setVisibility(View.VISIBLE);
+
+                }
+                if(!pdfurl.equals("empty")){
+                    holder.pdf_btn.setVisibility(View.VISIBLE);
+                }
+                if(!audiourl.equals("empty")){
+                    holder.audio_btn.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        //Pass the url of the attached file which user want to view
+        holder.video_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 Intent intent = new Intent(context, ViewAttachement.class);
                 intent.putExtra("videourl",videourl);
+                intent.putExtra("audiourl","empty");
+                intent.putExtra("pdfurl","empty");
+                context.startActivity(intent);
+            }
+        });
+        holder.audio_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl","empty");
                 intent.putExtra("audiourl",audiourl);
+                intent.putExtra("pdfurl","empty");
+                context.startActivity(intent);
+            }
+        });
+        holder.pdf_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl","empty");
+                intent.putExtra("audiourl","empty");
                 intent.putExtra("pdfurl",pdfurl);
                 context.startActivity(intent);
             }
         });
+
     }
 
 
@@ -251,7 +288,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
         ImageView uDp,pImage;
         TextView uName, pTime, pTitle, pDescpType,pDes;
         Button publish,cancel;
-        FloatingActionButton attachement;
+        FloatingActionButton attachement,video_btn,audio_btn,pdf_btn;
         public PendingHolder(@NonNull View itemView) {
             super(itemView);
             uDp = itemView.findViewById(R.id.uDp);
@@ -264,6 +301,9 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
             publish = itemView.findViewById(R.id.publish);
             cancel = itemView.findViewById(R.id.cancel);
             attachement = itemView.findViewById(R.id.view_attached);
+            audio_btn = itemView.findViewById(R.id.audio_upload);
+            pdf_btn = itemView.findViewById(R.id.pdf_upload);
+            video_btn = itemView.findViewById(R.id.video_upload);
         }
     }
 }

@@ -117,6 +117,56 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
            holder.attachement.setVisibility(View.VISIBLE);
        }
 
+       //when attached floating button is clicked make visible all those floting button whose value is not empty
+        holder.attachement.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               if(!videourl.equals("empty")){
+                   holder.video_btn.setVisibility(View.VISIBLE);
+
+               }
+               if(!pdfurl.equals("empty")){
+                   holder.pdf_btn.setVisibility(View.VISIBLE);
+               }
+               if(!audiourl.equals("empty")){
+                   holder.audio_btn.setVisibility(View.VISIBLE);
+               }
+           }
+       });
+
+        //Pass the url of the attached file which user want to view
+        holder.video_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl",videourl);
+                intent.putExtra("audiourl","empty");
+                intent.putExtra("pdfurl","empty");
+                context.startActivity(intent);
+            }
+        });
+        holder.audio_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl","empty");
+                intent.putExtra("audiourl",audiourl);
+                intent.putExtra("pdfurl","empty");
+                context.startActivity(intent);
+            }
+        });
+        holder.pdf_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl","empty");
+                intent.putExtra("audiourl","empty");
+                intent.putExtra("pdfurl",pdfurl);
+                context.startActivity(intent);
+            }
+        });
+
+
         PostFragment postFragment = new PostFragment();
         Bundle bundle = new Bundle();
         bundle.putString("Id",pId);
@@ -233,16 +283,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
             }
         });
-        holder.attachement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ViewAttachement.class);
-                intent.putExtra("videourl",videourl);
-                intent.putExtra("audiourl",audiourl);
-                intent.putExtra("pdfurl",pdfurl);
-                context.startActivity(intent);
-            }
-        });
+
     }
 
     private void beginDelete(final String pId, String pImage, final String pTimeStamp) {
@@ -413,7 +454,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
         EditClick editClick;
-       FloatingActionButton attachement;
+       FloatingActionButton attachement,audio_btn,video_btn,pdf_btn;
         public PostHolder(@NonNull View itemView, final EditClick editClick) {
             super(itemView);
             url=itemView.findViewById(R.id.uDp);
@@ -431,6 +472,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             pType=itemView.findViewById(R.id.pType);
             views=itemView.findViewById(R.id.viewCount);
             attachement = itemView.findViewById(R.id.view_attached);
+            audio_btn = itemView.findViewById(R.id.audio_upload);
+            video_btn = itemView.findViewById(R.id.video_upload);
+            pdf_btn = itemView.findViewById(R.id.pdf_upload);
             this.editClick = editClick;
             morebtn.setOnClickListener(new View.OnClickListener() {
                 @Override

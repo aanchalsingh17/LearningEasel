@@ -143,7 +143,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 if(!visible) {
                     video_btn.setVisibility(View.VISIBLE);
                     pdf_btn.setVisibility(View.VISIBLE);
-                    view_btn.setVisibility(View.VISIBLE);
+                   view_btn.setVisibility(View.VISIBLE);
                     audio_btn.setVisibility(View.VISIBLE);
                     visible = true;
                 }else{
@@ -189,13 +189,13 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                     view_page.putExtra("pdfurl","empty");
                 }
                 else{
-                    view_page.putExtra("pdfurl",pdfuri.toString());
+                    view_page.putExtra("pdfurl",pdfUrl);
                 }
 
                 if(audiouri==null){
                     view_page.putExtra("audiourl","empty");
                 }else{
-                    view_page.putExtra("audiourl",audiouri.toString());
+                    view_page.putExtra("audiourl",audiourrl);
                 }
                 startActivity(view_page);
             }

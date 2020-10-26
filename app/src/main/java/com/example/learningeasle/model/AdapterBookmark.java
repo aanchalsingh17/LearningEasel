@@ -55,7 +55,7 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyHolder holder, int position) {
         String uName = postList.get(position).getpName();
         String url = postList.get(position).getuImage();
         final String pTitle = postList.get(position).getpTitle();
@@ -67,10 +67,58 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
         final String videourl = postList.get(position).getVideourl();
          final String pdfurl = postList.get(position).getPdfurl();
          final String audiourl = postList.get(position).getAudiourl();
+         //If any of the url is non-empty then make attachen tn visible
         if (!videourl.equals("empty")||!pdfurl.equals("empty")||!audiourl.equals("empty")) {
             holder.attachement.setVisibility(View.VISIBLE);
 
         }
+        holder.attachement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!videourl.equals("empty")){
+                    holder.video_btn.setVisibility(View.VISIBLE);
+
+                }
+                if(!pdfurl.equals("empty")){
+                    holder.pdf_btn.setVisibility(View.VISIBLE);
+                }
+                if(!audiourl.equals("empty")){
+                    holder.audio_btn.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        //Pass the url of the attached file which user want to view
+        holder.video_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl",videourl);
+                intent.putExtra("audiourl","empty");
+                intent.putExtra("pdfurl","empty");
+                context.startActivity(intent);
+            }
+        });
+        holder.audio_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl","empty");
+                intent.putExtra("audiourl",audiourl);
+                intent.putExtra("pdfurl","empty");
+                context.startActivity(intent);
+            }
+        });
+        holder.pdf_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl","empty");
+                intent.putExtra("audiourl","empty");
+                intent.putExtra("pdfurl",pdfurl);
+                context.startActivity(intent);
+            }
+        });
 
         System.out.println(pTitle+" in bookmarks "+pDescription);
 
@@ -128,16 +176,7 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
 
             }
         });
-        holder.attachement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ViewAttachement.class);
-                intent.putExtra("videourl",videourl);
-                intent.putExtra("audiourl",audiourl);
-                intent.putExtra("pdfurl",pdfurl);
-                context.startActivity(intent);
-            }
-        });
+
     }
 
     @Override
@@ -149,7 +188,7 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
 
         ImageView uDp,pImage;
         TextView uName, pTime, pTitle, pDesc,pType;
-        FloatingActionButton attachement;
+        FloatingActionButton attachement,video_btn,audio_btn,pdf_btn;
         public MyHolder(@NonNull View itemView) {
             super(itemView);
             uDp = itemView.findViewById(R.id.uDp);
@@ -160,6 +199,10 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
             pDesc = itemView.findViewById(R.id.pdesc);
             pType=itemView.findViewById(R.id.pType);
             attachement = itemView.findViewById(R.id.view_attached);
+            video_btn = itemView.findViewById(R.id.video_upload);
+            audio_btn = itemView.findViewById(R.id.audio_upload);
+            pdf_btn = itemView.findViewById(R.id.pdf_upload);
+
         }
     }
 }

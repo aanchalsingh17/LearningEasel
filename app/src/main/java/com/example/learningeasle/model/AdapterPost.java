@@ -104,6 +104,53 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         if(!videourl.equals("empty")||!(pdfurl.equals("empty"))||!(audiourl.equals("empty"))){
             holder.attached.setVisibility(View.VISIBLE);
         }
+        //when attached floating button is clicked make visible all those floting button whose value is not empty
+        holder.attached.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!videourl.equals("empty")){
+                    holder.video_btn.setVisibility(View.VISIBLE);
+
+                }
+                if(!pdfurl.equals("empty")){
+                    holder.pdf_btn.setVisibility(View.VISIBLE);
+                }
+                if(!audiourl.equals("empty")){
+                    holder.audio_btn.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        //Pass the url of the attached file which user want to view
+        holder.video_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl",videourl);
+                intent.putExtra("audiourl","empty");
+                intent.putExtra("pdfurl","empty");
+                context.startActivity(intent);
+            }
+        });
+        holder.audio_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl","empty");
+                intent.putExtra("audiourl",audiourl);
+                intent.putExtra("pdfurl","empty");
+                context.startActivity(intent);
+            }
+        });
+        holder.pdf_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewAttachement.class);
+                intent.putExtra("videourl","empty");
+                intent.putExtra("audiourl","empty");
+                intent.putExtra("pdfurl",pdfurl);
+                context.startActivity(intent);
+            }
+        });
 
         final String[] viewsCount = new String[1];
 
@@ -278,16 +325,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
             }
         });
-        holder.attached.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent  = new Intent(context, ViewAttachement.class);
-                intent.putExtra("videourl",videourl);
-                intent.putExtra("pdfurl",pdfurl);
-                intent.putExtra("audiourl",audiourl);
-                context.startActivity(intent);
-            }
-        });
+
 
     }
 
@@ -388,7 +426,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         TextView uName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment,pType,views;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
-        FloatingActionButton attached;
+        FloatingActionButton attached,audio_btn,video_btn,pdf_btn;
         public MyHolder(@NonNull View itemView) {
             super(itemView);
             uDp = itemView.findViewById(R.id.uDp);
@@ -407,6 +445,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             pType=itemView.findViewById(R.id.pType);
             views=itemView.findViewById(R.id.viewCount);
             attached=itemView.findViewById(R.id.view_attached);
+            audio_btn = itemView.findViewById(R.id.audio_upload);
+            video_btn = itemView.findViewById(R.id.video_upload);
+            pdf_btn = itemView.findViewById(R.id.pdf_upload);
 
         }
 

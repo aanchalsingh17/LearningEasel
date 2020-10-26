@@ -20,6 +20,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.example.learningeasle.PushNotifications.APIService;
+import com.example.learningeasle.PushNotifications.Client;
+import com.example.learningeasle.PushNotifications.Data;
+import com.example.learningeasle.PushNotifications.MyResponse;
+import com.example.learningeasle.PushNotifications.NotificationSender;
 import com.example.learningeasle.model.AdapterChat;
 import com.example.learningeasle.model.ModelChat;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,13 +43,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ChatDetailsActivity extends AppCompatActivity {
 
 
     androidx.appcompat.widget.Toolbar toolbar;
     RecyclerView recyclerView;
     ImageView profileIV;
-    TextView nameTV,statusTV;
+    TextView nameTV, statusTV;
     EditText messageET;
     ImageButton sendbtn;
     FirebaseAuth firebaseAuth;
@@ -54,28 +63,32 @@ public class ChatDetailsActivity extends AppCompatActivity {
     String hisImage;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference usersDbRef;
+    String name;
 
     ValueEventListener seenListener;
     DatabaseReference userRefForSeen;
-    List<ModelChat>chatList;
-    AdapterChat  adapterChat;
+    List<ModelChat> chatList;
+    AdapterChat adapterChat;
 
+    private APIService apiService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_details);
 
-        toolbar=findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("");
-        recyclerView=findViewById(R.id.chat_recyclerView);
-        profileIV=findViewById(R.id.profileIV);
-        nameTV=findViewById(R.id.nameTV);
-        statusTV=findViewById(R.id.status);
-        messageET=findViewById(R.id.messageET);
-        sendbtn=findViewById(R.id.send);
+        recyclerView = findViewById(R.id.chat_recyclerView);
+        profileIV = findViewById(R.id.profileIV);
+        nameTV = findViewById(R.id.nameTV);
+        statusTV = findViewById(R.id.status);
+        messageET = findViewById(R.id.messageET);
+        sendbtn = findViewById(R.id.send);
 
-        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -84,41 +97,35 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
         hisUid = intent.getStringExtra("Id");
 
-        firebaseAuth=FirebaseAuth.getInstance();
-        FirebaseUser user=firebaseAuth.getCurrentUser();
-        myUid=user.getUid();
+        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        myUid = user.getUid();
 
 
-        firebaseDatabase=FirebaseDatabase.getInstance();
-        usersDbRef=firebaseDatabase.getReference("Users");
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        usersDbRef = firebaseDatabase.getReference("Users");
 
 
         usersDbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot ds:snapshot.getChildren())
-                {
-                    System.out.println(ds.getKey()+"{{{{{{{{{{{");
-                    if(ds.getKey().equals(hisUid)) {
-                        String name = "" + ds.child("Name").getValue();
-                        String typingStatus=""+ds.child("typingTo").getValue();
-                        if(typingStatus.equals(myUid)){
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    System.out.println(ds.getKey() + "{{{{{{{{{{{");
+                    if (ds.getKey().equals(hisUid)) {
+                        name = "" + ds.child("Name").getValue();
+                        String typingStatus = "" + ds.child("typingTo").getValue();
+                        if (typingStatus.equals(myUid)) {
                             statusTV.setText("typing..");
-                        }
-                        else
-                        {
-                            String onlineStatus=""+ds.child("onlineStatus").getValue();
-                            if(onlineStatus.equals("online"))
-                            {
+                        } else {
+                            String onlineStatus = "" + ds.child("onlineStatus").getValue();
+                            if (onlineStatus.equals("online")) {
                                 statusTV.setText(onlineStatus);
-                            }
-                            else
-                            {
+                            } else {
                                 Calendar calendar = Calendar.getInstance(Locale.getDefault());
                                 calendar.setTimeInMillis(Long.parseLong(onlineStatus));
 
                                 String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
-                                statusTV.setText("Last seen at: "+pTime);
+                                statusTV.setText("Last seen at: " + pTime);
                             }
                         }
                         hisImage = "" + ds.child("Url").getValue();
@@ -139,60 +146,92 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
             }
         });
-sendbtn.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        String message=messageET.getText().toString().trim();
-        if(TextUtils.isEmpty(message)){
-            Toast.makeText(getApplicationContext(),"Cannot send the empty message",Toast.LENGTH_SHORT
-            ).show();
-            return;
-        }
-        else{
-            sendMessage(message);
+        sendbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String message = messageET.getText().toString().trim();
+                if (TextUtils.isEmpty(message)) {
+                    Toast.makeText(getApplicationContext(), "Cannot send the empty message", Toast.LENGTH_SHORT
+                    ).show();
+                    return;
+                } else {
+                    sendMessage(message);
 
-        }
+                    FirebaseDatabase.getInstance().getReference().child("Tokens").child(hisUid).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            String usertoken=dataSnapshot.getValue(String.class);
+                            sendNotifications(usertoken, name,message);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                }
+
+            }
+        });
+
+        messageET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().trim().length() == 0) {
+                    checkTypingStatus("noOne");
+                } else {
+                    checkTypingStatus(hisUid);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        readMessages();
+        seenMessage();
 
     }
-});
 
-messageET.addTextChangedListener(new TextWatcher() {
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    public void sendNotifications(String usertoken, String title, String message) {
+        Data data = new Data(title, message);
+        NotificationSender sender = new NotificationSender(data, usertoken);
+        apiService.sendNotifcation(sender).enqueue(new Callback<MyResponse>() {
+            @Override
+            public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().isSuccessful != 1) {
+                        Toast.makeText(getApplicationContext(), "Failed ", Toast.LENGTH_LONG);
+                    }
+                }
+            }
 
+            @Override
+            public void onFailure(Call<MyResponse> call, Throwable t) {
+
+            }
+        });
     }
 
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-if(s.toString().trim().length()==0)
-{
- checkTypingStatus("noOne");
-}
-else{
-    checkTypingStatus(hisUid);
-}
-
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-
-    }
-});
-readMessages();
-seenMessage();
-
-    }
-    private void checkOnlineStatus(String status){
-        DatabaseReference dbRef=FirebaseDatabase.getInstance().getReference("Users").child(myUid);
-        HashMap<String,Object>hashMap=new HashMap<>();
-        hashMap.put("onlineStatus",status);
+    private void checkOnlineStatus(String status) {
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("onlineStatus", status);
         dbRef.updateChildren(hashMap);
     }
-    private void checkTypingStatus(String typing){
-        DatabaseReference dbRef=FirebaseDatabase.getInstance().getReference("Users").child(myUid);
-        HashMap<String,Object>hashMap=new HashMap<>();
-        hashMap.put("typingTo",typing);
+
+    private void checkTypingStatus(String typing) {
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Users").child(myUid);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("typingTo", typing);
         dbRef.updateChildren(hashMap);
     }
 
@@ -202,13 +241,13 @@ seenMessage();
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    ModelChat chat ;
-                    final HashMap<Object, String> hashMap =  (HashMap<Object, String>) ds.getValue();
-                    chat=new ModelChat(hashMap.get("message"),hashMap.get("receiver"),
-                            hashMap.get("sender"),hashMap.get("timestamp"),hashMap.get("isSeen"));
+                    ModelChat chat;
+                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) ds.getValue();
+                    chat = new ModelChat(hashMap.get("message"), hashMap.get("receiver"),
+                            hashMap.get("sender"), hashMap.get("timestamp"), hashMap.get("isSeen"));
                     if (chat.getSender().equals(hisUid) && chat.getReceiver().equals(myUid)) {
                         HashMap<String, Object> hasSeenHashMap = new HashMap<>();
-                        hasSeenHashMap.put("isSeen","1");
+                        hasSeenHashMap.put("isSeen", "1");
                         ds.getRef().updateChildren(hasSeenHashMap);
                     }
                 }
@@ -222,22 +261,22 @@ seenMessage();
 
 
     private void readMessages() {
-        chatList=new ArrayList<>();
-        DatabaseReference dbRef=FirebaseDatabase.getInstance().getReference("Chats");
+        chatList = new ArrayList<>();
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats");
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 chatList.clear();
-                for(DataSnapshot ds:snapshot.getChildren()){
-                    ModelChat chat ;
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    ModelChat chat;
                     final HashMap<Object, String> hashMap = (HashMap<Object, String>) ds.getValue();
-                    chat=new ModelChat(hashMap.get("message"),hashMap.get("receiver"),
-                    hashMap.get("sender"),hashMap.get("timestamp"),hashMap.get("isSeen"));
-                    if(chat.getSender().equals(hisUid) && chat.getReceiver().equals(myUid) ||
-                            chat.getReceiver().equals(hisUid) && chat.getSender().equals(myUid)){
+                    chat = new ModelChat(hashMap.get("message"), hashMap.get("receiver"),
+                            hashMap.get("sender"), hashMap.get("timestamp"), hashMap.get("isSeen"));
+                    if (chat.getSender().equals(hisUid) && chat.getReceiver().equals(myUid) ||
+                            chat.getReceiver().equals(hisUid) && chat.getSender().equals(myUid)) {
                         chatList.add(chat);
                     }
-                    adapterChat=new AdapterChat(getApplicationContext(),chatList,hisImage);
+                    adapterChat = new AdapterChat(getApplicationContext(), chatList, hisImage);
                     adapterChat.notifyDataSetChanged();
                     recyclerView.setAdapter(adapterChat);
                 }
@@ -251,14 +290,14 @@ seenMessage();
     }
 
     private void sendMessage(String message) {
-        String timestamp=String.valueOf(System.currentTimeMillis());
-        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference();
-        HashMap<String,Object>hashMap=new HashMap<>();
-        hashMap.put("sender",myUid);
-        hashMap.put("receiver",hisUid);
-        hashMap.put("message",message);
-        hashMap.put("timestamp",timestamp);
-        hashMap.put("isSeen","0");
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("sender", myUid);
+        hashMap.put("receiver", hisUid);
+        hashMap.put("message", message);
+        hashMap.put("timestamp", timestamp);
+        hashMap.put("isSeen", "0");
         databaseReference.child("Chats").push().setValue(hashMap);
 
         messageET.setText("");
@@ -273,7 +312,7 @@ seenMessage();
     @Override
     protected void onPause() {
         super.onPause();
-        String timestamp=String.valueOf(System.currentTimeMillis());
+        String timestamp = String.valueOf(System.currentTimeMillis());
         checkOnlineStatus(timestamp);
         checkTypingStatus("noOne");
         userRefForSeen.removeEventListener(seenListener);

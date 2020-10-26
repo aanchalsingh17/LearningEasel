@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -61,6 +62,7 @@ public class Login extends AppCompatActivity {
     SignInButton signin;
     // FirebaseFirestore fStore;
     CheckBox admin;
+    ProgressDialog progressDialog;
     FirebaseUser fUser;
     FirebaseFirestore fStore;
     GoogleSignInClient mgooglesignin;
@@ -84,6 +86,7 @@ public class Login extends AppCompatActivity {
         admin = findViewById(R.id.adminLogin);
         signin = findViewById(R.id.googlesignin);
         fStore = FirebaseFirestore.getInstance();
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).
                 requestIdToken(getString(R.string.default_web_client_id)).
                 requestEmail().build();
@@ -97,6 +100,11 @@ public class Login extends AppCompatActivity {
         });
 
         if (fUser != null ) {
+            progressDialog=new ProgressDialog(Login.this);
+            progressDialog.setMessage("Please Wait... ");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+
             //If Current User is Admin then open the AdminPage otherwise main Activity
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
 
@@ -106,9 +114,11 @@ public class Login extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if(snapshot.hasChild(fUser.getUid())){
+                        progressDialog.dismiss();
                         startActivity(new Intent(getApplicationContext(),AdminMainPage.class));
                         finish();
                     }else{
+                        progressDialog.dismiss();
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         finish();
                     }
@@ -116,7 +126,7 @@ public class Login extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-
+                    progressDialog.dismiss();
                 }
             });
 

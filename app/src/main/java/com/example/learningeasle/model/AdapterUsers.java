@@ -128,6 +128,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
               public void onClick(View v) {
                   Intent intent = new Intent(context, UserProfile.class);
                   intent.putExtra("Id",Uid);
+                  intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                   context.startActivity(intent);
               }
           });

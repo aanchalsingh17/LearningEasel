@@ -28,66 +28,17 @@ public class SplashActivity extends AppCompatActivity {
         final ImageView imageView = findViewById(R.id.logo_reg1);
         final LottieAnimationView lottieAnimationView = findViewById(R.id.lottie);
 
-        final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        new Handler().postDelayed(new Runnable() {
 
-        if (fUser != null) {
+            @Override
+            public void run() {
+                imageView.animate().translationY(-1600).setDuration(1000).setStartDelay(4000);
+                lottieAnimationView.animate().translationY(1400).setDuration(1000).setStartDelay(4000);
+                startActivity(new Intent(getApplicationContext(), Login.class));
+                finish();
+            }
+        }, 4700);
 
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
-
-
-            //If Current User is Admin then open the AdminPage otherwise main Activity
-
-            reference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.hasChild(fUser.getUid())) {
-                        imageView.animate().translationY(-1600).setDuration(1000).setStartDelay(4000);
-                        lottieAnimationView.animate().translationY(1400).setDuration(1000).setStartDelay(4000);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                startActivity(new Intent(getApplicationContext(), AdminMainPage.class));
-                                finish();
-
-                            }
-
-                        }, 4700);
-
-                    } else {
-
-                        imageView.animate().translationY(-1600).setDuration(1000).setStartDelay(4000);
-                        lottieAnimationView.animate().translationY(1400).setDuration(1000).setStartDelay(4000);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                finish();
-
-                            }
-
-                        }, 4700);
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-
-        } else {
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    imageView.animate().translationY(-1600).setDuration(1000).setStartDelay(4000);
-                    lottieAnimationView.animate().translationY(1400).setDuration(1000).setStartDelay(4000);
-                    startActivity(new Intent(getApplicationContext(), Login.class));
-                    finish();
-                }
-            }, 4700);
-        }
     }
 }

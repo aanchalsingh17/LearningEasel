@@ -179,7 +179,7 @@ public class HomeFragment extends Fragment {
 
     //Get the few starting post from the query and then on demand load more
     private void getStartingPost() {
-        query.limitToFirst(15).addListenerForSingleValueEvent(new ValueEventListener() {
+        query.limitToFirst(15).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 //Clear the model post list and load the post from the starting
@@ -299,7 +299,7 @@ public class HomeFragment extends Fragment {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         final boolean[] start = {true};
-        query.startAt(oldestPost).limitToFirst(15).addListenerForSingleValueEvent(new ValueEventListener() {
+        query.startAt(oldestPost).limitToFirst(15).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -351,7 +351,6 @@ public class HomeFragment extends Fragment {
         switch (id) {
             case R.id.chat:
                 startActivity(new Intent(getContext(), ChatActivity.class));
-                getActivity().finish();
                 return true;
             case R.id.interests:
                 startActivity(new Intent(getContext(), PickInterests.class));

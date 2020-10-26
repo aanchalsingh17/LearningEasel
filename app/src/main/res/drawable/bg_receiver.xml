@@ -91,13 +91,13 @@
             android:toDegrees="0">
             <shape android:shape="rectangle">
                 <corners android:radius="4dp" />
-                <solid android:color="#57E964" />
+                <solid android:color="#74bbfb" />
             </shape>
         </rotate>
     </item>
     <item android:left="8dp">
         <shape android:shape="rectangle">
-            <solid android:color="#57E964" />
+            <solid android:color="#74bbfb" />
             <corners android:radius="8dp" />
         </shape>
     </item>

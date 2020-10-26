@@ -6,75 +6,85 @@
     android:layout_height="match_parent"
     android:background="#F1EDED"
     tools:context=".ChatDetailsActivity">
-    
+
     <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="#420420"
-        android:id="@+id/toolbar">
+        android:background="#18415C"
+        android:padding="7dp">
+
         <com.mikhaellopez.circularimageview.CircularImageView
             android:id="@+id/profileIV"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_pic"
-            />
+            android:src="@drawable/ic_pic" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
             android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp">
+            android:layout_marginLeft="20dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
             <TextView
                 android:id="@+id/nameTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="His Name"
-                android:textColor="#e7bfb3"
+                android:textColor="#fff"
+                android:fontFamily="@font/ubuntu"
                 android:textSize="18sp"
-                android:textStyle="bold"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="online"
-            android:textColor="#e7bfb3"
-            android:textStyle="bold"
-            android:id="@+id/status"/>
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_marginTop="3dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="online"
+                android:fontFamily="@font/ubuntu"
+                android:textColor="#fff" />
         </LinearLayout>
 
 
     </androidx.appcompat.widget.Toolbar>
-    
+
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/chat_recyclerView"
-        android:layout_below="@+id/toolbar"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient"
+        android:layout_below="@id/toolbar"
+        android:layout_above="@+id/chatLayout"/>
 
     <LinearLayout
+        android:id="@+id/chatLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/chatLayout"
         android:layout_alignParentBottom="true"
-        android:gravity="center"
+        android:background="#f5f5f5"
+        android:gravity="bottom"
         android:orientation="horizontal">
 
         <EditText
+            android:id="@+id/messageET"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/messageET"
-            android:inputType="textCapSentences"
             android:layout_weight="1"
             android:hint="Start typing"
-            android:padding="15dp"/>
+            android:fontFamily="@font/ubuntu"
+            android:inputType="textCapSentences"
+            android:padding="10dp" />
+
         <ImageButton
+            android:id="@+id/send"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:id="@+id/send"
-            android:src="@drawable/ic_send"
-           />
-
+            android:layout_gravity="center"
+            android:src="@drawable/ic_send" />
 
 
     </LinearLayout>

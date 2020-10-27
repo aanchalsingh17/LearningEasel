@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="#18415C"
+
         android:padding="7dp">
 
         <com.mikhaellopez.circularimageview.CircularImageView

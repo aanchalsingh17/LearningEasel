@@ -251,7 +251,7 @@ public class UpdateProfile extends AppCompatActivity {
                         public void onSuccess(Uri uri) {
                             Picasso.get().load(uri).into(profileimage);
                             progressDialog.dismiss();
-                            String url = uri.toString();
+                            url = uri.toString();
                             updateDetails("image");
                         }
                     }).addOnFailureListener(new OnFailureListener() {

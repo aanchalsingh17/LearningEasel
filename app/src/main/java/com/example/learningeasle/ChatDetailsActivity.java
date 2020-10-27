@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -37,6 +38,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -123,7 +125,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
         });
 
 
-        usersDbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        usersDbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
@@ -141,13 +143,12 @@ public class ChatDetailsActivity extends AppCompatActivity {
                                 calendar.setTimeInMillis(Long.parseLong(onlineStatus));
 
                                 String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
-                                statusTV.setText("Last seen at: " + pTime);
+                                statusTV.setText("Last seen : " + pTime);
                             }
                         }
                         hisImage = "" + ds.child("Url").getValue();
                         nameTV.setText(name);
 
-                        System.out.println(name + "in name");
 
 
                         try {
@@ -180,7 +181,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                             String usertoken = dataSnapshot.getValue(String.class);
-                            sendNotifications(usertoken, myName, message);
+                            sendNotifications(usertoken, myName+"+-*/"+myUid, message);
                         }
 
                         @Override
@@ -221,7 +222,6 @@ public class ChatDetailsActivity extends AppCompatActivity {
     }
 
     public void sendNotifications(String usertoken, String title, String message) {
-        System.out.println(name + " " + title + " in 1st name");
         Data data = new Data(title, message);
         NotificationSender sender = new NotificationSender(data, usertoken);
         apiService.sendNotifcation(sender).enqueue(new Callback<MyResponse>() {
@@ -343,4 +343,5 @@ public class ChatDetailsActivity extends AppCompatActivity {
         checkOnlineStatus("online");
         super.onResume();
     }
+
 }

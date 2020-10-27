@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.learningeasle.MainFragments.HomeFragment;
 import com.example.learningeasle.PostDetailActivity;
 import com.example.learningeasle.R;
 import com.example.learningeasle.UserDetails.UserProfile;
@@ -211,12 +212,11 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
 
         if (pImage.equals("noImage")) {
-            System.out.println(pTitle + "  . " + pDescription);
             holder.pImage.setVisibility(View.GONE);
         } else {
             try {
                 holder.pImage.setVisibility(View.VISIBLE);
-                Picasso.get().load(pImage).placeholder(shimmerDrawable).fit().centerCrop().into(holder.pImage);
+                Picasso.get().load(pImage).placeholder(shimmerDrawable).fit().into(holder.pImage);
             } catch (Exception e) {
             }
         }
@@ -273,7 +273,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         holder.comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println(pTimeStamp+" cmnt");
                 Intent intent = new Intent(context, PostDetailActivity.class);
                 intent.putExtra("postId", pTimeStamp);
                 context.startActivity(intent);

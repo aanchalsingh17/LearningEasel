@@ -89,7 +89,7 @@ public class AdminPostFragment extends Fragment {
     }
 
     private void loadStartingPost() {
-        query.limitToFirst(5).addListenerForSingleValueEvent(new ValueEventListener() {
+        query.limitToFirst(5).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelpostList.clear();
@@ -133,7 +133,7 @@ public class AdminPostFragment extends Fragment {
 
     private void getAllPost() {
         final boolean[] first = {true};
-        query.startAt(oldestpost).limitToFirst(4).addListenerForSingleValueEvent(new ValueEventListener() {
+        query.startAt(oldestpost).limitToFirst(4).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {

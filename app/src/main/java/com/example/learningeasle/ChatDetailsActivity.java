@@ -181,7 +181,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                             String usertoken = dataSnapshot.getValue(String.class);
-                            sendNotifications(usertoken, myName+"+-*/"+myUid, message);
+                            sendNotifications(usertoken, myName+"+-*/"+myUid, message);//
                         }
 
                         @Override

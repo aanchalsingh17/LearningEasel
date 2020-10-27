@@ -318,7 +318,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
         hashMap.put("message", message);
         hashMap.put("timestamp", timestamp);
         hashMap.put("isSeen", "0");
-        databaseReference.child("Chats").push().setValue(hashMap);
+        databaseReference.child("Chats").child(myUid+hisUid).setValue(hashMap);
 
         messageET.setText("");
     }

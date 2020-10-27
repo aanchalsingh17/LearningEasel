@@ -76,10 +76,12 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.holder
         });
         final String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
 
+        //Set the details of the comment i.e comment time of comment and user
         holder.nameTV.setText(name);
         holder.commentTV.setText(comment);
         holder.timeTV.setText(pTime);
 
+        //Set the userdp
         try{
             Picasso.get().load(image).placeholder(R.drawable.ic_default).into(holder.avatarIV);
         }
@@ -88,6 +90,7 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.holder
             Picasso.get().load(R.drawable.ic_default).into(holder.avatarIV);
         }
 
+        //Delete the comment
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,6 +108,7 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.holder
 
     }
     boolean mProcessComment = false;
+    //When someone commented update the commnt count
     private void updateCommentCount(String postId) {
         mProcessComment = true;
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(postId);

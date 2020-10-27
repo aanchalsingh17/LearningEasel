@@ -96,7 +96,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
 
 
 
-        //Setting al the data at the specified position of holder;
+        //Setting all the data at the specified position of holder;
         holder.uName.setText(uName);
         holder.pDescpType.setText(pType);
         holder.pDes.setText(pDescription);
@@ -106,6 +106,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
 
         String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
+        //set the post image view
         holder.pTime.setText(pTime);
         if(pImage.equals("noImage")){
             holder.pImage.setVisibility(View.GONE);
@@ -113,11 +114,12 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
             holder.pImage.setVisibility(View.VISIBLE);
             Picasso.get().load(pImage).placeholder(shimmerDrawable).fit().centerCrop().into(holder.pImage);
         }
+        //Set the user dp
         if (url.equals("empty"))
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
             Picasso.get().load(url).placeholder(shimmerDrawable).into(holder.uDp);
-        //If Admin Publishes the post then change the reference of the post in the database
+      //If image view is clicked show the full view image to the admin
         holder.pImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,6 +128,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
                 context.startActivity(intent);
             }
         });
+        //If Admin Publishes the post then change the reference of the post in the database
         holder.publish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,12 +174,13 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
                 });
             }
         });
-        //If admin cancel the post then delete the post from the pending post list and dont publish it
+        //If admin cancel the post then delete the post from the pending post list and all the files from the firebase dont publish it
         holder.cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
              //If admin Cancel the post then simply delete the post from the pending post and nothing else to do
                 //Since at this time post doesnt contain any nested data thats why simply removing the value work here
+
 
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");//.child(pTimeStamp);
                 ref.child(pTimeStamp).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -208,6 +212,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
         if(!videourl.equals("empty")||!(audiourl.equals("empty"))||!(pdfurl.equals("empty"))){
             holder.attachement.setVisibility(View.VISIBLE);
         }
+        //If attachement btn is clicked then make all those btns visible whose url is non empty
         holder.attachement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -257,7 +262,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
 
     }
 
-
+   //Sending the notification to the user
     public void sendNotifications(String usertoken, String title, String message) {
         Data data = new Data(title, message);
         NotificationSender sender = new NotificationSender(data, usertoken);

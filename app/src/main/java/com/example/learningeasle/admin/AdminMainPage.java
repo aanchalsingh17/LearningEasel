@@ -109,6 +109,7 @@ public class AdminMainPage extends AppCompatActivity {
                             getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("H")).commit();
                     }
                      break;
+                    //Admin Logout
                 case R.id.logout:
                     FirebaseAuth fba;
                     fba = FirebaseAuth.getInstance();

@@ -108,7 +108,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         usersDbRef = firebaseDatabase.getReference("Users");
 
-        usersDbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        usersDbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot ds:snapshot.getChildren()){
@@ -256,7 +256,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
     }
 
     private void seenMessage() {
-        userRefForSeen = FirebaseDatabase.getInstance().getReference("Chats");
+        userRefForSeen = FirebaseDatabase.getInstance().getReference("Chats").child(myUid+hisUid);
         seenListener = userRefForSeen.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -282,7 +282,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
     private void readMessages() {
         chatList = new ArrayList<>();
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats");
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats").child(myUid+hisUid);
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -307,6 +307,31 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
             }
         });
+//        DatabaseReference dbRef1 = FirebaseDatabase.getInstance().getReference("Chats").child(hisUid+myUid);
+//        dbRef1.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                chatList.clear();
+//                for (DataSnapshot ds : snapshot.getChildren()) {
+//                    ModelChat chat;
+//                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) ds.getValue();
+//                    chat = new ModelChat(hashMap.get("message"), hashMap.get("receiver"),
+//                            hashMap.get("sender"), hashMap.get("timestamp"), hashMap.get("isSeen"));
+//                    if (chat.getSender().equals(hisUid) && chat.getReceiver().equals(myUid) ||
+//                            chat.getReceiver().equals(hisUid) && chat.getSender().equals(myUid)) {
+//                        chatList.add(chat);
+//                    }
+//                    adapterChat = new AdapterChat(getApplicationContext(), chatList, hisImage);
+//                    adapterChat.notifyDataSetChanged();
+//                    recyclerView.setAdapter(adapterChat);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
     }
 
     private void sendMessage(String message) {
@@ -318,7 +343,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
         hashMap.put("message", message);
         hashMap.put("timestamp", timestamp);
         hashMap.put("isSeen", "0");
-        databaseReference.child("Chats").child(myUid+hisUid).setValue(hashMap);
+        databaseReference.child("Chats").child(myUid+hisUid).push().setValue(hashMap);
+        databaseReference.child("Chats").child(hisUid+myUid).push().setValue(hashMap);
 
         messageET.setText("");
     }

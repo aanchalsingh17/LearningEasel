@@ -72,6 +72,7 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
             holder.attachement.setVisibility(View.VISIBLE);
 
         }
+        //If any of the url is not empty make attached btn visible
         holder.attachement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,8 +123,10 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
 
         System.out.println(pTitle+" in bookmarks "+pDescription);
 
+        //Set user details on the post
         holder.uName.setText(uName);
         holder.pType.setText(pType);
+        //User name is clicked redirect the user to the profile of the user whose name is clicked
         holder.uName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,6 +144,7 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
 
             }
         });
+        //Set dp of the user who posted this particular post
         if (url.equals("empty"))
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
@@ -151,7 +155,7 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
         String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
 
 
-
+        //Set post image
         if (pImage.equals("noImage")) {
             System.out.println(pTitle + "  . " + pDescription);
             holder.pImage.setVisibility(View.GONE);
@@ -162,11 +166,12 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
             } catch (Exception e) {
             }
         }
+        //Setting post details
         holder.pTime.setText(pTime);
         holder.pTitle.setText(pTitle);
         holder.pDesc.setText(pDescription);
 
-
+        //User want to view the post image
         holder.pImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

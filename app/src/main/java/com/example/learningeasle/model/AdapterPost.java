@@ -177,7 +177,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             }
         });
 
-
+        //Set user details for the post
         holder.uName.setText(uName);
         holder.pType.setText(pType);
         holder.uName.setOnClickListener(new View.OnClickListener() {
@@ -189,14 +189,12 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                     intent.putExtra("Id", pId);
                     context.startActivity(intent);
                 } else {
-                    /*AppCompatActivity activity = (AppCompatActivity) view.getContext();
-                    Fragment myFragment = new ProfileFragment();
-                    activity.getSupportFragmentManager().beginTransaction().replace(R.id.home, myFragment).addToBackStack(null).commit();*/
                     Toast.makeText(context, "Go to Profile to view your profile", Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
+        //Set user dp
         if (url.equals("empty"))
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
@@ -204,13 +202,14 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         final Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
 
+        //Set comment counts
         String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
         if (pComments == null)
             pComments = "0";
         holder.pTotalComment.setText(pComments + " Comments");
 
 
-
+        //Set the post image
         if (pImage.equals("noImage")) {
             holder.pImage.setVisibility(View.GONE);
         } else {
@@ -220,6 +219,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             } catch (Exception e) {
             }
         }
+        //setting the post description
         holder.morebtn.setVisibility(View.GONE);
         holder.pTime.setText(pTime);
         holder.pTitle.setText(pTitle);
@@ -229,6 +229,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         setLikes(holder, pTimeStamp);
 
 
+        //Liked btn is clicked if post is not liked like it and vice versa
         holder.like_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -269,7 +270,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             }
         });
 
+        //Setting the bookmark on those post whch are bookmarked
         setBookmark(holder, myId, pId, pTimeStamp);
+        //View Comment
         holder.comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -278,6 +281,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 context.startActivity(intent);
             }
         });
+        //Share the post  according to the condition that it has the image with it or not
         holder.share_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -290,6 +294,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 }
             }
         });
+        //Bookmark the post if its not bookmarked and vice-versa
         holder.boookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -299,10 +304,11 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.hasChild(pTimeStamp)) {
                             reference.child(pTimeStamp).removeValue();
-                            holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_bookmark_border_24));
+                            holder.boookmark.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
                         } else {
                             reference.child(pTimeStamp).setValue(pId);
-                            holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.bookmarked));
+                            //holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.bookmarked));
+                            holder.boookmark.setImageResource(R.drawable.bookmarked);
                         }
                     }
 
@@ -313,6 +319,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 });
             }
         });
+        //Show the post image in full-view
         holder.pImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -325,7 +332,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
 
     }
-
+   //SetBookmark
     private void setBookmark(final MyHolder holder, String myId, final String pId, final String pTimeStamp) {
         final DatabaseReference Posts = FirebaseDatabase.getInstance().getReference("Posts")
                 .child(pTimeStamp);
@@ -337,7 +344,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                     holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.bookmarked));
                 }else{
 
-                    holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_bookmark_border_24));
+                    holder.boookmark.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+                    //holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_bookmark_border_24));
                 }
             }
 
@@ -386,6 +394,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         context.startActivity(Intent.createChooser(shareIntent,"Share Via"));
     }
 
+    //SetLikes
     private void setLikes(final MyHolder holder, final String pTimeStamp) {
        postsref.addValueEventListener(
                new ValueEventListener() {

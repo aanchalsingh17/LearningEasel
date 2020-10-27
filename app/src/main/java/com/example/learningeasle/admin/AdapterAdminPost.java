@@ -2,10 +2,13 @@ package com.example.learningeasle.admin;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.text.format.DateFormat;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.learningeasle.PostDetailActivity;
@@ -95,6 +99,7 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
            holder.attachement.setVisibility(View.VISIBLE);
        }
 
+       //When Attached btn is clicked make all thide floating btn visible whose url is not empty
        holder.attachement.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
@@ -169,20 +174,24 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
         holder.uName.setText(uName);
         holder.pType.setText(pType);
         holder.views.setText(viewsCount[0]);
+        //Set the dp of the user in the holder udp image view
         if (url.equals("empty"))
             holder.uDp.setImageResource(R.drawable.ic_action_account);
         else
             Picasso.get().load(url).placeholder(shimmerDrawable).into(holder.uDp);
+
+        //Getting the time readable format from the timestamp uploaded onto the firebase
         final Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
 
         String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
+        //Setting the comment count onto the comment textview of the holder
         if (pComments == null)
             pComments = "0";
         holder.pTotalComment.setText(pComments + " Comments");
 
 
-
+        //If post image url is not "noImage" then show the post image otherwise make visibility of imageview gone
         if (pImage.equals("noImage")) {
             System.out.println(pTitle + "  . " + pDescription);
             holder.pImage.setVisibility(View.GONE);
@@ -193,10 +202,12 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
             } catch (Exception e) {
             }
         }
+        //Setting the all the values from the realtime database to the post
         holder.pTime.setText(pTime);
         holder.pTitle.setText(pTitle);
         holder.pDesc.setText(pDescription);
         holder.pTotalLikes.setText(pLikes + " Likes");
+        //If viewCommnet btn is clicked show all the comments to the admin
         holder.comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -205,92 +216,154 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
                 context.startActivity(intent);
             }
         });
-        holder.comment_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, PostDetailActivity.class);
-                intent.putExtra("postId", pTimeStamp);
-                context.startActivity(intent);
-            }
-        });
+        //Admin want to delete the post
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Before deleting the post delete it from the bookmarks section of the users;
-                final DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Users");
-                ref.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for(DataSnapshot ds:snapshot.getChildren()){
-                            String path = ds.getKey();
-                            if(ds.child("Bookmarks").hasChild(pTimeStamp)){
-                                ref.child(path).child("Bookmarks").child(pTimeStamp).removeValue();
-                            }
-                        }
-                    }
 
+                AlertDialog.Builder delete = new AlertDialog.Builder(new ContextThemeWrapper(v.getContext(), R.style.AlertDialogCustom));
+                delete.setTitle("Are You Sure??");
+                delete.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Before deleting the post delete it from the bookmarks section of the users;
+                        deletefromBookmarks(pTimeStamp, pImage, pId, videourl, audiourl, pdfurl);
                     }
                 });
-                if (pImage.equals("noImage")) {
-                    final ProgressDialog pd = new ProgressDialog(context);
-                    pd.setMessage("Deleting....");
-                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts").child(pTimeStamp);
-                    if (!reference.child("pComments").equals("0"))
-                        reference.child("Comments").removeValue();
-                    reference.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                delete.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Close Dialog
+                    }
+                });
+                AlertDialog alert = delete.create();
+                alert.show();
+                //    Customising buttons for dialog
+                Button p = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+                p.setBackgroundColor(Color.parseColor("#222831"));
+                p.setTextColor(Color.parseColor("#D90091EA"));
+                Button n = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+                n.setBackgroundColor(Color.parseColor("#222831"));
+                n.setTextColor(Color.parseColor("#DEFFFFFF"));
+
+
+            }
+        });
+
+    }
+
+    private void deletefromBookmarks(final String pTimeStamp, String pImage, String pId, String videourl, String audiourl, String pdfurl) {
+        final DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Users");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds:snapshot.getChildren()){
+                    String path = ds.getKey();
+                    if(ds.child("Bookmarks").hasChild(pTimeStamp)){
+                        ref.child(path).child("Bookmarks").child(pTimeStamp).removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        //Remove the post views from the view child
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
+        databaseReference.child(pTimeStamp).removeValue();
+        //If post contains the attached file then firstly delete them
+        if(!videourl.equals("empty")){
+            StorageReference videoref = FirebaseStorage.getInstance().getReferenceFromUrl(videourl);
+            videoref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(context,"Attached Video File Deleted Successfully",Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+        if(!audiourl.equals("empty")){
+
+            StorageReference audioref = FirebaseStorage.getInstance().getReferenceFromUrl(audiourl);
+            audioref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(context,"Attached Audio File Deleted Successfully",Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        if(!pdfurl.equals("empty")){
+            StorageReference pdfref = FirebaseStorage.getInstance().getReferenceFromUrl(pdfurl);
+            pdfref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(context,"Attached Pdf File Deleted Successfully",Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        deletePost(pTimeStamp,pImage,pId);
+    }
+
+    private void deletePost(final String pTimeStamp, String pImage, final String pId) {
+        //If there is no post image then simply delete the post otherwise first delete it from the storage
+        if (pImage.equals("noImage")) {
+            final ProgressDialog pd = new ProgressDialog(context);
+            pd.setMessage("Deleting....");
+            DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Posts").child(pTimeStamp);
+            if (!reference1.child("pComments").equals("0"))
+                reference1.child("Comments").removeValue();
+            reference1.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                    pd.dismiss();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(context, "Unable to Delete", Toast.LENGTH_SHORT).show();
+                    pd.dismiss();
+                }
+            });
+        }else{
+            final ProgressDialog pd = new ProgressDialog(context);
+            pd.setMessage("Deleting....");
+
+            StorageReference picref = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
+            picref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Query query = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
+                    query.addValueEventListener(new ValueEventListener() {
                         @Override
-                        public void onSuccess(Void aVoid) {
-                            Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for(DataSnapshot ds:snapshot.getChildren()){
+                                HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                                if(hashMap.get("pTime").equals(pTimeStamp))
+                                    ds.getRef().removeValue();
+                                Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
+                            }
                             pd.dismiss();
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(context, "Unable to Delete", Toast.LENGTH_SHORT).show();
-                            pd.dismiss();
-                        }
-                    });
-                }else{
-                    final ProgressDialog pd = new ProgressDialog(context);
-                    pd.setMessage("Deleting....");
 
-                    StorageReference picref = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
-                    picref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
-                        public void onSuccess(Void aVoid) {
-                            Query query = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(pId);
-                            query.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    for(DataSnapshot ds:snapshot.getChildren()){
-                                        HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
-                                        if(hashMap.get("pTime").equals(pTimeStamp))
-                                            ds.getRef().removeValue();
-                                        Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
-                                    }
-                                    pd.dismiss();
-                                }
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            pd.dismiss();
-                            Toast.makeText(context,"Unable to delete Post",Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    pd.dismiss();
+                    Toast.makeText(context,"Unable to delete Post",Toast.LENGTH_SHORT).show();
+                }
+            });
         }
-
-        });
 
     }
 
@@ -299,6 +372,7 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
         return postList.size();
     }
 
+    //Created my Holder for the adapter
     static class MyHolder extends RecyclerView.ViewHolder {
 
         ImageView uDp,pImage,delete;

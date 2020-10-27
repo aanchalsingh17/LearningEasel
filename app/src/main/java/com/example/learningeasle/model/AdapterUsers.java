@@ -75,6 +75,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
 
 
 //          System.out.println(userName+" jsr "+email);
+        //If current user is admin make follow btn invisible
          DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
          databaseReference.addValueEventListener(new ValueEventListener() {
              @Override
@@ -89,6 +90,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
 
              }
          });
+         //Set user profile
          if(url.equals("empty"))
            holder.profile.setImageResource(R.drawable.ic_action_account);
          else
@@ -123,6 +125,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
                }
            });
 
+          //When an item of holder is clicked show the profile of the clicked user to current user
           holder.itemView.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
@@ -134,6 +137,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
           });
     }
 
+    //Set followers of the user
     private void setFollower(final UserHolder holder, final String curruid, final String uid) {
         final DatabaseReference reffollowing = FirebaseDatabase.getInstance().getReference("Users")
                 .child(curruid);

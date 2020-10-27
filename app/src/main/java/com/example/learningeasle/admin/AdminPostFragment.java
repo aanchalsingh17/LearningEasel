@@ -73,6 +73,7 @@ public class AdminPostFragment extends Fragment {
                 .orderByChild("order");
         loadStartingPost();
 
+        //Adding Scroll Listener on Recycler view to achieve lazy loading
        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -87,6 +88,7 @@ public class AdminPostFragment extends Fragment {
 
         return  view;
     }
+     //Load few Starting post
 
     private void loadStartingPost() {
         query.limitToFirst(5).addValueEventListener(new ValueEventListener() {
@@ -130,7 +132,7 @@ public class AdminPostFragment extends Fragment {
             }
         });
     }
-
+    //Get Few More Posts on Demand
     private void getAllPost() {
         final boolean[] first = {true};
         query.startAt(oldestpost).limitToFirst(4).addValueEventListener(new ValueEventListener() {

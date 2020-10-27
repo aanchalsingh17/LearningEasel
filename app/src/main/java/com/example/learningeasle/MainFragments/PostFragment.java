@@ -183,28 +183,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         view_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (videouri == null && audiouri == null && pdfuri == null) {
-                   // Toast.makeText(this, "File Not Attached!!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent view_page = new Intent(getActivity(), ViewAttachement.class);
-                    if (videouri == null) {
-                        view_page.putExtra("videourl", "empty");
-                    } else {
-                        view_page.putExtra("videourl", videouri.toString());
-                    }
-                    if (pdfuri == null) {
-                        view_page.putExtra("pdfurl", "empty");
-                    } else {
-                        view_page.putExtra("pdfurl", pdfUrl);
-                    }
-
-                    if (audiouri == null) {
-                        view_page.putExtra("audiourl", "empty");
-                    } else {
-                        view_page.putExtra("audiourl", audiourrl);
-                    }
-                    startActivity(view_page);
-                }
+                viewAttachedFile();
             }
         });
 
@@ -243,6 +222,132 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
         // Inflate the layout for this fragment
 
+
+    }
+
+    private void viewAttachedFile() {
+        String[] options = {"Audio", "Video","Pdf"};
+        final Intent view_page = new Intent(getActivity(), ViewAttachement.class);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case 0:
+                        boolean go = true;
+                          if(!audiourrl.equals("empty")){
+                              view_page.putExtra("audiourl", audiourrl);
+                              view_page.putExtra("pdfurl","empty");
+                              view_page.putExtra("videourl","empty");
+                          }else if(edit.equals("EditPost")){
+                              final String[] url = new String[1];
+                              //If its edit post then check does database audiourl is empty ornot if not empty then send that url
+                              reference.child(time).child("audiourl").addValueEventListener(new ValueEventListener() {
+                                  @Override
+                                  public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    url[0] = (String) snapshot.getValue();
+                                  }
+
+                                  @Override
+                                  public void onCancelled(@NonNull DatabaseError error) {
+
+                                  }
+                              });
+                              if(url[0]!=null&&!url[0].equals("empty")){
+                                  view_page.putExtra("audiourl",url[0]);
+                                  view_page.putExtra("pdfurl","empty");
+                                  view_page.putExtra("videourl","empty");
+                              }else{
+                                  Toast.makeText(getContext(),"No Audio File Attached",Toast.LENGTH_SHORT).show();
+                                  go =false;
+                              }
+                          }else{
+                              Toast.makeText(getContext(),"No Audio File Attached",Toast.LENGTH_SHORT).show();
+                              go = false;
+                          }
+                          if(go) {
+                              startActivity(view_page);
+                          }
+                          break;
+                    case 1:
+                         go = true;
+                        if(videouri!=null){
+                            view_page.putExtra("videourl",videourl);
+                            view_page.putExtra("pdfurl","empty");
+                            view_page.putExtra("audiourl","empty");
+                        }else if(edit.equals("EditPost")){
+                            final String[] url = new String[1];
+                            //If its edit post then check does database videourl is empty ornot if not empty then send that url
+                            reference.child(time).child("videourl").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    url[0] = (String) snapshot.getValue();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                            if(url[0]!=null&&!url[0].equals("empty")){
+                                view_page.putExtra("videourl",url[0]);
+                                view_page.putExtra("pdfurl","empty");
+                                view_page.putExtra("audiourl","empty");
+                            }else{
+                                Toast.makeText(getContext(),"No Video File Attached",Toast.LENGTH_SHORT).show();
+                                go =false;
+                            }
+                        }else{
+                            Toast.makeText(getContext(),"No Video File Attached",Toast.LENGTH_SHORT).show();
+                            go = false;
+                        }
+                        if(go) {
+                            startActivity(view_page);
+                        }
+                        break;
+                    case 2:
+                        go =true;
+                        if(pdfuri!=null){
+                            view_page.putExtra("pdfurl", pdfUrl);
+                            view_page.putExtra("videourl","empty");
+                            view_page.putExtra("audiourl","empty");
+                        }else if(edit.equals("EditPost")){
+                            final String[] url = new String[1];
+                            //If its edit post then check does database videourl is empty ornot if not empty then send that url
+                            reference.child(time).child("pdfurl").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    url[0] = (String) snapshot.getValue();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                            if(url[0]!=null&&!url[0].equals("empty")){
+                                view_page.putExtra("pdfurl",url[0]);
+                                view_page.putExtra("videourl","empty");
+                                view_page.putExtra("audiourl","empty");
+                            }
+                            else{
+                                Toast.makeText(getContext(),"No Pdf File Attached",Toast.LENGTH_SHORT).show();
+                                go =false;
+                            }
+                        }else{
+                            Toast.makeText(getContext(),"No Pdf File Attached",Toast.LENGTH_SHORT).show();
+                            go =false;
+                        }
+                        if(go) {
+                            startActivity(view_page);
+                        }
+                        break;
+
+                }
+            }
+        });
+        builder.create().show();
 
     }
 
@@ -726,7 +831,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             if (edit.equals("EditPost"))
                 timeStamp = time;
             //Upload the audio file onto the storage then download the file and save its uri upload onto the realtimedatabse
-            final StorageReference des = reference.child("Audio/"+ timeStamp + "/" + "audio."+getExt(audiouri));
+            final StorageReference des = reference.child("Audio/"+ timeStamp + "audio."+getExt(audiouri));
             uploadTask = des.putFile(audiouri);
             des.putFile(audiouri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -757,7 +862,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
 
-            final StorageReference des = reference.child("Pdf/"+ timeStamp + "/" + "Pdf."+getExt(pdfuri));
+            final StorageReference des = reference.child("Pdf/"+ timeStamp  + "Pdf."+getExt(pdfuri));
             uploadTask = des.putFile(pdfuri);
             //Upload the pdf file onto the storage then download the file and save its uri to upload onto the realtimedatabse
             des.putFile(pdfuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -794,7 +899,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
 
-            final StorageReference des = reference.child("Video/"+ timeStamp + "/" + "video."+getExt(videouri));
+            final StorageReference des = reference.child("Video/"+ timeStamp + "video."+getExt(videouri));
             uploadTask = des.putFile(videouri);
             //Upload the video file onto the storage then download the file and save its uri upload onto the realtimedatabse
             des.putFile(videouri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

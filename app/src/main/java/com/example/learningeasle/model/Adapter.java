@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,7 +97,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
          pdfurl = postList.get(position).getPdfurl();
         final String[] viewsCount = new String[1];
 
-      /*  DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
+       DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
         databaseReference.child(pTimeStamp).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -113,8 +115,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });*/
+        });
 
+        //If any of the url is non empty make attachement btn visible
        if(!videourl.equals("empty")||!(audiourl.equals("empty"))||!(pdfurl.equals("empty"))){
            holder.attachement.setVisibility(View.VISIBLE);
        }
@@ -168,7 +171,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             }
         });
 
-
         PostFragment postFragment = new PostFragment();
         Bundle bundle = new Bundle();
         bundle.putString("Id",pId);
@@ -181,6 +183,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         bundle.putString("Comments",pComments);
         postFragment.setArguments(bundle);
 
+        //Set the userdetails for the post
         holder.pName.setText(uName);
         holder.pType.setText(pType);
         if(url.equals("empty"))
@@ -195,10 +198,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
 
 
-
+        //Setting the comment count of the post
         if(pComments==null)
             pComments="0";
         holder.pTotalComment.setText(pComments + " Comments");
+        //Setting post image
         if (pImage.equals("noImage")){
             System.out.println(pTitle+"  . "+pDescription);
             holder.Image.setVisibility(View.GONE);
@@ -209,12 +213,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             }catch (Exception e){}
         }
 
+        //Setting the post details
         holder.pTime.setText(pTime);
         holder.pTitle.setText(pTitle);
         holder.pDesc.setText(pDescription);
         holder.pTotalLikes.setText(pLikes +" Likes");
 
         setLikes(holder,pTimeStamp);
+        //Liked btn is clicked if post is not liked then make it liked nad viceversa
         holder.like_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -254,6 +260,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
             }
         });
+        //User want to comment on the post
         holder.comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -262,20 +269,24 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                 context.startActivity(intent);
             }
         });
+        //Share the post
         holder.share_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 BitmapDrawable bitmapDrawable= (BitmapDrawable) holder.Image.getDrawable();
                 if(bitmapDrawable == null){
+                    //Post has no image share only text
                     shareTextOnly(pTitle,pDescription);
                 }
                 else{
+                    //Share image too
                     Bitmap bitmap=bitmapDrawable.getBitmap();
                     shareImageAndText(pTitle,pDescription,bitmap);
                 }
             }
         });
 
+        //Image is clicked show user fullview of image
         holder.Image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -293,12 +304,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
         return  mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
     }
+    //After deleting the post from bookmark section then delete the post and its data from the storage section
     private void beginDelete(final String pId, String pImage, final String pTimeStamp,String videourl,String audiourl,String pdfurl) {
 
         //First of all Delete the attachements from the storage if their and also the view count of the post from realtime database
         DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
         databaseReference.child(pTimeStamp).removeValue();
         StorageReference reference = FirebaseStorage.getInstance().getReference();
+        //Deleting the file attached with the post if any
         if(!videourl.equals("empty")){
             StorageReference videoref = FirebaseStorage.getInstance().getReferenceFromUrl(videourl);
             final StorageReference des =  reference.child("Video/"+ pTimeStamp + "/" + "video."+getExt(Uri.parse(videourl)));
@@ -398,6 +411,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         }
     }
 
+    //Delete the post from the bookmark section of all the users when user this post
     private void deletefromBookmarks(final String pTimeStamp, final String pImage, final String pId, final String videourl, final String audiourl, final String pdfurl) {
         final DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Users");
         ref.addValueEventListener(new ValueEventListener() {
@@ -462,6 +476,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         context.startActivity(Intent.createChooser(shareIntent,"Share Via"));
     }
 
+    //Setting the liked btn that user has liked this particular post or not
     private void setLikes(final PostHolder holder, final String pTimeStamp) {
         postsref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -523,29 +538,54 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             video_btn = itemView.findViewById(R.id.video_upload);
             pdf_btn = itemView.findViewById(R.id.pdf_upload);
             this.editClick = editClick;
+            //More btn is clicked by user show him dialog to edit or delete the post
             morebtn.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(final View v) {
                     final String[] options = {"Edit", "Delete","Cancel"};
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setItems(options,new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             if (options[i].equals("Edit")) {
+                                //Edit btn is clicked call the editClick method of the interface EditClick
                                 editClick.onEditClick(getAdapterPosition(),postList.get(getAdapterPosition()).pId,postList.get(getAdapterPosition()).pTime,"EditPost",postList.get(getAdapterPosition()).pTitle,postList.get(getAdapterPosition()).pDesc,postList.get(getAdapterPosition()).pImage,
                                         postList.get(getAdapterPosition()).pLikes,postList.get(getAdapterPosition()).pComments);
                             }
 
                             if (options[i].equals("Delete")) {
-                                String time = postList.get(getAdapterPosition()).pTime;
-                                String pImage = postList.get(getAdapterPosition()).pImage;
-                                String pId = postList.get(getAdapterPosition()).pId;
-                                String videourl = postList.get(getAdapterPosition()).getVideourl();
-                                String audiourl = postList.get(getAdapterPosition()).getAudiourl();
-                                String pdfurl = postList.get(getAdapterPosition()).getPdfurl();
-                                //Before deleting the post delete it from the bookmarks section of the users;
-                                deletefromBookmarks(time,pImage,pId,videourl,audiourl,pdfurl);
+                                final String time = postList.get(getAdapterPosition()).pTime;
+                                final String pImage = postList.get(getAdapterPosition()).pImage;
+                                final String pId = postList.get(getAdapterPosition()).pId;
+                                final String videourl = postList.get(getAdapterPosition()).getVideourl();
+                                final String audiourl = postList.get(getAdapterPosition()).getAudiourl();
+                                final String pdfurl = postList.get(getAdapterPosition()).getPdfurl();
+                                //Show user an alert dialog that he surely want to delete the post
+                                AlertDialog.Builder delete = new AlertDialog.Builder(new ContextThemeWrapper(v.getContext(), R.style.AlertDialogCustom));
+                                delete.setTitle("Are You Sure??");
+                                delete.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //Before deleting the post delete it from the bookmarks section of the users;
+                                        deletefromBookmarks(time,pImage,pId,videourl,audiourl,pdfurl);
+                                    }
+                                });
 
+                                delete.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //Close Dialog
+                                    }
+                                });
+                                AlertDialog alert = delete.create();
+                                alert.show();
+                                //    Customising buttons for dialog
+                                Button p = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+                                p.setBackgroundColor(Color.parseColor("#222831"));
+                                p.setTextColor(Color.parseColor("#D90091EA"));
+                                Button n = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+                                n.setBackgroundColor(Color.parseColor("#222831"));
+                                n.setTextColor(Color.parseColor("#DEFFFFFF"));
                             }
                         }
                     });
@@ -557,7 +597,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
     }
 
 
-
+    //Interface to pass the data from the post to the post fragment to set the image text and des of the post to be edited
     public interface  EditClick{
         public void onEditClick(int position,String Uid,String pTimeStamp,String post,String title,String content,String url,String pLikes,String pComment);
     }

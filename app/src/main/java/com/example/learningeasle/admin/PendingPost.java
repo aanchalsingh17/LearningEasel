@@ -60,6 +60,7 @@ public class PendingPost extends Fragment {
         //create api service
 
         shimmerFrameLayout.startShimmer();
+        //Load all the pending post from the admins pending post section
         loadAllPendingPost();
         return  view;
     }

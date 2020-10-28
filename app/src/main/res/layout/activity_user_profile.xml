@@ -21,29 +21,28 @@
 
             <FrameLayout
                 android:id="@+id/frameLayout2"
-                android:layout_width="175dp"
-                android:layout_height="175dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:layout_gravity="left"
-                android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
                 tools:ignore="MissingConstraints">
 
                 <com.mikhaellopez.circularimageview.CircularImageView
                     android:id="@+id/image"
-                    android:layout_width="175dp"
-                    android:layout_height="175dp"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
                     app:civ_border_color="#E61A0C"
-                    app:civ_border_width="4dp"
+                    app:civ_border_width="2dp"
                     app:civ_shadow="true"
                     app:civ_shadow_color="#152FC1"
-                    app:civ_shadow_radius="10dp" />
+                    app:civ_shadow_radius="7dp" />
             </FrameLayout>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="18dp"
                 android:layout_toRightOf="@id/frameLayout2">
 
                 <TextView
@@ -66,15 +65,111 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="7dp"
                     android:fontFamily="@font/ubuntu"
+                    android:textColor="#000"
                     android:singleLine="true"
                     android:textSize="15sp" />
 
+
+                <LinearLayout
+                    android:id="@+id/socialDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/email"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:padding="3dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/postsCnt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="5dp"
+                            android:fontFamily="@font/ubuntu"
+                            android:text="100"
+                            android:textColor="#000"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="5dp"
+                            android:fontFamily="@font/ubuntu"
+                            android:text="Posts" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="3dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/followersCnt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="5dp"
+                            android:fontFamily="@font/ubuntu"
+                            android:text="166"
+                            android:textColor="#000"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="5dp"
+                            android:fontFamily="@font/ubuntu"
+                            android:text="Followers" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:padding="3dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/followingCnt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="5dp"
+                            android:fontFamily="@font/ubuntu"
+                            android:text="100"
+                            android:textColor="#000"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="5dp"
+                            android:fontFamily="@font/ubuntu"
+                            android:text="Following" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
                 <Button
                     android:id="@+id/follow"
-                    android:layout_width="200dp"
+                    android:layout_width="220dp"
                     android:layout_height="30dp"
-                    android:layout_below="@id/email"
-                    android:layout_marginTop="40dp"
+                    android:layout_below="@id/socialDetails"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/button_follow"
                     android:fontFamily="@font/ubuntu"
                     android:text="Follow"

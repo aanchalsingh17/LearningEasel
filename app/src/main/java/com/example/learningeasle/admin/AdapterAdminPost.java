@@ -222,8 +222,8 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
             public void onClick(View v) {
                 //Before deleting the post delete it from the bookmarks section of the users;
 
-                AlertDialog.Builder delete = new AlertDialog.Builder(new ContextThemeWrapper(v.getContext(), R.style.AlertDialogCustom));
-                delete.setTitle("Are You Sure??");
+                AlertDialog.Builder delete = new AlertDialog.Builder(context);
+                delete.setTitle("Are You Sure?");
                 delete.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -241,12 +241,6 @@ public class AdapterAdminPost extends RecyclerView.Adapter<AdapterAdminPost.MyHo
                 AlertDialog alert = delete.create();
                 alert.show();
                 //    Customising buttons for dialog
-                Button p = alert.getButton(DialogInterface.BUTTON_POSITIVE);
-                p.setBackgroundColor(Color.parseColor("#222831"));
-                p.setTextColor(Color.parseColor("#D90091EA"));
-                Button n = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
-                n.setBackgroundColor(Color.parseColor("#222831"));
-                n.setTextColor(Color.parseColor("#DEFFFFFF"));
 
 
             }

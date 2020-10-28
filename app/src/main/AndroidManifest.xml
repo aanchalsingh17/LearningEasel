@@ -21,6 +21,7 @@
         </activity>
 
         <activity android:name=".chats.ChatActivity"
+            android:label="Chats"
             android:screenOrientation="portrait"/>
         <activity android:name=".ViewAttachement"
             android:screenOrientation="portrait"/>

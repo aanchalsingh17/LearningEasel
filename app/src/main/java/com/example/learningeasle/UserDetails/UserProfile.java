@@ -34,12 +34,13 @@ public class UserProfile extends AppCompatActivity {
    String Id;
     ImageView profile;
     StorageReference reference;
-    TextView username, useremail, userstatus;
+    TextView username, useremail, userstatus,postsCnt, followersCnt, followingCnt;
     FirebaseFirestore fstore;
     RecyclerView recyclerView;
     List<modelpost> modelpostList;
     AdapterPost adapterPost;
     Button follow;
+    private int cnt=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,11 +54,28 @@ public class UserProfile extends AppCompatActivity {
         fstore = FirebaseFirestore.getInstance();
         recyclerView = findViewById(R.id.posts);
         follow = findViewById(R.id.follow);
+        postsCnt = findViewById(R.id.postsCnt);
+        followersCnt = findViewById(R.id.followersCnt);
+        followingCnt = findViewById(R.id.followingCnt);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    follow.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         loadprofile();
         loadposts();
         final String curruid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -76,9 +94,10 @@ public class UserProfile extends AppCompatActivity {
                           if(snapshot.child("Following").hasChild(Id)){
                               reffollowing.child("Following").child(Id).removeValue();
                               reffollowers.child("Followers").child(curruid).removeValue();
-                          }else
+                          }else {
                               reffollowing.child("Following").child(Id).setValue(Id);
-                             reffollowers.child("Followers").child(curruid).setValue(curruid);
+                              reffollowers.child("Followers").child(curruid).setValue(curruid);
+                          }
 
                       }
 
@@ -164,6 +183,49 @@ public class UserProfile extends AppCompatActivity {
                             Picasso.get().load(url).into(profile);
                     }
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference("Posts").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                cnt = 0;
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) ds.getValue();
+
+                    if (hashMap.get("pId").equals(Id))
+                        cnt++;
+                }
+                postsCnt.setText(String.valueOf(cnt));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference("Users").child(Id).child("Followers").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                followersCnt.setText(String.valueOf(snapshot.getChildrenCount()));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference("Users").child(Id).child("Following").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                followingCnt.setText(String.valueOf(snapshot.getChildrenCount()));
             }
 
             @Override

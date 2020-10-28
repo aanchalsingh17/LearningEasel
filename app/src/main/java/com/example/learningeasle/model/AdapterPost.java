@@ -221,6 +221,22 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         }
         //setting the post description
         holder.morebtn.setVisibility(View.GONE);
+        FirebaseDatabase.getInstance().getReference("admin").child("Id").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    holder.boookmark.setVisibility(View.GONE);
+                    holder.like_btn.setVisibility(View.GONE);
+                    holder.comment_btn.setText("View Comments");
+                    holder.share_btn.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         holder.pTime.setText(pTime);
         holder.pTitle.setText(pTitle);
         holder.pDesc.setText(pDescription);

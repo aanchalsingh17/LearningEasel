@@ -22,7 +22,7 @@ public class BottomSheetDialog extends BottomSheetDialogFragment {
 
     private BottomSheetListener bottomSheetListener;
     TextView popularity,areaOfInterests,uploadDate,followers;
-    private static BottomSheetDialog bottomSheetDialog=null;
+    public static BottomSheetDialog bottomSheetDialog=null;
     private int flag;
 
     private BottomSheetDialog(BottomSheetListener bottomSheetListener){

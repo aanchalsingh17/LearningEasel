@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -45,7 +46,7 @@ public class ProfileFragment extends Fragment {
     FirebaseUser user;
     String userid;
     StorageReference reference;
-    TextView username, useremail, userstatus;
+    TextView username, useremail, userstatus, postsCnt, followersCnt, followingCnt;
     FirebaseFirestore fstore;
     String userID;
     FirebaseAuth fAuth;
@@ -55,6 +56,8 @@ public class ProfileFragment extends Fragment {
     View view;
     ViewPager viewPager;
     TabLayout tabLayout;
+
+    private int cnt = 0;
 
 
     @Override
@@ -68,8 +71,8 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         context = getActivity();
         view = inflater.inflate(R.layout.fragment_profile, container, false);
-        viewPager=view.findViewById(R.id.viewPager);
-        tabLayout=view.findViewById(R.id.tabLayout);
+        viewPager = view.findViewById(R.id.viewPager);
+        tabLayout = view.findViewById(R.id.tabLayout);
         profile = view.findViewById(R.id.image);
         user = FirebaseAuth.getInstance().getCurrentUser();
         userid = user.getUid();//
@@ -78,6 +81,9 @@ public class ProfileFragment extends Fragment {
         username = view.findViewById(R.id.username);
         useremail = view.findViewById(R.id.email);
         userstatus = view.findViewById(R.id.status);
+        postsCnt = view.findViewById(R.id.postsCnt);
+        followersCnt = view.findViewById(R.id.followersCnt);
+        followingCnt = view.findViewById(R.id.followingCnt);
         fAuth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
         setProfile();
@@ -93,7 +99,8 @@ public class ProfileFragment extends Fragment {
         return view;
 
     }
-   //On activity created load the fragments of the profile
+
+    //On activity created load the fragments of the profile
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -111,7 +118,6 @@ public class ProfileFragment extends Fragment {
         tabLayout.getTabAt(1).getIcon().setColorFilter(getResources().getColor(R.color.allTabs), PorterDuff.Mode.SRC_IN);
         tabLayout.getTabAt(2).getIcon().setColorFilter(getResources().getColor(R.color.allTabs), PorterDuff.Mode.SRC_IN);
         tabLayout.getTabAt(3).getIcon().setColorFilter(getResources().getColor(R.color.allTabs), PorterDuff.Mode.SRC_IN);
-
 
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -133,11 +139,11 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setUpViewPager(ViewPager viewPager) {
-        SectionPagerAdapter sectionPagerAdapter=new SectionPagerAdapter(getChildFragmentManager());
-        sectionPagerAdapter.addFragment(new UserPostsFragment(),"");
-        sectionPagerAdapter.addFragment(new UserFollowersFragment(),"");
-        sectionPagerAdapter.addFragment(new UserFollowingFragment(),"");
-        sectionPagerAdapter.addFragment(new UserBookmarkFragment(),"");
+        SectionPagerAdapter sectionPagerAdapter = new SectionPagerAdapter(getChildFragmentManager());
+        sectionPagerAdapter.addFragment(new UserPostsFragment(), "");
+        sectionPagerAdapter.addFragment(new UserFollowersFragment(), "");
+        sectionPagerAdapter.addFragment(new UserFollowingFragment(), "");
+        sectionPagerAdapter.addFragment(new UserBookmarkFragment(), "");
 
         viewPager.setAdapter(sectionPagerAdapter);
     }
@@ -172,8 +178,8 @@ public class ProfileFragment extends Fragment {
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(getContext(), ViewImage.class);
-                intent.putExtra("image",url);
+                Intent intent = new Intent(getContext(), ViewImage.class);
+                intent.putExtra("image", url);
                 startActivity(intent);
             }
         });
@@ -189,15 +195,30 @@ public class ProfileFragment extends Fragment {
                         String name = hashMap.get("Name");
                         String email = hashMap.get("email");
                         String status = hashMap.get("status");
-                        username.setText(name);
+                        username.setText(hashMap.get("Name"));
                         useremail.setText(email);
                         userstatus.setText(status);
                         url = hashMap.get("Url");
                     }
-
-
                 }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference("Posts").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                cnt = 0;
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) ds.getValue();
+
+                    if (hashMap.get("pId").equals(userID))
+                        cnt++;
+                }
+                postsCnt.setText(String.valueOf(cnt));
             }
 
             @Override
@@ -206,6 +227,29 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        FirebaseDatabase.getInstance().getReference("Users").child(userID).child("Followers").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                followersCnt.setText(String.valueOf(snapshot.getChildrenCount()));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference("Users").child(userID).child("Following").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                followingCnt.setText(String.valueOf(snapshot.getChildrenCount()));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
     }
 

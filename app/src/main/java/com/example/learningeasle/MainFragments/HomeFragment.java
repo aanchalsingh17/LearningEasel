@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import com.example.learningeasle.BottomSheetDialog;
 import com.example.learningeasle.PickInterests;
+import com.example.learningeasle.PushNotifications.Data;
 import com.example.learningeasle.PushNotifications.Token;
 import com.example.learningeasle.R;
 import com.example.learningeasle.chats.ChatActivity;
@@ -205,6 +206,7 @@ public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSh
                         ref2.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                following.clear();
                                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                     following.add(dataSnapshot.getKey());
                                 }
@@ -404,6 +406,7 @@ public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSh
 
     @Override
     public void onTextSelected(String type) {
+        modelpostList.clear();
         if (type.equals("pop")) {
             shimmerFrameLayout.setVisibility(View.VISIBLE);
             shimmerFrameLayout.startShimmer();

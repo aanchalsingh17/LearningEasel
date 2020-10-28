@@ -74,7 +74,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.UserHolder>{
              @Override
              public void onDataChange(@NonNull DataSnapshot snapshot) {
                  if(snapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                     holder.follow.setVisibility(View.INVISIBLE);
+                     holder.follow.setVisibility(View.GONE);
                  }
              }
 

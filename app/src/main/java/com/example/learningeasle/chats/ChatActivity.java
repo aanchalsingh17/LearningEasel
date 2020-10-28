@@ -5,11 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ProgressBar;
 
+import com.example.learningeasle.MainActivity;
 import com.example.learningeasle.R;
 import com.example.learningeasle.chats.AdapterChatDisplay;
 import com.example.learningeasle.model.ModelUsers;
@@ -36,6 +39,7 @@ public class ChatActivity extends AppCompatActivity {
     ShimmerFrameLayout shimmerFrameLayout;
     int CurrentItems, totalItems, ViewedItems;
     int start = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,8 +50,9 @@ public class ChatActivity extends AppCompatActivity {
         final LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext());
         users.setLayoutManager(manager);
         usersList = new ArrayList<>();
-        shimmerFrameLayout =findViewById(R.id.shimmer_layout);
+        shimmerFrameLayout = findViewById(R.id.shimmer_layout);
         progressBar = findViewById(R.id.progressBar_loading);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // getAllUsers();
         adapterChatDisplay = new AdapterChatDisplay(getApplicationContext(), usersList);
         users.setAdapter(adapterChatDisplay);
@@ -78,6 +83,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
     }
+
     private void getFirstUsers() {
         final FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
@@ -106,10 +112,6 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
-
 
     private void getAllUsers() {
         //current user;
@@ -145,4 +147,17 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        int id = menuItem.getItemId();
+        if (id == android.R.id.home) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return false;
     }
+
+}
+
+

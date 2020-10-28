@@ -2,11 +2,15 @@ package com.example.learningeasle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -36,6 +40,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -44,7 +50,7 @@ import java.util.Locale;
 
 public class PostDetailActivity extends AppCompatActivity {
 
-    String hisuId, myEmail, myName, myDp, postId, mylikes, hisDp, hisName, postType;
+    String hisuId, myEmail, myName, myDp, postId, mylikes, hisDp, hisName, postType,pTitle,pDesc;
     boolean processLike = false;
     ProgressBar progressBar;
     ImageView uDpIV, pImageIV;
@@ -110,7 +116,10 @@ public class PostDetailActivity extends AppCompatActivity {
                 if(snapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                     //Current User is Admin Then Make send Button invisible so that admin wont be able to comment
                     sendbtn.setVisibility(View.GONE);
+                    avatarIV.setVisibility(View.GONE);
+                    likebtn.setVisibility(View.GONE);
                     commentET.setVisibility(View.GONE);
+                    morebtn.setVisibility(View.GONE);
                 }
             }
 
@@ -168,6 +177,19 @@ public class PostDetailActivity extends AppCompatActivity {
 
             }
         });
+
+        sharebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BitmapDrawable bitmapDrawable = (BitmapDrawable) pImageIV.getDrawable();
+                if (bitmapDrawable == null) {
+                    shareTextOnly(pTitle, pDesc);
+                } else {
+                    Bitmap bitmap = bitmapDrawable.getBitmap();
+                shareImageAndText(pTitle, pDesc, bitmap);
+                }
+            }
+        });
         setLikes();
         LinearLayoutManager layoutManager = new LinearLayoutManager(
                 getApplicationContext());
@@ -175,6 +197,44 @@ public class PostDetailActivity extends AppCompatActivity {
         commentList = new ArrayList<>();
         loadComments();
     }
+
+    private void shareImageAndText(String pTitle, String pDescription, Bitmap bitmap) {
+        String shareBody=pTitle+"\n"+pDescription;
+        Uri uri=saveImageInCache(bitmap);
+        Intent shareIntent=new Intent(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM,uri);
+        shareIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT,"Subject Here");
+        shareIntent.setType("image/png");
+        startActivity(Intent.createChooser(shareIntent,"Share Via"));
+    }
+
+    private Uri saveImageInCache(Bitmap bitmap) {
+        File imageFolder=new File(getCacheDir(),"images");
+        Uri uri=null;
+        try{
+            imageFolder.mkdirs();
+            File file=new File(imageFolder,"shared_image.png");
+            FileOutputStream stream=new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG,90,stream);
+            stream.flush();
+            stream.close();
+            uri= FileProvider.getUriForFile(getApplicationContext(),"com.example.learningeasle.fileprovider",file);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return uri;
+    }
+
+    private void shareTextOnly(String pTitle, String pDescription) {
+        String shareBody=pTitle+"\n"+pDescription;
+        Intent shareIntent=new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT,"Subject Here"); // for sharing via email
+        shareIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
+        startActivity(Intent.createChooser(shareIntent,"Share Via"));
+    }
+
 
     private void loadComments() {
 
@@ -343,8 +403,8 @@ public class PostDetailActivity extends AppCompatActivity {
                     ref.child(postId).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            String pTitle = "" + snapshot.child("pTitle").getValue();
-                            String pDesc = "" + snapshot.child("pDesc").getValue();
+                            pTitle = "" + snapshot.child("pTitle").getValue();
+                            pDesc = "" + snapshot.child("pDesc").getValue();
                             mylikes = "" + snapshot.child("pLikes").getValue();
                             String pTimeStamp = (String) snapshot.child("pTime").getValue();
                             pImage = "" + snapshot.child("pImage").getValue();

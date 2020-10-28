@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView navigationView1;
+        BottomSheetDialog.bottomSheetDialog=null;
         navigationView1 = findViewById(R.id.menu_nav);
         navigationView1.setOnNavigationItemSelectedListener(listener1);
 
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    BottomSheetDialog.bottomSheetDialog=null;
                     Fragment selectedfragment = null;
                     Bundle bundle = new Bundle();
                     switch (item.getItemId()) {

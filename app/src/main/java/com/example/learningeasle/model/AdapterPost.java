@@ -1,5 +1,6 @@
 package com.example.learningeasle.model;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -99,6 +100,28 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         //Initialise shimmer Drawable
         ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
         shimmerDrawable.setShimmer(shimmer);
+
+
+        //If current user is admin then he cant like share n comment
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
+        reference.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.hasChild(myId)){
+                   holder.like_btn.setVisibility(View.GONE);
+                   holder.share_btn.setVisibility(View.GONE);
+                   holder.comment_btn.setText("View Comments");
+                   holder.boookmark.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
         if(!videourl.equals("empty")||!(pdfurl.equals("empty"))||!(audiourl.equals("empty"))){
             holder.attached.setVisibility(View.VISIBLE);

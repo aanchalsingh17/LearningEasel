@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,178 +8,43 @@
     app:cardCornerRadius="2dp"
     app:cardElevation="2dp"
     app:cardBackgroundColor="@color/text"
-    app:contentPadding="3dp">
+>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="#E7E7E7"
+        />
     <LinearLayout
-        android:id="@+id/user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <com.mikhaellopez.circularimageview.CircularImageView
-            android:id="@+id/image"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:background="#6AE7E7E7"
-            />
-        <LinearLayout
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:paddingTop="5dp"
-                android:background="#6AE7E7E7"
-                android:layout_gravity="center" />
+            android:paddingHorizontal="@android:dimen/app_icon_size"
+            android:paddingTop="5dp"
+            android:layout_gravity="center"
+            android:background="#E7E7E7"/>
 
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:paddingTop="5dp"
-                android:background="#6AE7E7E7"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:background="#6AE7E7E7"/>
-
-        </LinearLayout>
-        <com.mikhaellopez.circularimageview.CircularImageView
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:background="#6AE7E7E7"
-            />
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:paddingTop="5dp"
-                android:background="#6AE7E7E7"
-                android:layout_gravity="center" />
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:paddingTop="5dp"
-                android:background="#6AE7E7E7"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:background="#6AE7E7E7"/>
-
-        </LinearLayout>
-        <com.mikhaellopez.circularimageview.CircularImageView
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:background="#6AE7E7E7"
-            />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:paddingTop="5dp"
-                android:background="#6AE7E7E7"
-                android:layout_gravity="center" />
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:paddingTop="5dp"
-                android:background="#6AE7E7E7"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:background="#6AE7E7E7"/>
-
-        </LinearLayout>
-        <com.mikhaellopez.circularimageview.CircularImageView
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:background="#6AE7E7E7"
-            />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:paddingTop="5dp"
-                android:background="#6AE7E7E7"
-                android:layout_gravity="center" />
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:paddingTop="5dp"
-                android:background="#6AE7E7E7"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:background="#6AE7E7E7"/>
-
-        </LinearLayout>
-        <com.mikhaellopez.circularimageview.CircularImageView
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:background="#6AE7E7E7"
-            />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:paddingTop="5dp"
-                android:background="#6AE7E7E7"
-                android:layout_gravity="center" />
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:paddingTop="5dp"
-                android:background="#6AE7E7E7"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingHorizontal="@android:dimen/app_icon_size"
-                android:background="#6AE7E7E7"/>
-
-        </LinearLayout>
+            android:paddingHorizontal="@android:dimen/app_icon_size"
+            android:paddingTop="5dp"
+            android:singleLine="true"
+            android:background="#E7E7E7"/>
+        <Button
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="170dp"
+            android:layout_width="150dp"
+            android:layout_height="30dp"
+            android:background="#E7E7E7" />
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</LinearLayout>
+    </androidx.cardview.widget.CardView>

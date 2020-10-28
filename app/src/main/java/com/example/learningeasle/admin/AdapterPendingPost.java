@@ -133,6 +133,7 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
             @Override
             public void onClick(View v) {
                 //delete the post from the pending post reference
+                publishPost(pTimeStamp);
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");//.child(pTimeStamp);
                 ref.child(pTimeStamp).removeValue();
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
@@ -262,7 +263,10 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
 
     }
 
-   //Sending the notification to the user
+    private void publishPost(String pTimeStamp) {
+    }
+
+    //Sending the notification to the user
     public void sendNotifications(String usertoken, String title, String message) {
         Data data = new Data(title, message);
         NotificationSender sender = new NotificationSender(data, usertoken);

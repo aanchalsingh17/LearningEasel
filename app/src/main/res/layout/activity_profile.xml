@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient">
 
     <ImageView
         android:id="@+id/imageView"
@@ -15,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.203"
-        app:srcCompat="@drawable/ic_action_account" />
+        app:srcCompat="@drawable/ic_baseline_account_box_24" />
 
     <Button
         android:id="@+id/register_reg"

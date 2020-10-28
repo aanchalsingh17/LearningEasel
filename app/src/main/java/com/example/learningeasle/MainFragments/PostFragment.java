@@ -142,9 +142,12 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         pdf_btn = view.findViewById(R.id.pdf_upload);
         view_btn = view.findViewById(R.id.view);
         audio_btn = view.findViewById(R.id.audio_upload);
-
+        //Setting the url null so that when user posted continuosly we dont hold the last value of url for this post
+        audiouri = null;
+        pdfuri = null;
+        videouri = null;
         //Initialise timestamp here
-        timeStamp= String.valueOf(System.currentTimeMillis());
+
         //When attached button is clicked make visiblity of video n pdf button visible
 
         view_attached.setOnClickListener(new View.OnClickListener() {
@@ -298,6 +301,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                             view_page.putExtra("videourl","empty");
                             view_page.putExtra("audiourl","empty");
                             view_page.putExtra("pdfurl",pdfuri.toString());
+                            view_page.putExtra("type","local_url");
                             startActivity(view_page);
                         }
                         else if(!pdf_ref.equals("empty")){
@@ -655,7 +659,6 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 timeStamp = time;
             //Upload the audio file onto the storage then download the file and save its uri upload onto the realtimedatabse
             final StorageReference des = reference.child("Audio/"+ timeStamp);
-            uploadTask = des.putFile(audiouri);
             des.putFile(audiouri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -712,7 +715,6 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
 
             final StorageReference des = reference.child("Pdf/"+ timeStamp);
-            uploadTask = des.putFile(pdfuri);
             //Upload the pdf file onto the storage then download the file and save its uri to upload onto the realtimedatabse
             des.putFile(pdfuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -741,7 +743,6 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             if(edit.equals("EditPost"))
                 timeStamp = time;
             final StorageReference des = reference.child("Video/"+ timeStamp);
-            uploadTask = des.putFile(videouri);
             //Upload the video file onto the storage then download the file and save its uri upload onto the realtimedatabse
             des.putFile(videouri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -781,6 +782,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                     Toast.makeText(getActivity(), "Enter Description...", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                timeStamp= String.valueOf(System.currentTimeMillis());
                 uploadVideo(videouri);
                 break;
 

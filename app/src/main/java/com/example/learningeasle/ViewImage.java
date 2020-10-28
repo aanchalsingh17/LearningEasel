@@ -7,10 +7,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.squareup.picasso.Picasso;
 
 public class ViewImage extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,9 +20,13 @@ public class ViewImage extends AppCompatActivity {
         ImageView imageView=findViewById(R.id.imageView);
         if (image.equals("noImage")) {
             imageView.setImageResource(R.drawable.ic_pic);
+            imageView.setVisibility(View.VISIBLE);
         } else {
             try {
                 Picasso.get().load(image).placeholder(R.drawable.ic_default).into(imageView);
+                imageView.setVisibility(View.VISIBLE);
+
+
             } catch (Exception e) {
 
             }

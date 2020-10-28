@@ -39,6 +39,7 @@ public class ViewAttachement extends AppCompatActivity {
     String audiourl;
     LinearLayout player;
     final MediaPlayer mediaPlayer = new MediaPlayer();
+    boolean first = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +57,7 @@ public class ViewAttachement extends AppCompatActivity {
         String url = getIntent().getStringExtra("videourl");
         String pdfurl = getIntent().getStringExtra("pdfurl");
          audiourl = getIntent().getStringExtra("audiourl");
+         String type = getIntent().getStringExtra("type");
          //if videourl is non empty then make it visible and load the video from the url
         if (!url.equals("empty")) {
             frameLayout.setVisibility(View.VISIBLE);
@@ -70,7 +72,15 @@ public class ViewAttachement extends AppCompatActivity {
         if (!pdfurl.equals("empty")) {
             pdfView.setVisibility(View.VISIBLE);
            // Uri pdfuri = Uri.parse(pdfurl);
-            new RetrievePDFStream().execute(pdfurl);
+            if(type!=null&&type.equals("local_url")){
+                pdfView.fromUri(Uri.parse(pdfurl))
+                        .defaultPage(0)
+                        .spacing(10)
+                        .load();
+
+            }else {
+                new RetrievePDFStream().execute(pdfurl);
+            }
 
         }
 
@@ -82,13 +92,19 @@ public class ViewAttachement extends AppCompatActivity {
         imageplaypause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mediaPlayer.isPlaying()){
+                if(first){
+                    mediaPlayer.start();
+                    imageplaypause.setImageResource(R.drawable.ic_pause);
+                    updateSeekBar();
+                    first = false;
+                }
+                else if(mediaPlayer.isPlaying()){
                     handler.removeCallbacks(updater);
                     mediaPlayer.pause();
-                    imageplaypause.setImageResource(R.drawable.ic_pause);
+                    imageplaypause.setImageResource(R.drawable.ic_play);
                 }else{
                     mediaPlayer.start();
-                    imageplaypause.setImageResource(R.drawable.ic_play);
+                    imageplaypause.setImageResource(R.drawable.ic_pause);
                     updateSeekBar();
 
                 }

@@ -127,6 +127,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         holder.attachement.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
+               videourl = postList.get(position).getVideourl();
+               pdfurl = postList.get(position).getPdfurl();
+               audiourl = postList.get(position).getAudiourl();
                if(!videourl.equals("empty")){
                    holder.video_btn.setVisibility(View.VISIBLE);
 

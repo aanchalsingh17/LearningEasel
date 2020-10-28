@@ -32,21 +32,6 @@
                         layout="@layout/shimmer_row_layout"/>
                 </LinearLayout>
             </com.facebook.shimmer.ShimmerFrameLayout>
-            <ProgressBar
-                android:id="@+id/progressBar_loading"
-                style="@style/MyProgressBarRectangle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="40dp"
-                android:visibility="invisible"
-                android:layout_marginStart="100dp"
-
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:visibility="invisible" />
         </LinearLayout>
 
 

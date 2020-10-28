@@ -1,4 +1,4 @@
-package com.example.learningeasle;
+package com.example.learningeasle.chats;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,34 +11,30 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.example.learningeasle.PushNotifications.APIService;
 import com.example.learningeasle.PushNotifications.Client;
 import com.example.learningeasle.PushNotifications.Data;
 import com.example.learningeasle.PushNotifications.MyResponse;
 import com.example.learningeasle.PushNotifications.NotificationSender;
-import com.example.learningeasle.model.AdapterChat;
-import com.example.learningeasle.model.ModelChat;
+import com.example.learningeasle.R;
+import com.example.learningeasle.chats.AdapterChat;
+import com.example.learningeasle.chats.ModelChat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;

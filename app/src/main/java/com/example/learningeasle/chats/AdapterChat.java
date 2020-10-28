@@ -1,7 +1,6 @@
-package com.example.learningeasle.model;
+package com.example.learningeasle.chats;
 
 import android.content.Context;
-import android.text.NoCopySpan;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;

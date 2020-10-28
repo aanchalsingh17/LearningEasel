@@ -39,18 +39,6 @@
                     <include layout="@layout/shimmer_row_layout" />
                 </LinearLayout>
             </com.facebook.shimmer.ShimmerFrameLayout>
-
-            <ProgressBar
-                android:id="@+id/progressBar_loading"
-                style="@style/MyProgressBarRectangle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_marginStart="90dp"
-                android:layout_marginBottom="40dp"
-
-
-                android:visibility="invisible" />
         </LinearLayout>
 
 

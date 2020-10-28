@@ -118,7 +118,7 @@ public class AdminMainPage extends AppCompatActivity {
                     startActivity(intent1);
                     finish();
             }
-            return false;
+            return true;
         }
     };
 }

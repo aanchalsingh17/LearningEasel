@@ -1,4 +1,4 @@
-package com.example.learningeasle.model;
+package com.example.learningeasle.chats;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,8 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.learningeasle.ChatDetailsActivity;
 import com.example.learningeasle.R;
+import com.example.learningeasle.model.ModelUsers;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
 import com.google.firebase.auth.FirebaseAuth;

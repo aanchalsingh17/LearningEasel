@@ -7,16 +7,19 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -24,6 +27,7 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -60,6 +64,7 @@ import com.squareup.picasso.Picasso;
 //import net.dankito.richtexteditor.android.RichTextEditor;
 //import net.dankito.richtexteditor.android.toolbar.AllCommandsEditorToolbar;
 
+import java.io.ObjectStreamException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -79,8 +84,10 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     String edit,id,time,title,des,image,email;
     String pLikes="0",pComments="0";
     Spinner spinner;
-    String videourl="empty",pdfUrl="empty",audiourrl="empty";
+    ProgressDialog postDialog;
+    String videourl="empty",pdfUrl="empty",audiourrl="empty",imageurl= "empty";
      String timeStamp;
+    String audio_ref="empty",video_ref = "empty",pdf_ref = "empty";
     ArrayAdapter<String> adapter;
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
@@ -104,6 +111,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        final View view = inflater.inflate(R.layout.fragment_post, container, false);
         edit = getArguments().getString("Edit");
         if(edit.equals("EditPost")) {
             id = getArguments().getString("Id");
@@ -115,7 +123,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             pComments = getArguments().getString("Comments");
         }
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_post, container, false);
+        return view;
 
 
     }
@@ -183,6 +191,22 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         view_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(edit.equals("EditPost")) {
+                    final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts").child(time);
+                    reference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            audio_ref = (String) snapshot.child("audiourl").getValue();
+                            video_ref = (String) snapshot.child("videourl").getValue();
+                            pdf_ref = (String) snapshot.child("pdfurl").getValue();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
                 viewAttachedFile();
             }
         });
@@ -225,122 +249,64 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
     }
 
+
     private void viewAttachedFile() {
         String[] options = {"Audio", "Video","Pdf"};
+        //If Edit Post then go and check if file is already attached on firebase or not
+
         final Intent view_page = new Intent(getActivity(), ViewAttachement.class);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which){
                     case 0:
-                        boolean go = true;
-                          if(!audiourrl.equals("empty")){
-                              view_page.putExtra("audiourl", audiourrl);
-                              view_page.putExtra("pdfurl","empty");
+                        if(audiouri!=null) {
+                            view_page.putExtra("videourl","empty");
+                            view_page.putExtra("audiourl",audiouri.toString());
+                            view_page.putExtra("pdfurl","empty");
+                            startActivity(view_page);
+                        }
+                        else if(!audio_ref.equals("empty")){
                               view_page.putExtra("videourl","empty");
-                          }else if(edit.equals("EditPost")){
-                              final String[] url = new String[1];
-                              //If its edit post then check does database audiourl is empty ornot if not empty then send that url
-                              reference.child(time).child("audiourl").addValueEventListener(new ValueEventListener() {
-                                  @Override
-                                  public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    url[0] = (String) snapshot.getValue();
-                                  }
-
-                                  @Override
-                                  public void onCancelled(@NonNull DatabaseError error) {
-
-                                  }
-                              });
-                              if(url[0]!=null&&!url[0].equals("empty")){
-                                  view_page.putExtra("audiourl",url[0]);
-                                  view_page.putExtra("pdfurl","empty");
-                                  view_page.putExtra("videourl","empty");
-                              }else{
-                                  Toast.makeText(getContext(),"No Audio File Attached",Toast.LENGTH_SHORT).show();
-                                  go =false;
-                              }
-                          }else{
-                              Toast.makeText(getContext(),"No Audio File Attached",Toast.LENGTH_SHORT).show();
-                              go = false;
-                          }
-                          if(go) {
+                              view_page.putExtra("audiourl",audio_ref);
+                              view_page.putExtra("pdfurl","empty");
                               startActivity(view_page);
+                          }else{
+                              Toast.makeText(getContext(),"No Audio File Attached!!",Toast.LENGTH_SHORT).show();
                           }
                           break;
                     case 1:
-                         go = true;
                         if(videouri!=null){
-                            view_page.putExtra("videourl",videourl);
-                            view_page.putExtra("pdfurl","empty");
+                            view_page.putExtra("videourl",videouri.toString());
                             view_page.putExtra("audiourl","empty");
-                        }else if(edit.equals("EditPost")){
-                            final String[] url = new String[1];
-                            //If its edit post then check does database videourl is empty ornot if not empty then send that url
-                            reference.child(time).child("videourl").addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    url[0] = (String) snapshot.getValue();
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-                            if(url[0]!=null&&!url[0].equals("empty")){
-                                view_page.putExtra("videourl",url[0]);
-                                view_page.putExtra("pdfurl","empty");
-                                view_page.putExtra("audiourl","empty");
-                            }else{
-                                Toast.makeText(getContext(),"No Video File Attached",Toast.LENGTH_SHORT).show();
-                                go =false;
-                            }
-                        }else{
-                            Toast.makeText(getContext(),"No Video File Attached",Toast.LENGTH_SHORT).show();
-                            go = false;
-                        }
-                        if(go) {
+                            view_page.putExtra("pdfurl","empty");
                             startActivity(view_page);
+                        }
+                        else if(!video_ref.equals("empty")){
+                            view_page.putExtra("videourl",video_ref);
+                            view_page.putExtra("audiourl","empty");
+                            view_page.putExtra("pdfurl","empty");
+                            startActivity(view_page);
+                        }else{
+                            Toast.makeText(getContext(),"No Video File Attached!!",Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 2:
-                        go =true;
                         if(pdfuri!=null){
-                            view_page.putExtra("pdfurl", pdfUrl);
                             view_page.putExtra("videourl","empty");
                             view_page.putExtra("audiourl","empty");
-                        }else if(edit.equals("EditPost")){
-                            final String[] url = new String[1];
-                            //If its edit post then check does database videourl is empty ornot if not empty then send that url
-                            reference.child(time).child("pdfurl").addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    url[0] = (String) snapshot.getValue();
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-                            if(url[0]!=null&&!url[0].equals("empty")){
-                                view_page.putExtra("pdfurl",url[0]);
-                                view_page.putExtra("videourl","empty");
-                                view_page.putExtra("audiourl","empty");
-                            }
-                            else{
-                                Toast.makeText(getContext(),"No Pdf File Attached",Toast.LENGTH_SHORT).show();
-                                go =false;
-                            }
-                        }else{
-                            Toast.makeText(getContext(),"No Pdf File Attached",Toast.LENGTH_SHORT).show();
-                            go =false;
-                        }
-                        if(go) {
+                            view_page.putExtra("pdfurl",pdfuri.toString());
                             startActivity(view_page);
+                        }
+                        else if(!pdf_ref.equals("empty")){
+                            view_page.putExtra("videourl","empty");
+                            view_page.putExtra("audiourl","empty");
+                            view_page.putExtra("pdfurl",pdf_ref);
+                            startActivity(view_page);
+                        }else{
+                            Toast.makeText(getContext(),"No Pdf File Attached!!",Toast.LENGTH_SHORT).show();
                         }
                         break;
 
@@ -428,233 +394,90 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         img_post.setOnClickListener(this);
     }
 
-    private void Post_Data(final String title, final String description, final String uri) {
-
-//        pd=new ProgressDialog(this);
-//        pd.setMessage("Publishing Post..");
-//        pd.show();
+    private void Post_Data(final String title, final String description) {
         progressBar.setVisibility(View.VISIBLE);
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        // String UserId = firebaseUser.getUid();
-
         //If post is to be edited then timestamp is going to be the time stamp of the post to be edited not the current timestamp
         if(edit.equals("EditPost"))
             timeStamp = time;
-
-
-        String filePathAndName = "Posts/" + "post_" + timeStamp;
         final String type=spinner.getSelectedItem().toString();
-
-
-
-
-
-        //If post contains the image
-        if (!uri.equals("noImage")) {
-            // with image
-            //If imageuri is null which means that the post image is not changed
-            if(image_rui==null){
-                DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
-                databaseReference.child(timeStamp).setValue("0");
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(timeStamp);
-                ref.child("pTitle").setValue(title);
-                ref.child("pDesc").setValue(description);
-                ref.child("type").setValue(type);
+        if(edit.equals("EditPost")){
+            DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
+            databaseReference.child(timeStamp).setValue("0");
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(timeStamp);
+            ref.child("pTitle").setValue(title);
+            ref.child("pDesc").setValue(description);
+            ref.child("type").setValue(type);
 //                ref.child("views").setValue("0");
-                //If any of the url is not equal to empty means new file being attached from the device
-                if(!videourl.equals("empty")){
-                    ref.child("videourl").setValue(videourl);
-                }
-                if(!audiourrl.equals("empty")){
-                    ref.child("audiourl").setValue(audiourrl);
-                }
-                if(!pdfUrl.equals("pdfurl")){
-                    ref.child("pdfurl").setValue(pdfUrl);
-                }
-                Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
-                        .show();
-                et_desc.setText("");
-                et_title.setText("");
-                img_post.setImageURI(null);
-                image_rui = null;
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
-            }else {
-                //otherwise we have added a image either from the gallery or from the camera
-                StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
-                ref.putFile(Uri.parse(uri)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                        while (!uriTask.isSuccessful()) ;
-                        String downloadUri = uriTask.getResult().toString();
-
-
-                        if (uriTask.isSuccessful()) {
-                            //If edit post then in any scenerio we can either change image type title and desc nothing else than that
-                            if (edit.equals("EditPost")) {
-                                DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
-                                databaseReference.child(timeStamp).setValue("0");
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(timeStamp);
-                                ref.child("pTitle").setValue(title);
-                                ref.child("pDesc").setValue(description);
-                                ref.child("type").setValue(type);
-                                ref.child("pImage").setValue(downloadUri);
-//                                ref.child("views").setValue("0");
-                                //If any of the url is not equal to empty means new file being attached from the device
-                                if(!videourl.equals("empty")){
-                                    ref.child("videourl").setValue(videourl);
-                                }
-                                if(!audiourrl.equals("empty")){
-                                    ref.child("audiourl").setValue(audiourrl);
-                                }
-                                if(!pdfUrl.equals("pdfurl")){
-                                    ref.child("pdfurl").setValue(pdfUrl);
-                                }
-                                Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
-                                        .show();
-                                et_desc.setText("");
-                                et_title.setText("");
-                                img_post.setImageURI(null);
-                                image_rui = null;
-                                Intent intent = new Intent(getActivity(), MainActivity.class);
-                                startActivity(intent);
-                            } else {
-                                //Otherwise we are publishing the post
-                                HashMap<Object, Object> hashMap = new HashMap<>();
-                                hashMap.put("pId", firebaseUser.getUid());
-                                hashMap.put("pImage", downloadUri);
-                                hashMap.put("pTitle", title);
-                                hashMap.put("pDesc", description);
-                                hashMap.put("pTime", timeStamp);
-                                hashMap.put("pName", pName);
-                                hashMap.put("url", url);
-                                hashMap.put("pLikes", "0");
-                                hashMap.put("pComments", "0");
-                                hashMap.put("type", type);
-                                hashMap.put("videourl",videourl);
-                                hashMap.put("pdfurl",pdfUrl);
-                                hashMap.put("audiourl",audiourrl);
-                                hashMap.put("order",-System.currentTimeMillis());
+            if(videouri!=null){
+                ref.child("videourl").setValue(videourl);
+            }
+            if(pdfuri!=null){
+                ref.child("pdfurl").setValue(pdfUrl);
+            }
+            if(audiouri!=null){
+                ref.child("audiourl").setValue(audiourrl);
+            }
+            if(image_rui!=null){
+                ref.child("pImage").setValue(imageurl);
+            }
+            Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
+                    .show();
+            et_desc.setText("");
+            et_title.setText("");
+            img_post.setImageURI(null);
+            image_rui = null;
+            postDialog.dismiss();
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            startActivity(intent);
+        }else{
+            HashMap<Object, Object> hashMap = new HashMap<>();
+            hashMap.put("pId", firebaseUser.getUid());
+            hashMap.put("pImage",imageurl);
+            hashMap.put("pTitle", title);
+            hashMap.put("pDesc", description);
+            hashMap.put("pTime", timeStamp);
+            hashMap.put("pName", pName);
+            hashMap.put("url", url);
+            hashMap.put("pLikes", "0");
+            hashMap.put("pComments", "0");
+            hashMap.put("type", type);
+            hashMap.put("audiourl",audiourrl);
+            hashMap.put("videourl",videourl);
+            hashMap.put("pdfurl",pdfUrl);
+            hashMap.put("order",-System.currentTimeMillis());
 //                                hashMap.put("views","0");
 
-                                //Reference of the admin pending post when user post for the first time then it should pass through the admin
-                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");
-                                reference.child(timeStamp).setValue(hashMap)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
+            //Reference of the admin pending post when user post for the first time then it should pass through the admin
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");
+            reference.child(timeStamp).setValue(hashMap)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
 //                                pd.dismiss();
-                                                progressBar.setVisibility(View.GONE);
-                                                Toast.makeText(getActivity(), "Post Passed to Admin!!", Toast.LENGTH_SHORT)
-                                                        .show();
-                                                et_desc.setText("");
-                                                et_title.setText("");
-                                                img_post.setImageURI(null);
-                                                image_rui = null;
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getActivity(), "Post Passed to Admin!!", Toast.LENGTH_SHORT)
+                                    .show();
+                            et_desc.setText("");
+                            et_title.setText("");
+                            img_post.setImageURI(null);
+                            image_rui = null;
+                            postDialog.dismiss();
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                            startActivity(intent);
 
-                                                Intent intent = new Intent(getActivity(), MainActivity.class);
-                                                startActivity(intent);
 
-
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-//                                pd.dismiss();
-                                        progressBar.setVisibility(View.GONE);
-//                                Toast.makeText(getApplicationContext(),"Whyyy",Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
                         }
-
-                    }
-                })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-//                            pd.dismiss();
-                            }
-                        });
-
-            }
-        } else {
-            //If its edit post then we need to set the values of only title content type and image
-            if (edit.equals("EditPost")) {
-                DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
-                databaseReference.child(timeStamp).setValue("0");
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(timeStamp);
-                ref.child("pTitle").setValue(title);
-                ref.child("pDesc").setValue(description);
-                ref.child("type").setValue(type);
-                ref.child("pImage").setValue("noImage");
-                //If any of the url is not equal to empty means new file being attached from the device
-                if(!videourl.equals("empty")){
-                    ref.child("videourl").setValue(videourl);
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+//                                pd.dismiss();
+                    progressBar.setVisibility(View.GONE);
+//                                Toast.makeText(getApplicationContext(),"Whyyy",Toast.LENGTH_SHORT).show();
                 }
-                if(!audiourrl.equals("empty")){
-                    ref.child("audiourl").setValue(audiourrl);
-                }
-                if(!pdfUrl.equals("pdfurl")){
-                    ref.child("pdfurl").setValue(pdfUrl);
-                }
-//                ref.child("views").setValue("0");
-                    Toast.makeText(getActivity(), "Post Edited!", Toast.LENGTH_SHORT)
-                            .show();
-                et_desc.setText("");
-                et_title.setText("");
-                img_post.setImageURI(null);
-                image_rui = null;
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
-            } else {
-                //otherwise publish the new post
-                HashMap<Object, Object> hashMap = new HashMap<>();
-                hashMap.put("pId", firebaseUser.getUid());
-                hashMap.put("pImage", "noImage");
-                hashMap.put("pTitle", title);
-                hashMap.put("pDesc", description);
-                hashMap.put("pTime", timeStamp);
-                hashMap.put("pName", pName);
-                hashMap.put("url", url);
-                hashMap.put("pLikes", "0");
-                hashMap.put("pComments", "0");
-                hashMap.put("type", type);
-                hashMap.put("videourl",videourl);
-                hashMap.put("pdfurl",pdfUrl);
-                hashMap.put("audiourl",audiourrl);
-                hashMap.put("order",-System.currentTimeMillis());
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");
-                ref.child(timeStamp).setValue(hashMap)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-//                            pd.dismiss();
-                                progressBar.setVisibility(View.GONE);
-                                    Toast.makeText(getActivity(), "Post Passed to Admin!", Toast.LENGTH_SHORT)
-                                            .show();
-                                et_desc.setText("");
-                                et_title.setText("");
-                                img_post.setImageURI(null);
-                                image_rui = null;
-                                Intent intent = new Intent(getActivity(), MainActivity.class);
-                                startActivity(intent);
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-//                    pd.dismiss();
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(getActivity(), "Whyyy", Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-            }
+            });
         }
-
     }
    //When image view is clicked show the image dialog show that user will be able to pick the image either from the camera or gallery
     private void Image_dialog() {
@@ -796,21 +619,24 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             if(requestCode==108){
 
                 videouri = data.getData();
-                uploadVideo(videouri);
+                Toast.makeText(getContext(),"File Attached",Toast.LENGTH_SHORT).show();
+                //uploadVideo(videouri);
             }
         }
         //IF request code is of pdf then retrieve pdfuri from data and upload it onto the storage
         if(resultCode==RESULT_OK){
             if(requestCode==PDF_REQUEST){
                 pdfuri = data.getData();
-                uploadPdf(pdfuri);
+                Toast.makeText(getContext(),"File Attached",Toast.LENGTH_SHORT).show();
+                //uploadPdf(pdfuri);
             }
         }
         //If request code is of audio then retrieve the audiouri from data and upload it onto storage
         if(resultCode==RESULT_OK){
             if(requestCode==AUDIO_REQUEST){
                 audiouri = data.getData();
-                uploadAudio(audiouri);
+                Toast.makeText(getContext(),"File Attached",Toast.LENGTH_SHORT).show();
+                //uploadAudio(audiouri);
             }
         }
 
@@ -818,20 +644,17 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
     private void uploadAudio(Uri audiouri) {
         //If storage Permission in not given then go for that first
-        if(!checkStoragePermission()){
-            requestStoragePermission();
-        }
+       if(audiouri==null){
+           audiourrl = "empty";
+           uploadImage(image_rui);
+       }
         if(audiouri!=null){
             //If post is to be edited then timestamp is going to be the time stamp of the post to be edited not the current timestamp
-            final ProgressDialog progressDialog;
-            progressDialog = new ProgressDialog(getActivity());
-            progressDialog.setMessage("Attaching File...");
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
+
             if (edit.equals("EditPost"))
                 timeStamp = time;
             //Upload the audio file onto the storage then download the file and save its uri upload onto the realtimedatabse
-            final StorageReference des = reference.child("Audio/"+ timeStamp + "audio."+getExt(audiouri));
+            final StorageReference des = reference.child("Audio/"+ timeStamp);
             uploadTask = des.putFile(audiouri);
             des.putFile(audiouri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -840,8 +663,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                         @Override
                         public void onSuccess(Uri uri) {
                              audiourrl= uri.toString();
-                             progressDialog.dismiss();
-                            Toast.makeText(getActivity(),"Audio File Attached",Toast.LENGTH_SHORT).show();
+                             uploadImage(image_rui);
                         }
                     });
                 }
@@ -849,20 +671,47 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    private void uploadImage(Uri image_rui) {
+        if(image_rui==null){
+            imageurl = "noImage";
+            uploadPdf(pdfuri);
+        }else{
+            if(edit.equals("EditPost"))
+                timeStamp = time;
+            String filePathAndName = "Posts/" + "post_" + timeStamp;
+            final StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
+            ref.putFile(image_rui).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                           imageurl = uri.toString();
+                           uploadPdf(pdfuri);
+                        }
+                    });
+                }
+            });
+
+        }
+    }
+
+
     private void uploadPdf(Uri pdfuri) {
+        if(pdfuri==null){
+            pdfUrl = "empty";
+            String title = et_title.getText().toString().trim();
+            String description = et_desc.getText().toString().trim();
+            Post_Data(title,description);
+
+        }
         if(pdfuri!=null) {
             //If post is to be edited then timestamp is going to be the time stamp of the post to be edited not the current timestamp
             if (edit.equals("EditPost"))
                 timeStamp = time;
 
-            //Show the progress dialog until file is not attached
-            final ProgressDialog progressDialog;
-            progressDialog = new ProgressDialog(getActivity());
-            progressDialog.setMessage("Attaching File...");
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
 
-            final StorageReference des = reference.child("Pdf/"+ timeStamp  + "Pdf."+getExt(pdfuri));
+            final StorageReference des = reference.child("Pdf/"+ timeStamp);
             uploadTask = des.putFile(pdfuri);
             //Upload the pdf file onto the storage then download the file and save its uri to upload onto the realtimedatabse
             des.putFile(pdfuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -872,8 +721,9 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                         @Override
                         public void onSuccess(Uri uri) {
                             pdfUrl = uri.toString();
-                            progressDialog.dismiss();
-                            Toast.makeText(getActivity(),"Pdf File Attached",Toast.LENGTH_SHORT).show();
+                            String title = et_title.getText().toString().trim();
+                            String description = et_desc.getText().toString().trim();
+                            Post_Data(title,description);
                         }
                     });
                 }
@@ -881,25 +731,16 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    //defineType;
-    private  String getExt(Uri uri){
-        ContentResolver contentResolver = getActivity().getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        return  mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
-    }
     private void uploadVideo(Uri videouri) {
+        if(videouri==null){
+            videourl = "empty";
+            uploadAudio(audiouri);
+        }
         if(videouri!=null){
             //If post is to be edited then timestamp is going to be the time stamp of the post to be edited not the current timestamp
             if(edit.equals("EditPost"))
                 timeStamp = time;
-            //Show the progress dialog until the video is not attached
-            final ProgressDialog progressDialog;
-            progressDialog = new ProgressDialog(getActivity());
-            progressDialog.setMessage("Attaching File...");
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
-
-            final StorageReference des = reference.child("Video/"+ timeStamp + "video."+getExt(videouri));
+            final StorageReference des = reference.child("Video/"+ timeStamp);
             uploadTask = des.putFile(videouri);
             //Upload the video file onto the storage then download the file and save its uri upload onto the realtimedatabse
             des.putFile(videouri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -909,8 +750,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                         @Override
                         public void onSuccess(Uri uri) {
                             videourl = uri.toString();
-                            progressDialog.dismiss();
-                            Toast.makeText(getActivity(),"Video File Attached",Toast.LENGTH_SHORT).show();
+                            uploadAudio(audiouri);
                         }
                     });
                 }
@@ -927,6 +767,10 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 break;
                 //IF post btn is clicked then post the post in different cases
             case R.id.post_button:
+                postDialog = new ProgressDialog(getActivity());
+                postDialog.setMessage("Please Wait...");
+                postDialog.setCanceledOnTouchOutside(false);
+                postDialog.show();
                 String title = et_title.getText().toString().trim();
                 String description = et_desc.getText().toString().trim();
                 if (TextUtils.isEmpty(title)) {
@@ -937,18 +781,11 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                     Toast.makeText(getActivity(), "Enter Description...", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (image_rui != null) {
-                    // post with image
-                    Post_Data(title, description, String.valueOf(image_rui));
-                } else {
-//                     post without image
-                    if(edit.equals("EditPost")&&!image.equals("noImage"))
-                        Post_Data(title,description,image);
-                    else
-                    Post_Data(title, description, "noImage");
-                }
+                uploadVideo(videouri);
                 break;
 
         }
     }
+    //On Back Pressed remove all the attached files if any
+
 }

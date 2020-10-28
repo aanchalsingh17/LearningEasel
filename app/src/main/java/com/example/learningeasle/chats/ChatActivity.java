@@ -1,22 +1,17 @@
-package com.example.learningeasle;
+package com.example.learningeasle.chats;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ProgressBar;
 
-import com.example.learningeasle.model.AdapterChatDisplay;
-import com.example.learningeasle.model.AdapterUsers;
+import com.example.learningeasle.R;
+import com.example.learningeasle.chats.AdapterChatDisplay;
 import com.example.learningeasle.model.ModelUsers;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.auth.FirebaseAuth;

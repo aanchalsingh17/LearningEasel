@@ -181,6 +181,33 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
 
             }
         });
+        //When post is unbookmarked remove it from the bookmark
+        holder.bookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(pId).child("Bookmarks");
+                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.hasChild(pTimeStamp)) {
+                            reference.child(pTimeStamp).removeValue();
+                            holder.bookmark.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+                            Toast.makeText(context,"Post removed from Bookmark",Toast.LENGTH_SHORT).show();
+                        } else {
+                            reference.child(pTimeStamp).setValue(pId);
+                            //holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.bookmarked));
+                            holder.bookmark.setImageResource(R.drawable.bookmarked);
+                            Toast.makeText(context,"Post Added to Bookmark",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        });
 
     }
 
@@ -191,7 +218,7 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
 
     static class MyHolder extends RecyclerView.ViewHolder{
 
-        ImageView uDp,pImage;
+        ImageView uDp,pImage,bookmark;
         TextView uName, pTime, pTitle, pDesc,pType;
         FloatingActionButton attachement,video_btn,audio_btn,pdf_btn;
         public MyHolder(@NonNull View itemView) {
@@ -207,6 +234,7 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
             video_btn = itemView.findViewById(R.id.video_upload);
             audio_btn = itemView.findViewById(R.id.audio_upload);
             pdf_btn = itemView.findViewById(R.id.pdf_upload);
+            bookmark = itemView.findViewById(R.id.bookmarks);
 
         }
     }

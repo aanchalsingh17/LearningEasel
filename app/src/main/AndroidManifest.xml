@@ -15,12 +15,15 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ChatDetailsActivity"
+        <activity android:name=".chats.ChatDetailsActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
-        <activity android:name=".ChatActivity" />
-        <activity android:name=".ViewAttachement" />
+        <activity android:name=".chats.ChatActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ViewAttachement"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".admin.AdminMainPage"
             android:screenOrientation="portrait" />

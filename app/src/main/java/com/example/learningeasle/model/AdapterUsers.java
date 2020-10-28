@@ -1,25 +1,18 @@
 package com.example.learningeasle.model;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.learningeasle.ChatDetailsActivity;
-import com.example.learningeasle.MainFragments.UsersFragment;
-import com.example.learningeasle.ProfileFragments.UserPostsFragment;
 import com.example.learningeasle.R;
 import com.example.learningeasle.UserDetails.UserProfile;
 import com.facebook.shimmer.Shimmer;

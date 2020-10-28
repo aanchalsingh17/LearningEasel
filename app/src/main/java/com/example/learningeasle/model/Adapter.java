@@ -89,7 +89,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         final String pType=postList.get(position).getpType();
         final String pImage = postList.get(position).getpImage();
         final String pTimeStamp = postList.get(position).getpTime();
-        String pId = postList.get(position).getpId();
+        final String pId = postList.get(position).getpId();
         final String pLikes=postList.get(position).getpLikes();
         String pComments=postList.get(position).getpComments();
          videourl = postList.get(position).getVideourl();
@@ -297,13 +297,57 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             }
         });
 
+        //Setting the bookmark on those post whch are bookmarked
+        setBookmark(holder, myId, pId, pTimeStamp);
+        //Bookmark the post if its not bookmarked and vice-versa
+        holder.bookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(myId).child("Bookmarks");
+                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.hasChild(pTimeStamp)) {
+                            reference.child(pTimeStamp).removeValue();
+                            holder.bookmark.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+                        } else {
+                            reference.child(pTimeStamp).setValue(pId);
+                            //holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.bookmarked));
+                            holder.bookmark.setImageResource(R.drawable.bookmarked);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        });
     }
-    //defineType;
-    private  String getExt(Uri uri){
-        ContentResolver contentResolver = context.getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        return  mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+
+    private void setBookmark(final PostHolder holder, String myId, String pId, final String pTimeStamp) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(myId);//.child("Bookmarks");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.child("Bookmarks").hasChild(pTimeStamp)){
+                    holder.bookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.bookmarked));
+                }else{
+
+                    holder.bookmark.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+                    //holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_bookmark_border_24));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
+
     //After deleting the post from bookmark section then delete the post and its data from the storage section
     private void beginDelete(final String pId, String pImage, final String pTimeStamp,String videourl,String audiourl,String pdfurl) {
 
@@ -314,7 +358,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         //Deleting the file attached with the post if any
         if(!videourl.equals("empty")){
             StorageReference videoref = FirebaseStorage.getInstance().getReferenceFromUrl(videourl);
-            final StorageReference des =  reference.child("Video/"+ pTimeStamp + "/" + "video."+getExt(Uri.parse(videourl)));
             videoref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
@@ -326,7 +369,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         if(!audiourl.equals("empty")){
 
             StorageReference audioref = FirebaseStorage.getInstance().getReferenceFromUrl(audiourl);
-            final StorageReference des = reference.child("Audio/"+ pTimeStamp + "/" + "audio."+getExt(Uri.parse(audiourl)));
             audioref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
@@ -336,7 +378,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         }
         if(!pdfurl.equals("empty")){
             StorageReference pdfref = FirebaseStorage.getInstance().getReferenceFromUrl(pdfurl);
-            final StorageReference des = reference.child("Pdf/"+ pTimeStamp + "/" + "Pdf."+getExt(Uri.parse(pdfurl)));
             pdfref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
@@ -405,10 +446,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     pd.dismiss();
-                    Toast.makeText(context,"Unable to delete Post",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context,"Unable to delete Post",Toast.LENGTH_SHORT).show();
                 }
             });
         }
+        //Setting the bookmark on those post whch are bookmarked
+
     }
 
     //Delete the post from the bookmark section of all the users when user this post
@@ -511,7 +554,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
     public class PostHolder extends RecyclerView.ViewHolder {
 
-        ImageView url,Image;
+        ImageView url,Image,bookmark;
         TextView pName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment,pType,views;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
@@ -537,6 +580,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
             audio_btn = itemView.findViewById(R.id.audio_upload);
             video_btn = itemView.findViewById(R.id.video_upload);
             pdf_btn = itemView.findViewById(R.id.pdf_upload);
+            bookmark = itemView.findViewById(R.id.bookmarks);
             this.editClick = editClick;
             //More btn is clicked by user show him dialog to edit or delete the post
             morebtn.setOnClickListener(new View.OnClickListener() {
@@ -549,8 +593,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             if (options[i].equals("Edit")) {
                                 //Edit btn is clicked call the editClick method of the interface EditClick
-                                editClick.onEditClick(getAdapterPosition(),postList.get(getAdapterPosition()).pId,postList.get(getAdapterPosition()).pTime,"EditPost",postList.get(getAdapterPosition()).pTitle,postList.get(getAdapterPosition()).pDesc,postList.get(getAdapterPosition()).pImage,
-                                        postList.get(getAdapterPosition()).pLikes,postList.get(getAdapterPosition()).pComments);
+                                if (getAdapterPosition() != -1) {
+                                    editClick.onEditClick(getAdapterPosition(), postList.get(getAdapterPosition()).pId, postList.get(getAdapterPosition()).pTime, "EditPost", postList.get(getAdapterPosition()).pTitle, postList.get(getAdapterPosition()).pDesc, postList.get(getAdapterPosition()).pImage,
+                                            postList.get(getAdapterPosition()).pLikes, postList.get(getAdapterPosition()).pComments);
+                                }
                             }
 
                             if (options[i].equals("Delete")) {

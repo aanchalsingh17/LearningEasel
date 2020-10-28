@@ -1,4 +1,4 @@
-package com.example.learningeasle.model;
+package com.example.learningeasle.chats;
 
 public class ModelChat {
     String message,receiver,sender,timestamp,isSeen;

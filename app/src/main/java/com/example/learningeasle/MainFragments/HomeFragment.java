@@ -1,26 +1,18 @@
 package com.example.learningeasle.MainFragments;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
-import androidx.loader.content.AsyncTaskLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -29,25 +21,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
-
 import com.example.learningeasle.BottomSheetDialog;
-import com.example.learningeasle.ChatActivity;
-import com.example.learningeasle.MainActivity;
 import com.example.learningeasle.PickInterests;
 import com.example.learningeasle.PushNotifications.Token;
 import com.example.learningeasle.R;
+import com.example.learningeasle.chats.ChatActivity;
 import com.example.learningeasle.model.AdapterPost;
 import com.example.learningeasle.model.modelpost;
 import com.facebook.shimmer.ShimmerFrameLayout;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -56,17 +38,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.gson.internal.$Gson$Preconditions;
-import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -81,20 +54,12 @@ public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSh
     AdapterPost adapterPost;
     String email;
     ArrayList<String> interest, following;
-    ProgressBar progressBar;
     long oldestPost;
     ShimmerFrameLayout shimmerFrameLayout;
     Query query;
-    Boolean scrolling = false;
-
     private BottomSheetDialog.BottomSheetListener mListener;
 
     private int BATTERY_OPTIMIZATIONS_REQUEST_CODE = 7;
-    int currentItems, totalItems, viewedItems;
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     public HomeFragment() {
         // Required empty public constructor
@@ -110,15 +75,11 @@ public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSh
                              final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        NestedScrollView nestedScrollView = view.findViewById(R.id.scroll_view);
-        progressBar = view.findViewById(R.id.progressBar_loading);
         firebaseAuth = FirebaseAuth.getInstance();
         recyclerView = view.findViewById(R.id.postsRecyclerview);
         shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
         //Set the layout manager of the recycler view
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        //layoutManager.setStackFromEnd(true);
-        //layoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
         setHasOptionsMenu(true);

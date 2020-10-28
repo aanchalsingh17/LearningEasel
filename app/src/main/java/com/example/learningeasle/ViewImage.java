@@ -15,6 +15,7 @@ public class ViewImage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_image);
+        //get the image url from the intent and show the full image view of post image
         String image=getIntent().getStringExtra("image");
         ImageView imageView=findViewById(R.id.imageView);
         if (image.equals("noImage")) {

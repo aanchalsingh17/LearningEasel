@@ -282,7 +282,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
     private void readMessages() {
         chatList = new ArrayList<>();
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats").child(myUid+hisUid);
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats").child(hisUid+myUid);
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

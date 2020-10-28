@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#fff">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sort By"
+        android:paddingLeft="18dp"
+        android:paddingTop="18dp"
+        android:paddingBottom="7dp"
+        android:textSize="12sp"
+        android:textAllCaps="true"
+        android:textColor="#808080"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="4dp"
+        android:background="#a9a9a9"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/popularity"
+        android:text="Popularity"
+        android:fontFamily="@font/ubuntu"
+        android:textColor="#7f7f7f"
+        android:padding="18dp"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/followers"
+        android:fontFamily="@font/ubuntu"
+        android:text="Following"
+        android:textColor="#7f7f7f"
+        android:padding="18dp"
+        android:textSize="16sp"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/ubuntu"
+        android:id="@+id/areaOfInterests"
+        android:text="Areas of Interests"
+        android:textColor="#7f7f7f"
+        android:padding="18dp"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/uploadDate"
+        android:fontFamily="@font/ubuntu"
+        android:text="Upload Date (Following + Interests) "
+        android:textColor="#7f7f7f"
+        android:padding="18dp"
+        android:textSize="16sp"/>
+
+
+
+</LinearLayout>

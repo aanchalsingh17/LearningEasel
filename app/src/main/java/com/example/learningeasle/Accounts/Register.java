@@ -68,6 +68,7 @@ public class Register extends AppCompatActivity {
         createBtn_reg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideKeyboard(Register.this);
                 final String email = email_reg.getText().toString().trim();
                 final String password = password_reg.getText().toString().trim();
                 final String fullName = name_reg.getText().toString();
@@ -180,7 +181,6 @@ public class Register extends AppCompatActivity {
         loginBtn_reg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideKeyboard(Register.this);
                 startActivity(new Intent(getApplicationContext(),Login.class));
                 overridePendingTransition(R.anim.slide_up,R.anim.slide_down);
                 finish();

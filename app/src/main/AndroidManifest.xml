@@ -41,10 +41,8 @@
             android:name=".UserDetails.UpdateProfile"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".FullView"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ViewImage"
+            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".PostDetailActivity"

@@ -20,10 +20,10 @@ import com.example.learningeasle.ProfileFragments.UserBookmarkFragment;
 import com.example.learningeasle.ProfileFragments.UserFollowersFragment;
 import com.example.learningeasle.ProfileFragments.UserFollowingFragment;
 import com.example.learningeasle.ProfileFragments.UserPostsFragment;
-import com.example.learningeasle.FullView;
 import com.example.learningeasle.R;
 
 import com.example.learningeasle.UserDetails.UpdateProfile;
+import com.example.learningeasle.ViewImage;
 import com.example.learningeasle.model.SectionPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -172,7 +172,9 @@ public class ProfileFragment extends Fragment {
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(context, FullView.class));
+                Intent intent=new Intent(getContext(), ViewImage.class);
+                intent.putExtra("image",url);
+                startActivity(intent);
             }
         });
         userID = fAuth.getCurrentUser().getUid();                                                           //user id stored

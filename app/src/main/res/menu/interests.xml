@@ -7,6 +7,11 @@
         app:showAsAction="always"
         android:icon="@drawable/ic_school" />
     <item
+        android:id="@+id/sort"
+        android:title="Sort"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_sort"/>
+    <item
         android:id="@+id/chat"
         android:title="Chat"
         app:showAsAction="always"

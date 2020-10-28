@@ -36,7 +36,7 @@ import java.util.Map;
 
 import static android.R.color.holo_red_dark;
 
-public class PickInterests extends AppCompatActivity {
+public class PickInterests extends AppCompatActivity{
     Button btn_science, btn_medication, btn_computers, btn_business, btn_environment, btn_arts, btn_sports, btn_economics, btn_arch;
     DatabaseReference myRef;
     FirebaseAuth fAuth_reg;

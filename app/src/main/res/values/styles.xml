@@ -29,8 +29,8 @@
         <item name="android:minWidth">200dp</item>
     </style>
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">@color/colorPrimary</item>
-        <item name="android:textColorPrimary">@color/text</item>
+        <item name="colorAccent">@color/text</item>
+        <item name="android:textColorPrimary">#000</item>
         <item name="android:background">@color/colorPrimaryDark</item>
     </style>
 

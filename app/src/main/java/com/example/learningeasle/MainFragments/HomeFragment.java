@@ -1,6 +1,7 @@
 package com.example.learningeasle.MainFragments;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,7 +35,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.learningeasle.BottomSheetDialog;
 import com.example.learningeasle.ChatActivity;
+import com.example.learningeasle.MainActivity;
 import com.example.learningeasle.PickInterests;
 import com.example.learningeasle.PushNotifications.Token;
 import com.example.learningeasle.R;
@@ -63,14 +66,16 @@ import com.google.gson.internal.$Gson$Preconditions;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSheetListener {
 
     FirebaseAuth firebaseAuth;
-    ProgressDialog progressDialog;
     RecyclerView recyclerView;
     List<modelpost> modelpostList;
     AdapterPost adapterPost;
@@ -81,6 +86,8 @@ public class HomeFragment extends Fragment {
     ShimmerFrameLayout shimmerFrameLayout;
     Query query;
     Boolean scrolling = false;
+
+    private BottomSheetDialog.BottomSheetListener mListener;
 
     private int BATTERY_OPTIMIZATIONS_REQUEST_CODE = 7;
     int currentItems, totalItems, viewedItems;
@@ -117,6 +124,7 @@ public class HomeFragment extends Fragment {
         setHasOptionsMenu(true);
         interest = new ArrayList<>();
         following = new ArrayList<>();
+        mListener=this;
 
         //Check for battery optimizations if not enabled than show alert dialog
         checkForBatteryOptimizations();
@@ -130,7 +138,6 @@ public class HomeFragment extends Fragment {
         query = FirebaseDatabase.getInstance().getReference("Posts")
                 .orderByChild("order");
         getUserDetails();
-
 
 
         return view;
@@ -200,9 +207,6 @@ public class HomeFragment extends Fragment {
 
 
                 }
-                if (modelpostList.size() == 0) {
-                    loadPosts();
-                }
                 //Create adapter set the recycler view and make recycler view visible and shimmerframelayout gone
                 adapterPost = new AdapterPost(getActivity(), modelpostList);
                 recyclerView.setAdapter(adapterPost);
@@ -252,7 +256,6 @@ public class HomeFragment extends Fragment {
                                             if (dataSnapshot.getValue().equals("1"))
                                                 interest.add(dataSnapshot.getKey());
                                         }
-                                        //loadPosts();
 
 
                                     }
@@ -290,41 +293,36 @@ public class HomeFragment extends Fragment {
     public void loadPosts() {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-        final boolean[] start = {true};
-        query.startAt(oldestPost).limitToFirst(15).addValueEventListener(new ValueEventListener() {
+
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                modelpostList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     final HashMap<Object, Object> hashMap = (HashMap<Object, Object>) dataSnapshot.getValue();
-                    oldestPost = (long) hashMap.get("order");
                     modelpost post;
-                    if (!start[0]) {
-                        if (hashMap.get("pLikes") == null && (interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId")))) {
-                            post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                    hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
-                                    hashMap.get("pComments").toString(), hashMap.get("type").toString(),
-                                    hashMap.get("videourl").toString(), hashMap.get("pdfurl").toString(), hashMap.get("audiourl").toString());
-                            modelpostList.add(post);
-                        } else if ((interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId")))) {
-                            post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
-                                    hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
-                                    hashMap.get("pComments").toString(), hashMap.get("type").toString(),
-                                    hashMap.get("videourl").toString(), hashMap.get("pdfurl").toString(), hashMap.get("audiourl").toString());
-                            modelpostList.add(post);
-                        }
-                    } else {
-                        start[0] = false;
+                    if (hashMap.get("pLikes") == null && (interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId")))) {
+                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString(),
+                                hashMap.get("videourl").toString(), hashMap.get("pdfurl").toString(), hashMap.get("audiourl").toString());
+                        modelpostList.add(post);
+                    } else if ((interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId")))) {
+                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString(),
+                                hashMap.get("videourl").toString(), hashMap.get("pdfurl").toString(), hashMap.get("audiourl").toString());
+                        modelpostList.add(post);
                     }
 
+
                 }
-                if (modelpostList.size() == 0) {
-                    System.out.println("here hai");
-                    loadPosts();
-                }
+                Collections.sort(modelpostList, new CustomComparator());
                 adapterPost = new AdapterPost(getActivity(), modelpostList);
                 recyclerView.setAdapter(adapterPost);
                 adapterPost.notifyDataSetChanged();
-                progressBar.setVisibility(View.INVISIBLE);
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
             }
 
             @Override
@@ -335,6 +333,89 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    public void loadPostsInterests() {
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                modelpostList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    final HashMap<Object, Object> hashMap = (HashMap<Object, Object>) dataSnapshot.getValue();
+                    modelpost post;
+                    if (hashMap.get("pLikes") == null && interest.contains(hashMap.get("type")) ) {
+                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString(),
+                                hashMap.get("videourl").toString(), hashMap.get("pdfurl").toString(), hashMap.get("audiourl").toString());
+                        modelpostList.add(post);
+                    } else if (interest.contains(hashMap.get("type"))) {
+                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString(),
+                                hashMap.get("videourl").toString(), hashMap.get("pdfurl").toString(), hashMap.get("audiourl").toString());
+                        modelpostList.add(post);
+                    }
+
+
+                }
+                adapterPost = new AdapterPost(getActivity(), modelpostList);
+                recyclerView.setAdapter(adapterPost);
+                adapterPost.notifyDataSetChanged();
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+
+
+        });
+    }
+
+    public void loadPostsFollowers() {
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                modelpostList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    final HashMap<Object, Object> hashMap = (HashMap<Object, Object>) dataSnapshot.getValue();
+                    modelpost post;
+                    if (hashMap.get("pLikes") == null && following.contains(hashMap.get("pId"))) {
+                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), "0",
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString(),
+                                hashMap.get("videourl").toString(), hashMap.get("pdfurl").toString(), hashMap.get("audiourl").toString());
+                        modelpostList.add(post);
+                    } else if (following.contains(hashMap.get("pId"))) {
+                        post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
+                                hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
+                                hashMap.get("pComments").toString(), hashMap.get("type").toString(),
+                                hashMap.get("videourl").toString(), hashMap.get("pdfurl").toString(), hashMap.get("audiourl").toString());
+                        modelpostList.add(post);
+                    }
+
+
+                }
+                adapterPost = new AdapterPost(getActivity(), modelpostList);
+                recyclerView.setAdapter(adapterPost);
+                adapterPost.notifyDataSetChanged();
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+
+
+        });
+    }
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.interests, menu);
@@ -351,8 +432,46 @@ public class HomeFragment extends Fragment {
                 startActivity(new Intent(getContext(), PickInterests.class));
                 getActivity().finish();
                 return true;
+            case R.id.sort:
+                BottomSheetDialog bottomSheetDialog = BottomSheetDialog.getInstance(mListener);
+                bottomSheetDialog.show(getActivity().getSupportFragmentManager(),"BottomSheet");
+
         }
 
         return super.onOptionsItemSelected(item); // important line
+    }
+
+    @Override
+    public void onTextSelected(String type) {
+        if (type.equals("pop")) {
+            shimmerFrameLayout.setVisibility(View.VISIBLE);
+            shimmerFrameLayout.startShimmer();
+            loadPosts();
+        }
+        if (type.equals("aoi")) {
+            shimmerFrameLayout.setVisibility(View.VISIBLE);
+            shimmerFrameLayout.startShimmer();
+            loadPostsInterests();
+        }
+        if (type.equals("upd")) {
+            shimmerFrameLayout.setVisibility(View.VISIBLE);
+            shimmerFrameLayout.startShimmer();
+            getStartingPost();
+        }
+        if (type.equals("fol")) {
+            shimmerFrameLayout.setVisibility(View.VISIBLE);
+            shimmerFrameLayout.startShimmer();
+            loadPostsFollowers();
+        }
+    }
+
+    public class CustomComparator implements Comparator<modelpost> {
+
+        @Override
+        public int compare(modelpost o1, modelpost o2) {
+            if(o1.getpLikes() == o2.getpLikes())
+                return o2.getpTime().compareTo(o1.getpTime());
+            return o2.getpLikes().compareTo(o1.getpLikes());
+        }
     }
 }

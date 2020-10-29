@@ -16,21 +16,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".chats.ChatDetailsActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity android:name=".chats.ChatActivity"
-            android:label="Chats"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ViewAttachement"
-            android:screenOrientation="portrait"/>
+            android:label="Chats" />
+        <activity android:name=".ViewAttachement" />
         <activity
-            android:name=".admin.AdminMainPage"
-            android:screenOrientation="portrait" />
+            android:name=".admin.AdminMainPage"/>
         <activity
             android:name=".SplashActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,35 +34,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UserDetails.UserProfile"
-            android:screenOrientation="portrait" />
+            android:name=".UserDetails.UserProfile" />
         <activity
-            android:name=".UserDetails.UpdateProfile"
-            android:screenOrientation="portrait" />
+            android:name=".UserDetails.UpdateProfile" />
         <activity
             android:name=".ViewImage"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".PostDetailActivity"
-            android:screenOrientation="portrait" />
+            android:name=".PostDetailActivity" />
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait" />
+            android:configChanges="orientation|screenSize"/>
         <activity
             android:name=".PickInterests"
-            android:label="Your Interests"
-            android:screenOrientation="portrait" />
+            android:label="Your Interests" />
         <activity
-            android:name=".Accounts.Profile"
-            android:screenOrientation="portrait" />
+            android:name=".Accounts.Profile" />
         <activity
             android:name=".Accounts.Register"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme2" />
         <activity
             android:name=".Accounts.Login"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme2" />
 
         <provider

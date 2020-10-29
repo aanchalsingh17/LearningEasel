@@ -216,6 +216,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.DragEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -239,7 +240,7 @@ import java.net.URL;
 public class ViewAttachement extends AppCompatActivity {
     VideoView videoView;
     PDFView pdfView;
-    ImageView imageplaypause;
+    ImageView imageplaypause,fastforward,fastreverse;
     TextView textCurrenttime,textTotalDuration;
     SeekBar playerSeekbar;
     Handler handler = new Handler();
@@ -259,6 +260,8 @@ public class ViewAttachement extends AppCompatActivity {
         textCurrenttime = findViewById(R.id.text_currenttime);
         textTotalDuration = findViewById(R.id.total_duration);
         playerSeekbar = findViewById(R.id.seekbar_player);
+        fastforward = findViewById(R.id.fast_forward);
+        fastreverse = findViewById(R.id.fast_rewind);
         playerSeekbar.setMax(100);
         player = findViewById(R.id.player);
         //Get the url of the views to be shown
@@ -319,8 +322,40 @@ public class ViewAttachement extends AppCompatActivity {
                 }
             }
         });
-        preparemediaplayer();
 
+        preparemediaplayer();
+        //Fast forwarding the media player by 10sec
+        fastforward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int curremtPosition = mediaPlayer.getCurrentPosition()+5000;
+                if(mediaPlayer.isPlaying()) {
+                    textCurrenttime.setText(millisecondsToTimer(curremtPosition));
+                    mediaPlayer.seekTo(curremtPosition);
+                }
+            }
+        });
+        //rewinding the media player by 10sec
+        fastreverse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int currentposition = mediaPlayer.getCurrentPosition();
+                if(mediaPlayer.isPlaying()&&currentposition>5000){
+                    currentposition = currentposition-5000;
+                    textCurrenttime.setText(millisecondsToTimer(currentposition));
+                    mediaPlayer.seekTo(currentposition);
+                }
+            }
+        });
+
+        //When Audio file is completed reset it to starting position
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                imageplaypause.setImageResource(R.drawable.ic_play);
+                mediaPlayer.seekTo(0);
+            }
+        });
     }
     //Upon BackPressing Stop the mediaPlayer
     @Override

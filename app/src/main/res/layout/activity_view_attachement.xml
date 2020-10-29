@@ -48,6 +48,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/music"
+        android:visibility="gone"
         android:orientation="vertical">
 
         <LinearLayout

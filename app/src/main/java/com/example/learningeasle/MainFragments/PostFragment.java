@@ -194,6 +194,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         view_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //If Edit Post then go and check if file is already attached on firebase or not
                 if(edit.equals("EditPost")) {
                     final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts").child(time);
                     reference.addValueEventListener(new ValueEventListener() {
@@ -255,8 +256,8 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
     private void viewAttachedFile() {
         String[] options = {"Audio", "Video","Pdf"};
-        //If Edit Post then go and check if file is already attached on firebase or not
 
+        //If uri is null means nothing is picked from the device if its edit post then load whatever is present on firebase
         final Intent view_page = new Intent(getActivity(), ViewAttachement.class);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -269,6 +270,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                             view_page.putExtra("videourl","empty");
                             view_page.putExtra("audiourl",audiouri.toString());
                             view_page.putExtra("pdfurl","empty");
+                            view_page.putExtra("audiolocal","local");
                             startActivity(view_page);
                         }
                         else if(!audio_ref.equals("empty")){

@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PickInterests"
+    tools:context=".Interests.PickInterests"
+    android:background="@drawable/gradient"
     tools:menu="@menu/interests">
 
-    <androidx.core.widget.NestedScrollView
+   <!-- <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/gradient">
@@ -334,7 +335,11 @@
         </LinearLayout>
 
 
-    </androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/interestRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 
 </RelativeLayout>

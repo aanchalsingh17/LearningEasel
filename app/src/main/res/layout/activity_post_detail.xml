@@ -63,7 +63,8 @@
                                     android:autoLink="all"
                                     android:fontFamily="@font/ubuntu"
                                     android:text="Name"
-                                    android:textColor="#00d5ff"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/allTabs"
                                     android:textSize="20sp" />
                                 <ImageView
                                     android:layout_width="wrap_content"
@@ -75,7 +76,8 @@
                                     android:id="@+id/pType"
                                     android:fontFamily="@font/ubuntu"
                                     android:text="Type"
-                                    android:textColor="#00d5ff"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/allTabs"
                                     android:textSize="20sp"/>
                             </LinearLayout>
 
@@ -131,6 +133,50 @@
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
                         android:layout_marginBottom="5dp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/attachement"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/colorAccent"
+                            android:visibility="gone"
+                            android:src="@drawable/ic_baseline_attach_file_24"
+                            android:textColor="#FFFFFF"/>
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/video_upload"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:background="#34282C"
+                            android:visibility="gone"
+                            android:backgroundTint="@color/colorAccent"
+                            android:src="@drawable/ic_baseline_voice_chat_24"
+                            android:textColor="#FFFFFF" />
+
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/pdf_upload"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:background="#34282C"
+                            android:visibility="gone"
+                            android:backgroundTint="@color/colorAccent"
+                            android:src="@drawable/ic_document"
+                            android:textColor="#FFFFFF" />
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/audio_upload"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:background="#34282C"
+                            android:visibility="gone"
+                            android:backgroundTint="@color/colorAccent"
+                            android:src="@drawable/ic_audio"
+                            android:textColor="#FFFFFF" />
+                    </LinearLayout>
+
 
                     <LinearLayout
                         android:layout_width="match_parent"

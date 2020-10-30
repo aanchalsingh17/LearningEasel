@@ -778,10 +778,12 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 String description = et_desc.getText().toString().trim();
                 if (TextUtils.isEmpty(title)) {
                     Toast.makeText(getActivity(), "Enter Title...", Toast.LENGTH_SHORT).show();
+                    postDialog.dismiss();
                     return;
                 }
                 if (TextUtils.isEmpty(description)) {
                     Toast.makeText(getActivity(), "Enter Description...", Toast.LENGTH_SHORT).show();
+                    postDialog.dismiss();
                     return;
                 }
                 timeStamp= String.valueOf(System.currentTimeMillis());

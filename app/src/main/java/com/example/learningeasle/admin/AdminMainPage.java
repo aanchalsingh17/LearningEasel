@@ -65,6 +65,8 @@ public class AdminMainPage extends AppCompatActivity {
                             getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("U")).commit();
                         if (getSupportFragmentManager().findFragmentByTag("P") != null)
                             getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("P")).commit();
+                        if (getSupportFragmentManager().findFragmentByTag("C") != null)
+                            getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("C")).commit();
 
                     }else{
                         getSupportFragmentManager().beginTransaction().show(getSupportFragmentManager().findFragmentByTag("H")).commit();
@@ -72,6 +74,9 @@ public class AdminMainPage extends AppCompatActivity {
                             getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("U")).commit();
                         if (getSupportFragmentManager().findFragmentByTag("P") != null)
                             getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("P")).commit();
+                        if (getSupportFragmentManager().findFragmentByTag("C") != null)
+                            getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("C")).commit();
+
                     }
                     break;
                 case R.id.account:
@@ -82,6 +87,8 @@ public class AdminMainPage extends AppCompatActivity {
                             getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("P")).commit();
                         if (getSupportFragmentManager().findFragmentByTag("H") != null)
                             getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("H")).commit();
+                        if (getSupportFragmentManager().findFragmentByTag("C") != null)
+                            getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("C")).commit();
 
                     } else {
                         getSupportFragmentManager().beginTransaction().show(getSupportFragmentManager().findFragmentByTag("U")).commit();
@@ -89,6 +96,8 @@ public class AdminMainPage extends AppCompatActivity {
                             getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("P")).commit();
                         if (getSupportFragmentManager().findFragmentByTag("H") != null)
                             getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("H")).commit();
+                        if (getSupportFragmentManager().findFragmentByTag("C") != null)
+                            getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("C")).commit();
                     }
 
                     break;
@@ -100,6 +109,8 @@ public class AdminMainPage extends AppCompatActivity {
                             getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("U")).commit();
                         if (getSupportFragmentManager().findFragmentByTag("H") != null)
                             getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("H")).commit();
+                        if (getSupportFragmentManager().findFragmentByTag("C") != null)
+                            getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("C")).commit();
 
                     } else {
                         getSupportFragmentManager().beginTransaction().show(getSupportFragmentManager().findFragmentByTag("P")).commit();
@@ -107,8 +118,33 @@ public class AdminMainPage extends AppCompatActivity {
                             getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("U")).commit();
                         if (getSupportFragmentManager().findFragmentByTag("H") != null)
                             getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("H")).commit();
+                        if (getSupportFragmentManager().findFragmentByTag("C") != null)
+                            getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("C")).commit();
+
+
                     }
                      break;
+                case R.id.channel:
+                    selectedItem = new ChannelRequest();
+                    if (getSupportFragmentManager().findFragmentByTag("C") == null) {
+                        getSupportFragmentManager().beginTransaction().add(R.id.scroll, selectedItem, "C").commit();
+                        if (getSupportFragmentManager().findFragmentByTag("U") != null)
+                            getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("U")).commit();
+                        if (getSupportFragmentManager().findFragmentByTag("H") != null)
+                            getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("H")).commit();
+                        if (getSupportFragmentManager().findFragmentByTag("P") != null)
+                            getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("P")).commit();
+
+                    } else {
+                        getSupportFragmentManager().beginTransaction().show(getSupportFragmentManager().findFragmentByTag("C")).commit();
+                        if (getSupportFragmentManager().findFragmentByTag("U") != null)
+                            getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("U")).commit();
+                        if (getSupportFragmentManager().findFragmentByTag("H") != null)
+                            getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("H")).commit();
+                        if (getSupportFragmentManager().findFragmentByTag("P") != null)
+                            getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentByTag("P")).commit();
+                    }
+                    break;
                     //Admin Logout
                 case R.id.logout:
                     FirebaseAuth fba;

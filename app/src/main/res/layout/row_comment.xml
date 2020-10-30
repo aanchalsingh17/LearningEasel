@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_image">
     
     <RelativeLayout
         android:layout_width="match_parent"
@@ -42,10 +43,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="320dp"
-            android:layout_marginTop="40dp"
             android:text="Delete"
             android:textColor="#DA0909"
             android:textSize="14sp"
+            android:layout_below="@+id/comment1"
             android:visibility="invisible"/>
 
     </RelativeLayout>

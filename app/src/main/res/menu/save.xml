@@ -5,5 +5,9 @@
         android:id="@+id/save"
         android:title="Save"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/add"
+        android:title="Add Field"
+        app:showAsAction="always"/>
 
 </menu>

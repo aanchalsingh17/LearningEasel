@@ -45,9 +45,10 @@
                         android:layout_height="wrap_content"
                         android:autoLink="all"
                         android:fontFamily="@font/ubuntu"
+                        android:textStyle="bold"
                         android:text="Name"
                         android:singleLine="true"
-                        android:textColor="#00d5ff"
+                        android:textColor="@color/allTabs"
                         android:textSize="20sp" />
 
                     <ImageView
@@ -62,7 +63,8 @@
                         android:singleLine="true"
                         android:fontFamily="@font/ubuntu"
                         android:text="Type"
-                        android:textColor="#00d5ff"
+                        android:textColor="@color/allTabs"
+                        android:textStyle="bold"
                         android:textSize="20sp"/>
 
                 </LinearLayout>

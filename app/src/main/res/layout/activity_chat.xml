@@ -49,20 +49,5 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-    <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="300dp"
-        android:layout_marginBottom="@android:dimen/app_icon_size"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_search"
-        app:backgroundTint="@color/design_default_color_secondary"
-        app:borderWidth="0dp"
-        app:showAsAction="always"
-        app:actionViewClasses="android.support.v7.widget.SearchView">
-
-    </com.google.android.material.floatingactionbutton.FloatingActionButton>-->
 
 </FrameLayout>

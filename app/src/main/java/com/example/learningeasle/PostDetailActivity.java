@@ -30,6 +30,7 @@ import com.example.learningeasle.model.ModelComment;
 import com.example.learningeasle.model.modelpost;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.api.Distribution;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -71,12 +72,14 @@ public class PostDetailActivity extends AppCompatActivity {
     List<ModelComment> commentList;
     AdapterComments adapterComments;
     ProgressDialog progressDialog;
-
+    String audiourl,videourl,pdfurl;
+    boolean visibility = true;
+    FloatingActionButton attach,pdf,audio,video;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         postId = intent.getStringExtra("postId");
         profileLayout = findViewById(R.id.profileLayout);
         uDpIV = findViewById(R.id.uDp);
@@ -95,10 +98,13 @@ public class PostDetailActivity extends AppCompatActivity {
         morebtn = findViewById(R.id.more);
         likebtn = findViewById(R.id.like);
         sharebtn = findViewById(R.id.share);
-
+        attach = findViewById(R.id.attachement);
         commentET = findViewById(R.id.comment);
         sendbtn = findViewById(R.id.sendBtn);
         avatarIV = findViewById(R.id.avtar);
+        pdf = findViewById(R.id.pdf_upload);
+        video = findViewById(R.id.pdf_upload);
+        audio = findViewById(R.id.audio_upload);
 
 
         progressDialog = new ProgressDialog(this);
@@ -178,6 +184,52 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
+        //When attach button is clicked mark visibility of those floating btn whose url is not empty
+        attach.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!audiourl.equals("empty")){
+                    audio.setVisibility(View.VISIBLE);
+                }
+                if(!videourl.equals("empty")){
+                    video.setVisibility(View.VISIBLE);
+                }
+                if(!pdfurl.equals("empty")){
+                    pdf.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        //pass the data of the clicked btn
+        pdf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent view_page = new Intent(PostDetailActivity.this,ViewAttachement.class);
+                view_page.putExtra("audiourl","empty");
+                view_page.putExtra("videourl","empty");
+                view_page.putExtra("pdfurl",pdfurl);
+                startActivity(view_page);
+            }
+        });
+        audio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent view_page = new Intent(PostDetailActivity.this,ViewAttachement.class);
+                view_page.putExtra("audiourl",audiourl);
+                view_page.putExtra("videourl","empty");
+                view_page.putExtra("pdfurl","empty");
+                startActivity(view_page);
+            }
+        });
+        video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent view_page = new Intent(PostDetailActivity.this,ViewAttachement.class);
+                view_page.putExtra("audiourl","empty");
+                view_page.putExtra("videourl",videourl);
+                view_page.putExtra("pdfurl","empty");
+                startActivity(view_page);
+            }
+        });
         sharebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -412,6 +464,14 @@ public class PostDetailActivity extends AppCompatActivity {
                             hisDp = "" + snapshot.child("url").getValue();
                             hisName = "" + snapshot.child("pName").getValue();
                             postType = (String) snapshot.child("type").getValue();
+                            audiourl = (String) snapshot.child("audiourl").getValue();
+                            videourl = (String) snapshot.child("videourl").getValue();
+                            pdfurl = (String) snapshot.child("pdfurl").getValue();
+
+                            if(!audiourl.equals("empty")||!(videourl.equals("empty"))||!(pdfurl.equals("empty"))){
+                                attach.setVisibility(View.VISIBLE);
+                            }
+
                             String CommentCount;
                             if (pTimeStamp != null) {
                                 if (snapshot.child("pComments").getValue() == null)

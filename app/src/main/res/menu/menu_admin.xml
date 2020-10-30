@@ -8,7 +8,10 @@
         android:icon="@drawable/ic_action_account" />
     <item android:id="@+id/notification"
          android:title="PendingPost"
-         android:icon="@drawable/ic_notification"/>
+         android:icon="@drawable/ic_channel"/>
+    <item android:id="@+id/channel"
+        android:title="Channel"
+        android:icon="@drawable/ic_notification"/>
     <item android:id="@+id/logout"
         android:title="Logout"
         android:icon="@drawable/ic_log_out"

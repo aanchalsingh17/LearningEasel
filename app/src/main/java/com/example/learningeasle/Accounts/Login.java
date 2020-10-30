@@ -26,7 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.learningeasle.MainActivity;
-import com.example.learningeasle.PickInterests;
+import com.example.learningeasle.Interests.PickInterests;
 import com.example.learningeasle.R;
 import com.example.learningeasle.admin.AdminMainPage;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -288,7 +288,7 @@ public class Login extends AppCompatActivity {
             final DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
             final boolean[] start = new boolean[1];
             start[0]=true;
-            reference.addValueEventListener(new ValueEventListener() {
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if(!snapshot.hasChild(user.getUid())){
@@ -309,8 +309,22 @@ public class Login extends AppCompatActivity {
                         int j=email.length()-4;
                         final String username=email.substring(0,j);
                         final DatabaseReference myRef=database.getReference("Users").child(user.getUid()).child(username);
+                        final DatabaseReference channelRef = database.getReference("admin").child("channel");
+                        channelRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for(DataSnapshot channels:snapshot.getChildren()){
+                                    String channel = channels.getKey();
+                                    myRef.child(channel).setValue("0");
+                                }
+                            }
 
-                        myRef.child("Science").setValue("0");
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                        /*myRef.child("Science").setValue("0");
                         myRef.child("Medication").setValue("0");
                         myRef.child("Computers").setValue("0");
                         myRef.child("Business").setValue("0");
@@ -318,7 +332,7 @@ public class Login extends AppCompatActivity {
                         myRef.child("Arts").setValue("0");
                         myRef.child("Sports").setValue("0");
                         myRef.child("Economics").setValue("0");
-                        myRef.child("Architecture").setValue("0");
+                        myRef.child("Architecture").setValue("0");*/
 
                         System.out.println("pick");
                         //If signing in for the first time using gmail then go to PickInterests Activity otherwise

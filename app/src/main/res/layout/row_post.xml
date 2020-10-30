@@ -46,8 +46,9 @@
                         android:autoLink="all"
                         android:fontFamily="@font/ubuntu"
                         android:text="Name"
+                        android:textStyle="bold"
                         android:singleLine="true"
-                        android:textColor="#00d5ff"
+                        android:textColor="@color/allTabs"
                         android:textSize="20sp" />
 
                     <ImageView
@@ -62,7 +63,8 @@
                         android:singleLine="true"
                         android:fontFamily="@font/ubuntu"
                         android:text="Type"
-                        android:textColor="#00d5ff"
+                        android:textStyle="bold"
+                        android:textColor="@color/allTabs"
                         android:textSize="20sp"/>
 
                 </LinearLayout>

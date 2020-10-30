@@ -15,17 +15,32 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".chats.ChatDetailsActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-
-        <activity android:name=".chats.ChatActivity"
-            android:label="Chats" />
-        <activity android:name=".ViewAttachement" />
+        <activity android:name=".Interests.ViewChannel"></activity>
         <activity
-            android:name=".admin.AdminMainPage"/>
+            android:name=".Interests.AddChannel"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".chats.ChatDetailsActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".chats.ChatActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="Chats"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ViewAttachement"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".admin.AdminMainPage"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SplashActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,27 +49,44 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UserDetails.UserProfile" />
+            android:name=".UserDetails.UserProfile"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".UserDetails.UpdateProfile" />
+            android:name=".UserDetails.UpdateProfile"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ViewImage"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".PostDetailActivity" />
+            android:name=".PostDetailActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation|screenSize"/>
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".PickInterests"
-            android:label="Your Interests" />
+            android:name=".Interests.PickInterests"
+            android:configChanges="orientation|screenSize"
+            android:label="Your Interests"
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".Accounts.Profile" />
+            android:name=".Accounts.Profile"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Accounts.Register"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme2" />
         <activity
             android:name=".Accounts.Login"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme2" />
 
         <provider
@@ -66,7 +98,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.learningeasle.fileprovider"

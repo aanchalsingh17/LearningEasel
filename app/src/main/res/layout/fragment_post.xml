@@ -93,7 +93,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginBottom="35dp"
         android:background="#34282C"
-        android:backgroundTint="@color/colorAccent"
+        android:backgroundTint="@color/allTabs"
         android:src="@drawable/ic_done"
         android:text="Post"
         android:textColor="#FFFFFF" />
@@ -106,7 +106,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="35dp"
         android:background="#34282C"
-        android:backgroundTint="@color/colorAccent"
+        android:backgroundTint="@color/allTabs"
         android:src="@drawable/ic_baseline_attach_file_24"
         android:textColor="#FFFFFF" />
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -119,7 +119,7 @@
         android:layout_marginBottom="35dp"
         android:visibility="gone"
         android:background="#34282C"
-        android:backgroundTint="@color/colorAccent"
+        android:backgroundTint="@color/allTabs"
         android:src="@drawable/ic_baseline_voice_chat_24"
         android:textColor="#FFFFFF" />
 
@@ -133,7 +133,7 @@
         android:layout_marginBottom="35dp"
         android:background="#34282C"
         android:visibility="gone"
-        android:backgroundTint="@color/colorAccent"
+        android:backgroundTint="@color/allTabs"
         android:src="@drawable/ic_document"
         android:textColor="#FFFFFF" />
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -146,7 +146,7 @@
         android:layout_marginBottom="35dp"
         android:background="#34282C"
         android:visibility="gone"
-        android:backgroundTint="@color/colorAccent"
+        android:backgroundTint="@color/allTabs"
         android:src="@drawable/ic_audio"
         android:textColor="#FFFFFF" />
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -159,8 +159,8 @@
         android:layout_marginBottom="35dp"
         android:background="#34282C"
         android:visibility="gone"
-        android:backgroundTint="@color/colorAccent"
-        android:src="@drawable/ic_view"
+        android:backgroundTint="@color/allTabs"
+        android:src="@drawable/ic_search"
         android:textColor="#FFFFFF" />
 
 </RelativeLayout>

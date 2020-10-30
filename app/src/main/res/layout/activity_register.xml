@@ -164,7 +164,7 @@
             android:layout_marginStart="109dp"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="109dp"
-            android:background="@drawable/button_shaper_aqua"
+            android:background="@drawable/button_alltabs"
             android:backgroundTint="#0099cc"
             android:fontFamily="@font/ubuntu"
             android:textColor="#fff"

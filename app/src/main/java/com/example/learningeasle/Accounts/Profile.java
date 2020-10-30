@@ -21,7 +21,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.learningeasle.PickInterests;
+import com.example.learningeasle.Interests.PickInterests;
 import com.example.learningeasle.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;

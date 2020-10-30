@@ -27,8 +27,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -150,15 +153,20 @@ public class Register extends AppCompatActivity {
                             final FirebaseDatabase database = FirebaseDatabase.getInstance();
                            //Users Interest field also added to firebase
                             final DatabaseReference myRef=database.getReference().child("Users").child(userID).child(username);
-                            myRef.child("Science").setValue("0");
-                            myRef.child("Medication").setValue("0");
-                            myRef.child("Computers").setValue("0");
-                            myRef.child("Business").setValue("0");
-                            myRef.child("Environment").setValue("0");
-                            myRef.child("Arts").setValue("0");
-                            myRef.child("Sports").setValue("0");
-                            myRef.child("Economics").setValue("0");
-                            myRef.child("Architecture").setValue("0");
+                            DatabaseReference channelRef = database.getReference().child("admin").child("channel");
+                            channelRef.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for(DataSnapshot channels:snapshot.getChildren()){
+                                        myRef.child(channels.getKey()).setValue("0");
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
 
                             //After Registration is done redirect to profile class to upload profile photo
                             startActivity(new Intent(getApplicationContext(), Profile.class));

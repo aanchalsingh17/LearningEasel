@@ -1,5 +1,4 @@
 package com.example.learningeasle.MainFragments;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,7 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import com.example.learningeasle.BottomSheetDialog;
-import com.example.learningeasle.PickInterests;
+import com.example.learningeasle.Interests.PickInterests;
+import com.example.learningeasle.ProfileFragments.UserBookmarkFragment;
 import com.example.learningeasle.PushNotifications.Data;
 import com.example.learningeasle.PushNotifications.Token;
 import com.example.learningeasle.R;
@@ -130,6 +130,10 @@ public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSh
         }
     }
 
+    public interface OnDataReceiveCallback {
+        void onDataReceived(List<modelpost> postList);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -139,7 +143,7 @@ public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSh
     }
 
     //Get the few starting post from the query and then on demand load more
-    private void getStartingPost() {
+    private void getStartingPost(final OnDataReceiveCallback callback) {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -151,7 +155,6 @@ public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSh
                     //Get the oldest post id to acheive lazy loading
                     oldestPost = (long) hashMap.get("order");
                     modelpost post;
-                    System.out.println(hashMap.get("pId"));
                     //Create new Model Post of the loads and add it to the list
                     if (hashMap.get("pLikes") == null && (interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId")))) {
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
@@ -159,22 +162,27 @@ public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSh
                                 hashMap.get("pComments").toString(), hashMap.get("type").toString(),
                                 hashMap.get("videourl").toString(), hashMap.get("pdfurl").toString(), hashMap.get("audiourl").toString());
                         modelpostList.add(post);
+                        callback.onDataReceived(modelpostList);
                     } else if (interest.contains(hashMap.get("type")) || following.contains(hashMap.get("pId"))) {
                         post = new modelpost(hashMap.get("pId").toString(), hashMap.get("pImage").toString(), hashMap.get("pTitle").toString(), hashMap.get("pDesc").toString(),
                                 hashMap.get("pTime").toString(), hashMap.get("pName").toString(), hashMap.get("url").toString(), hashMap.get("pLikes").toString(),
                                 hashMap.get("pComments").toString(), hashMap.get("type").toString(),
                                 hashMap.get("videourl").toString(), hashMap.get("pdfurl").toString(), hashMap.get("audiourl").toString());
                         modelpostList.add(post);
+                        callback.onDataReceived(modelpostList);
                     }
 
 
                 }
-                //Create adapter set the recycler view and make recycler view visible and shimmerframelayout gone
-                adapterPost = new AdapterPost(getActivity(), modelpostList);
-                recyclerView.setAdapter(adapterPost);
-                recyclerView.setVisibility(View.VISIBLE);
                 shimmerFrameLayout.stopShimmer();
                 shimmerFrameLayout.setVisibility(View.GONE);
+                //Create adapter set the recycler view and make recycler view visible and shimmerframelayout gone
+//                adapterPost = new AdapterPost(getActivity(), modelpostList);
+//                System.out.println("size = "+modelpostList.size());
+//                recyclerView.setAdapter(adapterPost);
+//                recyclerView.setVisibility(View.VISIBLE);
+//                shimmerFrameLayout.stopShimmer();
+//                shimmerFrameLayout.setVisibility(View.GONE);
             }
 
             @Override
@@ -220,6 +228,18 @@ public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSh
                                                 interest.add(dataSnapshot.getKey());
                                         }
 
+                                        shimmerFrameLayout.startShimmer();
+                                        getStartingPost(new OnDataReceiveCallback() {
+                                            @Override
+                                            public void onDataReceived(List<modelpost> postList) {
+                                                adapterPost = new AdapterPost(getActivity(), modelpostList);
+                                                recyclerView.setAdapter(adapterPost);
+                                                recyclerView.setVisibility(View.VISIBLE);
+                                                shimmerFrameLayout.stopShimmer();
+                                                shimmerFrameLayout.setVisibility(View.GONE);
+                                            }
+                                        });
+
 
                                     }
 
@@ -229,8 +249,7 @@ public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSh
                                     }
                                 });
 
-                                shimmerFrameLayout.startShimmer();
-                                getStartingPost();
+
 
                             }
 
@@ -420,7 +439,17 @@ public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSh
         if (type.equals("upd")) {
             shimmerFrameLayout.setVisibility(View.VISIBLE);
             shimmerFrameLayout.startShimmer();
-            getStartingPost();
+            getStartingPost(new OnDataReceiveCallback() {
+                @Override
+                public void onDataReceived(List<modelpost> postList) {
+                    adapterPost = new AdapterPost(getActivity(), modelpostList);
+                    System.out.println("size = "+modelpostList.size());
+                    recyclerView.setAdapter(adapterPost);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    shimmerFrameLayout.stopShimmer();
+                    shimmerFrameLayout.setVisibility(View.GONE);
+                }
+            });
         }
         if (type.equals("fol")) {
             shimmerFrameLayout.setVisibility(View.VISIBLE);

@@ -37,7 +37,7 @@ public class PickInterests extends AppCompatActivity {
     List<ModelInterest> modelInterestList;
     String email, username;
     String userId = null;
-    ProgressDialog Waiting = new ProgressDialog(PickInterests.this);
+    ProgressDialog Waiting;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +66,7 @@ public class PickInterests extends AppCompatActivity {
                 //After name is retrieved load all the channels with its value create a model of type interest
                 //and add this into the list later creater adapter using that list and then set that adapter into our
                 //Recycler view
+                Waiting = new ProgressDialog(PickInterests.this);
                 Waiting.setMessage("Please Wait.....");
                 Waiting.setCanceledOnTouchOutside(false);
                 Waiting.show();

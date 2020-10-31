@@ -57,11 +57,15 @@ public class UserProfile extends AppCompatActivity {
         postsCnt = findViewById(R.id.postsCnt);
         followersCnt = findViewById(R.id.followersCnt);
         followingCnt = findViewById(R.id.followingCnt);
+
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
+
+        //If current user is admin then he cant follow any user make the visibility of the follow field gone
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -76,10 +80,19 @@ public class UserProfile extends AppCompatActivity {
 
             }
         });
+        //Load the profile of the current user with all the basic info
         loadprofile();
+
+        //Load all the posts of the user
         loadposts();
         final String curruid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+        //Set if the current user follow this user or not
         setfollower(curruid,Id);
+
+
+        //Whenever follow button is clicked set the follower of the user
         follow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,9 +105,13 @@ public class UserProfile extends AppCompatActivity {
                       @Override
                       public void onDataChange(@NonNull DataSnapshot snapshot) {
                           if(snapshot.child("Following").hasChild(Id)){
+                              //If Currentuser follow this user then remove the user from the current user Following section
+                              //and from the currentuser  followers section of the user whose profile is viewed
                               reffollowing.child("Following").child(Id).removeValue();
                               reffollowers.child("Followers").child(curruid).removeValue();
                           }else {
+                              //If Currentuser  dont follow this user then add the user into the current user Following section
+                              //and into the currentuser  followers section of the user whose profile is viewed
                               reffollowing.child("Following").child(Id).setValue(Id);
                               reffollowers.child("Followers").child(curruid).setValue(curruid);
                           }
@@ -116,6 +133,7 @@ public class UserProfile extends AppCompatActivity {
         reffollowing.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //If current user following section has the userid then set value to following otherwise to follow
                 if(snapshot.child("Following").hasChild(id)){
                     follow.setText("Following");
                     follow.setBackgroundResource(R.drawable.button_unfollow);
@@ -132,28 +150,40 @@ public class UserProfile extends AppCompatActivity {
         });
     }
 
+    //Load all the post of the user
     private void loadposts() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //clearing the modelpost list in the starting
                 modelpostList.clear();
+
+                //To store the counts of number of posts of the user
+                cnt = 0;
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    //Getting all the posts
                     final HashMap<Object, String> hashMap = (HashMap<Object, String>) dataSnapshot.getValue();
                     modelpost post = null;
+                    //If pLikes is null means there are zero likes and if the pid is equal to the current user id
+                    //Then its user post
                     if (hashMap.get("pLikes") == null && hashMap.get("pId").equals(Id)) {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
                                 hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), "0",hashMap.get("pComments"),hashMap.get("type"),
                                 hashMap.get("videourl"),hashMap.get("pdfurl"),hashMap.get("audiourl"));
+                        cnt++;
                     } else if (hashMap.get("pId").equals(Id)) {
                         post = new modelpost(hashMap.get("pId"), hashMap.get("pImage"), hashMap.get("pTitle"), hashMap.get("pDesc"),
                                 hashMap.get("pTime"), hashMap.get("pName"), hashMap.get("url"), hashMap.get("pLikes"),
                                 hashMap.get("pComments"),hashMap.get("type"),hashMap.get("videourl"),hashMap.get("pdfurl"),hashMap.get("audiourl"));
+                        cnt++;
                     }
+                    //Id post is not null means new post is created
                     if(post!=null)
                         modelpostList.add(post);
                 }
-
+                //After all the posts are traversed set the count of the post to the posts count view
+                postsCnt.setText(String.valueOf(cnt));
                 adapterPost = new AdapterPost(UserProfile.this, modelpostList);
                 recyclerView.setAdapter(adapterPost);
             }
@@ -166,6 +196,7 @@ public class UserProfile extends AppCompatActivity {
     }
 
     private void loadprofile() {
+        //Load the user profile details from the database that's the username the image the status and many more
         DatabaseReference ds = FirebaseDatabase.getInstance().getReference("Users");
         ds.addValueEventListener(new ValueEventListener() {
             @Override
@@ -177,6 +208,9 @@ public class UserProfile extends AppCompatActivity {
                         useremail.setText((CharSequence) hashMap.get("email"));
                         userstatus.setText((CharSequence) hashMap.get("status"));
                         String url = (String) hashMap.get("Url");
+
+                        //Setting the profile image from the downloaded url if url is
+                        //empty then the default image
                         if(url.equals("empty"))
                             profile.setImageResource(R.drawable.ic_action_account);
                         else
@@ -191,25 +225,8 @@ public class UserProfile extends AppCompatActivity {
             }
         });
 
-        FirebaseDatabase.getInstance().getReference("Posts").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                cnt = 0;
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    final HashMap<Object, String> hashMap = (HashMap<Object, String>) ds.getValue();
 
-                    if (hashMap.get("pId").equals(Id))
-                        cnt++;
-                }
-                postsCnt.setText(String.valueOf(cnt));
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
+        //Setting the count of followers and following of the user
         FirebaseDatabase.getInstance().getReference("Users").child(Id).child("Followers").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

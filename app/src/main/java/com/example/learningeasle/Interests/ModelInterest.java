@@ -1,4 +1,4 @@
-package com.example.learningeasle.admin;
+package com.example.learningeasle.Interests;
 
 public class ModelInterest {
     String channelName,value;

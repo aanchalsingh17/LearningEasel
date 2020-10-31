@@ -51,7 +51,7 @@
                     android:layout_margin="4dp"
                     android:fontFamily="@font/ubuntu"
                     android:text="Change Profile Image"
-                    android:textColor="#020488" />
+                    android:textColor="@color/allTabs" />
             </LinearLayout>
         </LinearLayout>
 
@@ -185,9 +185,10 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:background="@drawable/button_shaper_aqua"
+            android:background="@drawable/button_alltabs"
             android:fontFamily="@font/ubuntu"
             android:text="Update"
+            android:textColor="@color/text"
             android:textSize="18sp" />
 
     </LinearLayout>

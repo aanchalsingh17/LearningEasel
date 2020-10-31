@@ -81,6 +81,7 @@ public class UpdateProfile extends AppCompatActivity {
         userId = user.getUid();
         changeimage = findViewById(R.id.changeimage);
         disableEditText(useremail);
+        //Setting the userDetails by Retrieving them from firebase
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -110,12 +111,14 @@ public class UpdateProfile extends AppCompatActivity {
 
             }
         });
+        //User want to update the details with value in the edittext field
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 updateDetails("details");
             }
         });
+        //Change image text view is clicked give option to users to change the profile image
         changeimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,6 +152,7 @@ public class UpdateProfile extends AppCompatActivity {
         editText.setBackgroundColor(Color.TRANSPARENT);
     }
 
+    //Backbtn is pressed redirect to mainActivity
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -156,6 +160,7 @@ public class UpdateProfile extends AppCompatActivity {
         finish();
     }
 
+    //Asking for the camera Permission if not granted otherwise open the camera
     private void askCameraPermission() {
         //check if permission is granted or not
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -178,6 +183,7 @@ public class UpdateProfile extends AppCompatActivity {
         }
     }
 
+    //Creating an image file
     private File createImageFile() throws IOException {
         //create n image file name
         String TimeStamp = new SimpleDateFormat("yyyyMMdd_HHmm").format(new Date());
@@ -209,6 +215,7 @@ public class UpdateProfile extends AppCompatActivity {
         }
     }
 
+    //On Activity result successfully get the uri of the image and using that uri upload the image on firebase
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -228,7 +235,7 @@ public class UpdateProfile extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 File f = new File(currentPhotoPath);
                 imageuri = Uri.fromFile(f);
-
+                //Setting the image view to user selected image using its uri
                 profileimage.setImageURI(imageuri);
                 uploadImageToFirebase(imageuri);
 
@@ -236,6 +243,7 @@ public class UpdateProfile extends AppCompatActivity {
         }
     }
 
+    //Uploading image to firebase with the uri of the photo being passed to it
     private void uploadImageToFirebase(final Uri image_uri) {
         if (image_uri != null) {
             progressDialog = new ProgressDialog(UpdateProfile.this);
@@ -246,6 +254,7 @@ public class UpdateProfile extends AppCompatActivity {
             fileref.putFile(image_uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    //Downloading the url of the image and updating it on the realtime database
                     fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
@@ -276,14 +285,22 @@ public class UpdateProfile extends AppCompatActivity {
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
         }
+
+        //If url is empty then set the imageView with the default icon otherwise using Picasso library download the image
         if (url.equals("empty")) {
             profileimage.setImageResource(R.drawable.ic_action_account);
         } else
             Picasso.get().load(url).into(profileimage);
+
+
+        //Retrieving the value of all the data fields from the edit text
         final String name = username.getText().toString().trim();
         String email = useremail.getText().toString().trim();
         String phone = userphone.getText().toString().trim();
         String status = userstatus.getText().toString().trim();
+
+
+        //After values are retrieved upload them onto the firebase
         DatabaseReference db = FirebaseDatabase.getInstance().getReference("Users");
         final Map<String, Object> hashmap = new HashMap<>();
         hashmap.put("Id", userId);
@@ -295,6 +312,8 @@ public class UpdateProfile extends AppCompatActivity {
         hashmap.put("status", status);
         db.child(userId).updateChildren(hashmap);
 
+
+          // Upload the updated value of the username and dp onto the post and comment section to reflect the changes
             final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Posts");
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override

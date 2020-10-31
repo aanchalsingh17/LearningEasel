@@ -71,6 +71,7 @@ public class AddChannel extends AppCompatActivity {
         if(user!=null){
             uid = user.getUid();
         }
+        //Id user is admin then set text to add channel instead od send request
         DatabaseReference adminref = FirebaseDatabase.getInstance().getReference("admin").child("Id");
         adminref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -87,6 +88,8 @@ public class AddChannel extends AppCompatActivity {
             }
         });
 
+        //Whenever add channel btn is clicked check if any of the required field is empty or not if not then create a new channel or
+        //send request to admin
         add_channel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,7 +107,7 @@ public class AddChannel extends AppCompatActivity {
                         Toast.makeText(AddChannel.this, "Add Channel Description", Toast.LENGTH_SHORT).show();
                     }
                 }
-                    //sendChannelRequest();
+                    //send ChannelRequest
                     else {
                     DatabaseReference allChannels = FirebaseDatabase.getInstance().getReference("admin").child("channel");
                     allChannels.addValueEventListener(new ValueEventListener() {
@@ -126,6 +129,7 @@ public class AddChannel extends AppCompatActivity {
                 }
             }
         });
+        //Cover Image is clicked Open the image dialog to choose the image
         coverImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,6 +138,7 @@ public class AddChannel extends AppCompatActivity {
         });
     }
 
+    //If image uri is not null then upload the image from the firebase and download its url to add to realtime database
     private void uploadImagetoFirebase() {
         if(imageuri!=null){
             String path = "Channel/"+channelName;
@@ -154,12 +159,14 @@ public class AddChannel extends AppCompatActivity {
         }
     }
 
+
     private void Image_Dialog() {
         String[] options = {"Camera", "Gallery"};
         AlertDialog.Builder builder = new AlertDialog.Builder(AddChannel.this);
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                //If camera permission is not granted then ask for it otherwise open camera
                 if (i == 0) {
                     if (!checkCameraPermission())
                         requestCameraPermission();
@@ -167,6 +174,7 @@ public class AddChannel extends AppCompatActivity {
                         pickFromCamera();
                 }
 
+                //If storage permission is not granted then ask for it otherwise open gallery
                 if (i == 1) {
                     if (!checkStoragePermission())
                         requestStoragePermission();
@@ -178,23 +186,27 @@ public class AddChannel extends AppCompatActivity {
         builder.create().show();
     }
 
+    //Intent to pick a image from gallery
     private void pickFromGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
     }
 
+    //REquest for the storage permission
     private void requestStoragePermission() {
         ActivityCompat.requestPermissions(this, storagePermissions,
                 STORAGE_REQUEST_CODE);
     }
 
+    //Checking is permission to read the storage is given or not
     private boolean checkStoragePermission() {
         boolean reuslt = ContextCompat.checkSelfPermission(this, Manifest.permission.
                 WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
         return reuslt;
     }
 
+    //Pick an image from the camera
     private void pickFromCamera() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Images.Media.TITLE, "Temp Pick");
@@ -206,6 +218,7 @@ public class AddChannel extends AppCompatActivity {
         startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
     }
 
+    //Checking for the camera permission
     private boolean checkCameraPermission() {
         boolean result = ContextCompat.checkSelfPermission(AddChannel.this, Manifest.permission.
                 CAMERA) == (PackageManager.PERMISSION_GRANTED);
@@ -214,11 +227,14 @@ public class AddChannel extends AppCompatActivity {
         return result && result1;
     }
 
+    //Request for the camera permission
     private void requestCameraPermission() {
         ActivityCompat.requestPermissions(this, cameraPermissions,
                 CAMERA_REQUEST_CODE);
     }
 
+    //After the request is made and action is taken check if permission is granted or not if not granted then show a toast
+    //If granted then open camera or gallery whtever be the action
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -252,6 +268,7 @@ public class AddChannel extends AppCompatActivity {
         }
     }
 
+    //After image is taken from any of the source set it onto the image view and save its uri
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -266,6 +283,8 @@ public class AddChannel extends AppCompatActivity {
         }
     }
 
+    //Sending the channel request to the admin with details as an request
+    //and if current user is admin then simply add the channel
     private void sendChannelRequest() {
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("cName", channelName);

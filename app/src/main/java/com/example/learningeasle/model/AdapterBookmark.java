@@ -40,7 +40,7 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
     Context context;
     List<modelpost> postList;
     DatabaseReference postsref;
-
+    boolean first = true;
     public AdapterBookmark(Context context, List<modelpost> postList) {
         this.context = context;
         this.postList = postList;
@@ -76,15 +76,30 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
         holder.attachement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!videourl.equals("empty")){
-                    holder.video_btn.setVisibility(View.VISIBLE);
+                if(first) {
+                    if (!videourl.equals("empty")) {
+                        holder.video_btn.setVisibility(View.VISIBLE);
 
-                }
-                if(!pdfurl.equals("empty")){
-                    holder.pdf_btn.setVisibility(View.VISIBLE);
-                }
-                if(!audiourl.equals("empty")){
-                    holder.audio_btn.setVisibility(View.VISIBLE);
+                    }
+                    if (!pdfurl.equals("empty")) {
+                        holder.pdf_btn.setVisibility(View.VISIBLE);
+                    }
+                    if (!audiourl.equals("empty")) {
+                        holder.audio_btn.setVisibility(View.VISIBLE);
+                    }
+                    first = false;
+                }else{
+                    if (!videourl.equals("empty")) {
+                        holder.video_btn.setVisibility(View.INVISIBLE);
+
+                    }
+                    if (!pdfurl.equals("empty")) {
+                        holder.pdf_btn.setVisibility(View.INVISIBLE);
+                    }
+                    if (!audiourl.equals("empty")) {
+                        holder.audio_btn.setVisibility(View.INVISIBLE);
+                    }
+                    first = true;
                 }
             }
         });
@@ -189,6 +204,7 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
                 reference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        //If bookmark section og the user dont have this postId means post is not bookmarked in that case bookmark the post
                         if (snapshot.hasChild(pTimeStamp)) {
                             reference.child(pTimeStamp).removeValue();
                             holder.bookmark.setImageResource(R.drawable.ic_baseline_bookmark_border_24);

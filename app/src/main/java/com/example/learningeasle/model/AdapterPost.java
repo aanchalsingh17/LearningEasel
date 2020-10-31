@@ -54,7 +54,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     String myId;
     View view;
     boolean processLike = false;
-
+    boolean first = true;
     public AdapterPost(Context context, List<modelpost> postList) {
         this.context = context;
         this.postList = postList;
@@ -130,15 +130,30 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         holder.attached.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!videourl.equals("empty")){
-                    holder.video_btn.setVisibility(View.VISIBLE);
+                if(first) {
+                    if (!videourl.equals("empty")) {
+                        holder.video_btn.setVisibility(View.VISIBLE);
 
-                }
-                if(!pdfurl.equals("empty")){
-                    holder.pdf_btn.setVisibility(View.VISIBLE);
-                }
-                if(!audiourl.equals("empty")){
-                    holder.audio_btn.setVisibility(View.VISIBLE);
+                    }
+                    if (!pdfurl.equals("empty")) {
+                        holder.pdf_btn.setVisibility(View.VISIBLE);
+                    }
+                    if (!audiourl.equals("empty")) {
+                        holder.audio_btn.setVisibility(View.VISIBLE);
+                    }
+                    first = false;
+                }else{
+                    if (!videourl.equals("empty")) {
+                        holder.video_btn.setVisibility(View.INVISIBLE);
+
+                    }
+                    if (!pdfurl.equals("empty")) {
+                        holder.pdf_btn.setVisibility(View.INVISIBLE);
+                    }
+                    if (!audiourl.equals("empty")) {
+                        holder.audio_btn.setVisibility(View.INVISIBLE);
+                    }
+                    first = true;
                 }
             }
         });
@@ -442,13 +457,13 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
                     if (snapshot.child(pTimeStamp).hasChild("Likes") && snapshot.child(pTimeStamp).child("Likes").hasChild(myId)) {
 //                        System.out.println(ds.child("Likes")+".........."+myId);
-                        holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0,
+                        holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favourite_border, 0, 0,
                                 0);
                         holder.like_btn.setText("Liked");
                     }
 
                      else {
-                        holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like, 0, 0,
+                        holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favourite, 0, 0,
                                 0);
                         holder.like_btn.setText("Like");
                     }

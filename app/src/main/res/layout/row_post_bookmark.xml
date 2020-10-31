@@ -130,6 +130,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
+                android:backgroundTint="@color/allTabs"
                 android:src="@drawable/ic_baseline_attach_file_24"/>
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/video_upload"
@@ -137,6 +138,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:visibility="gone"
+                android:backgroundTint="@color/allTabs"
                 android:src="@drawable/ic_baseline_voice_chat_24" />
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/pdf_upload"
@@ -144,6 +146,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:visibility="gone"
+                android:backgroundTint="@color/allTabs"
                 android:src="@drawable/ic_document"
                 android:textColor="#FFFFFF" />
 
@@ -153,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:visibility="gone"
-                android:backgroundTint="@color/colorAccent"
+                android:backgroundTint="@color/allTabs"
                 android:src="@drawable/ic_audio"
                 android:textColor="#FFFFFF" />
         </LinearLayout>

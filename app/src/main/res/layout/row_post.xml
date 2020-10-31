@@ -136,6 +136,7 @@
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:visibility="gone"
+             android:backgroundTint="@color/allTabs"
              android:src="@drawable/ic_baseline_attach_file_24"/>
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/video_upload"
@@ -143,6 +144,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:visibility="gone"
+            android:backgroundTint="@color/allTabs"
             android:src="@drawable/ic_baseline_voice_chat_24" />
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/pdf_upload"
@@ -150,6 +152,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:visibility="gone"
+                android:backgroundTint="@color/allTabs"
                 android:src="@drawable/ic_document"
                 android:textColor="#FFFFFF" />
 
@@ -159,7 +162,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:visibility="gone"
-                android:backgroundTint="@color/colorAccent"
+                android:backgroundTint="@color/allTabs"
                 android:src="@drawable/ic_audio"
                 android:textColor="#FFFFFF" />
         </LinearLayout>
@@ -222,26 +225,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_like"
+                android:drawableLeft="@drawable/ic_favourite"
+                android:backgroundTint="@color/text"
                 android:drawablePadding="5dp"
-                android:text="LIKE" />
+                android:text="LIKE"
+                android:fontFamily="@font/ubuntu"/>
 
             <Button
                 android:id="@+id/comment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_comment"
+                android:drawableLeft="@drawable/comment"
                 android:drawablePadding="5dp"
-                android:text="COMMENT" />
+                android:text="COMMENT"
+                android:fontFamily="@font/ubuntu"
+                android:backgroundTint="@color/text"/>
 
             <Button
                 android:id="@+id/share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_share"
+                android:drawableLeft="@drawable/share"
                 android:drawablePadding="5dp"
+                android:fontFamily="@font/ubuntu"
+                android:backgroundTint="@color/text"
                 android:text="SHARE" />
 
 

@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.learningeasle.R;
-import com.example.learningeasle.admin.ModelInterest;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -45,6 +44,7 @@ public class AdapterInterest extends RecyclerView.Adapter<AdapterInterest.Intere
         final String name = modelInterests.get(position).getChannelName();
         follow = modelInterests.get(position).getValue();
 
+        //Get the model name and its value i.e user follow this channel or not
         holder.name.setText(name);
         setfollow(follow,holder);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -53,7 +53,7 @@ public class AdapterInterest extends RecyclerView.Adapter<AdapterInterest.Intere
             userId = user.getUid();
         }
 
-
+       //Follow button is clicked if user follow this page unfollow it and vie-versa
         holder.followButton.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
@@ -98,6 +98,7 @@ public class AdapterInterest extends RecyclerView.Adapter<AdapterInterest.Intere
 
            }
        });
+        //When an item view is clicked Go to detail view of that channel
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,6 +110,7 @@ public class AdapterInterest extends RecyclerView.Adapter<AdapterInterest.Intere
 
     }
 
+    //Checking if user follow this field or not and se the text and colour accordingly
     private void setfollow(String type,InterestHolder holder) {
         if(type.equals("0")){
             holder.followButton.setBackgroundResource(R.drawable.button_alltabs);

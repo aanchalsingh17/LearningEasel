@@ -50,8 +50,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@color/text"
                 android:drawableLeft="@drawable/ic_baseline_cancel_24"
                 android:drawablePadding="5dp"
+                android:fontFamily="@font/ubuntu"
                 android:text="Cancel" />
 
             <Button
@@ -59,9 +61,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@color/text"
                 android:drawableLeft="@drawable/ic_baseline_check_circle_24"
                 android:drawablePadding="5dp"
-                android:text="Add Channel" />
+                android:text="Add Channel"
+                android:fontFamily="@font/ubuntu"/>
         </LinearLayout>
 
     </LinearLayout>

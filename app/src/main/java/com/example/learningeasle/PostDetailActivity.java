@@ -68,7 +68,7 @@ public class PostDetailActivity extends AppCompatActivity {
     LinearLayout profileLayout;
     EditText commentET;
     ImageView avatarIV;
-    ImageButton sendbtn, morebtn;
+    ImageButton sendbtn;
     List<ModelComment> commentList;
     AdapterComments adapterComments;
     ProgressDialog progressDialog;
@@ -95,7 +95,6 @@ public class PostDetailActivity extends AppCompatActivity {
         pLikesTV = findViewById(R.id.totallikes);
         pCommentsTV = findViewById(R.id.totalcomments);
         pType = findViewById(R.id.pType);
-        morebtn = findViewById(R.id.more);
         likebtn = findViewById(R.id.like);
         sharebtn = findViewById(R.id.share);
         attach = findViewById(R.id.attachement);
@@ -103,7 +102,7 @@ public class PostDetailActivity extends AppCompatActivity {
         sendbtn = findViewById(R.id.sendBtn);
         avatarIV = findViewById(R.id.avtar);
         pdf = findViewById(R.id.pdf_upload);
-        video = findViewById(R.id.pdf_upload);
+        video = findViewById(R.id.video_upload);
         audio = findViewById(R.id.audio_upload);
 
 
@@ -125,7 +124,6 @@ public class PostDetailActivity extends AppCompatActivity {
                     avatarIV.setVisibility(View.GONE);
                     likebtn.setVisibility(View.GONE);
                     commentET.setVisibility(View.GONE);
-                    morebtn.setVisibility(View.GONE);
                 }
             }
 
@@ -331,12 +329,12 @@ public class PostDetailActivity extends AppCompatActivity {
 
                 if (snapshot.child(postId).hasChild("Likes") && snapshot.child(postId).child("Likes").hasChild(myId)) {
 //                        System.out.println(ds.child("Likes")+".........."+myId);
-                   likebtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0,
+                   likebtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favourite_border, 0, 0,
                             0);
                     likebtn.setText("Liked");
                 }
                 else {
-                   likebtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like, 0, 0,
+                   likebtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favourite, 0, 0,
                             0);
                     likebtn.setText("Like");
                 }

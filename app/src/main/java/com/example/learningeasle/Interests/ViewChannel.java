@@ -27,12 +27,14 @@ public class ViewChannel extends AppCompatActivity {
         channelName = findViewById(R.id.name);
         channelDes = findViewById(R.id.desciption);
         coverImage = findViewById(R.id.coverImage);
+        //Getting the channel name from the intent
         String channelname= getIntent().getStringExtra("channel");
         setChannelDes(channelname);
 
     }
 
     private void setChannelDes(String channelname) {
+        //Setting the channel details from the channel name
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("channel").child(channelname);
         reference.addValueEventListener(new ValueEventListener() {
             @Override

@@ -792,6 +792,5 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
         }
     }
-    //On Back Pressed remove all the attached files if any
 
 }

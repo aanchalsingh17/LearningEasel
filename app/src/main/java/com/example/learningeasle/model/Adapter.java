@@ -531,12 +531,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
 
                 if (snapshot.child(pTimeStamp).hasChild("Likes") && snapshot.child(pTimeStamp).child("Likes").hasChild(myId)) {
 //                        System.out.println(ds.child("Likes")+".........."+myId);
-                    holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0,
+                    holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favourite_border, 0, 0,
                             0);
                     holder.like_btn.setText("Liked");
                 }
                 else {
-                    holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like, 0, 0,
+                    holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favourite, 0, 0,
                             0);
                     holder.like_btn.setText("Like");
                 }

@@ -1,5 +1,6 @@
 package com.example.learningeasle.admin;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -33,7 +34,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
@@ -133,7 +137,6 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
             @Override
             public void onClick(View v) {
                 //delete the post from the pending post reference
-                publishPost(pTimeStamp);
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");//.child(pTimeStamp);
                 ref.child(pTimeStamp).removeValue();
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
@@ -181,20 +184,38 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
             public void onClick(View v) {
              //If admin Cancel the post then simply delete the post from the pending post and nothing else to do
                 //Since at this time post doesnt contain any nested data thats why simply removing the value work here
+                //If post contains the attached file then firstly delete them
+                if(!videourl.equals("empty")){
+                    StorageReference videoref = FirebaseStorage.getInstance().getReferenceFromUrl(videourl);
+                    videoref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(context,"Attached Video File Deleted Successfully",Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
+                }
+                if(!audiourl.equals("empty")){
 
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");//.child(pTimeStamp);
-                ref.child(pTimeStamp).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(context,"Post Not Published!!",Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(context,"Unable to complete the action!!",Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    StorageReference audioref = FirebaseStorage.getInstance().getReferenceFromUrl(audiourl);
+                    audioref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(context,"Attached Audio File Deleted Successfully",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                if(!pdfurl.equals("empty")){
+                    StorageReference pdfref = FirebaseStorage.getInstance().getReferenceFromUrl(pdfurl);
+                    pdfref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(context,"Attached Pdf File Deleted Successfully",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                deletePost(pTimeStamp,pImage,pId);
+
 
                 FirebaseDatabase.getInstance().getReference().child("Tokens").child(pId).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -263,8 +284,54 @@ public class AdapterPendingPost extends RecyclerView.Adapter<AdapterPendingPost.
 
     }
 
-    private void publishPost(String pTimeStamp) {
+    private void deletePost(final String pTimeStamp, String pImage, final String pId) {
+        if (pImage.equals("noImage")) {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");//.child(pTimeStamp);
+            ref.child(pTimeStamp).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(context,"Post Not Published!!",Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(context,"Unable to complete the action!!",Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }else{
+            final ProgressDialog pd = new ProgressDialog(context);
+            pd.setMessage("Deleting....");
+
+            StorageReference picref = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
+            picref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("admin").child("pendingpost");//.child(pTimeStamp);
+                    ref.child(pTimeStamp).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(context,"Post Not Published!!",Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(context,"Unable to complete the action!!",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    pd.dismiss();
+                    Toast.makeText(context,"Unable to Complete the action",Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+
     }
+
 
     //Sending the notification to the user
     public void sendNotifications(String usertoken, String title, String message) {

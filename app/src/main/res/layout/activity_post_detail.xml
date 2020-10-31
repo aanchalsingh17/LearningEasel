@@ -91,14 +91,6 @@
 
                         </LinearLayout>
 
-                        <ImageButton
-                            android:id="@+id/more"
-                            android:layout_width="38dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="5dp"
-                            android:background="@null"
-                            android:src="@drawable/ic_more" />
-
                     </LinearLayout>
 
                     <TextView
@@ -140,7 +132,7 @@
                             android:id="@+id/attachement"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:backgroundTint="@color/colorAccent"
+                            android:backgroundTint="@color/allTabs"
                             android:visibility="gone"
                             android:src="@drawable/ic_baseline_attach_file_24"
                             android:textColor="#FFFFFF"/>
@@ -151,7 +143,7 @@
                             android:layout_marginStart="10dp"
                             android:background="#34282C"
                             android:visibility="gone"
-                            android:backgroundTint="@color/colorAccent"
+                            android:backgroundTint="@color/allTabs"
                             android:src="@drawable/ic_baseline_voice_chat_24"
                             android:textColor="#FFFFFF" />
 
@@ -162,7 +154,7 @@
                             android:layout_marginStart="10dp"
                             android:background="#34282C"
                             android:visibility="gone"
-                            android:backgroundTint="@color/colorAccent"
+                            android:backgroundTint="@color/allTabs"
                             android:src="@drawable/ic_document"
                             android:textColor="#FFFFFF" />
                         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -172,7 +164,7 @@
                             android:layout_marginLeft="10dp"
                             android:background="#34282C"
                             android:visibility="gone"
-                            android:backgroundTint="@color/colorAccent"
+                            android:backgroundTint="@color/allTabs"
                             android:src="@drawable/ic_audio"
                             android:textColor="#FFFFFF" />
                     </LinearLayout>
@@ -222,9 +214,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:drawableLeft="@drawable/ic_like"
+                            android:backgroundTint="@color/text"
+                            android:drawableLeft="@drawable/favourite"
                             android:drawablePadding="5dp"
-                            android:text="LIKE" />
+                            android:text="LIKE"
+                            android:fontFamily="@font/ubuntu"/>
 
 
                         <Button
@@ -232,9 +226,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:drawableLeft="@drawable/ic_share"
+                            android:drawableLeft="@drawable/share"
                             android:drawablePadding="5dp"
-                            android:text="SHARE" />
+                            android:backgroundTint="@color/text"
+                            android:text="SHARE"
+                            android:fontFamily="@font/ubuntu"/>
 
 
                     </LinearLayout>

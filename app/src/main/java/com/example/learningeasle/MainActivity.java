@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -31,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
         BottomSheetDialog.bottomSheetDialog=null;
         navigationView1 = findViewById(R.id.menu_nav);
         navigationView1.setOnNavigationItemSelectedListener(listener1);
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String refreshToken = FirebaseInstanceId.getInstance().getToken();
+        Token token = new Token(refreshToken);
+        FirebaseDatabase.getInstance().getReference("Tokens").child(firebaseUser.getUid()).setValue(token);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.scrollable, new HomeFragment(), "H").commit();
 
@@ -139,7 +145,17 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.logout:
                             FirebaseAuth fba;
                             fba = FirebaseAuth.getInstance();
-                            FirebaseUser user = fba.getCurrentUser();
+                            SharedPreferences sharedPreferences=getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.clear();
+                            editor.commit();
+
+//                            Intent intent = new Intent(getApplicationContext(), SplashActivity.class);
+
+//                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                            intent.putExtra("EXIT", true);
+//                            startActivity(intent);
+//                            finish();
                             Intent intent1 = new Intent(getApplicationContext(), Login.class);
                             fba.signOut();
                             startActivity(intent1);

@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -51,6 +52,7 @@ public class AddChannel extends AppCompatActivity {
     private static final int IMAGE_PICK_GALLERY_CODE = 400;
     String[] cameraPermissions;
     String[] storagePermissions;
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +61,7 @@ public class AddChannel extends AppCompatActivity {
         title = findViewById(R.id.title);
         Des = findViewById(R.id.des);
 
+        progressDialog=new ProgressDialog(AddChannel.this);
 
         add_channel = findViewById(R.id.add_channel);
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.
@@ -109,12 +112,17 @@ public class AddChannel extends AppCompatActivity {
                 }
                     //send ChannelRequest
                     else {
+
+                    progressDialog.setMessage("Applying Changes...");
+                    progressDialog.setCanceledOnTouchOutside(false);
+                    progressDialog.show();
                     DatabaseReference allChannels = FirebaseDatabase.getInstance().getReference("admin").child("channel");
-                    allChannels.addValueEventListener(new ValueEventListener() {
+                    allChannels.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.hasChild(channelName)) {
-                                Toast.makeText(AddChannel.this, "Channel Name Exist", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AddChannel.this, "Channel Name Exists", Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
                             } else {
                                 uploadImagetoFirebase();
                             }
@@ -122,7 +130,7 @@ public class AddChannel extends AppCompatActivity {
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-
+                            progressDialog.dismiss();
                         }
                     });
 
@@ -307,19 +315,20 @@ public class AddChannel extends AppCompatActivity {
                                 int j=user_email.length()-4;
                                 final String username=user_email.substring(0,j);
                                 user_profile.child(Id).child(username).child(channelName).setValue("0");
+                                progressDialog.dismiss();
 
                             }
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-
+                            progressDialog.dismiss();
                         }
                     });
                     Des.setText("");
                     title.setText("");
                     imageuri = null;
-                    coverImage.setImageResource(R.drawable.border_image);
+                    coverImage.setImageResource(R.drawable.ic_image);
                 }
             });
 
@@ -332,13 +341,15 @@ public class AddChannel extends AppCompatActivity {
                     Des.setText("");
                     title.setText("");
                     imageuri = null;
-                    coverImage.setImageResource(R.drawable.border_image);
+                    coverImage.setImageResource(R.drawable.ic_image);
+                    progressDialog.dismiss();
 
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Toast.makeText(AddChannel.this, "Unable to send Request", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
                 }
             });
         }

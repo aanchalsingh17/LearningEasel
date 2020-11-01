@@ -51,8 +51,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
         Drawable myDrawable = getResources().getDrawable(R.drawable.logo_large);
         final Bitmap bitmap = ((BitmapDrawable) myDrawable).getBitmap();
 
-        System.out.println(" in  fcm");
-
+//        add the message to a notification using notificationManager
         final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         final Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

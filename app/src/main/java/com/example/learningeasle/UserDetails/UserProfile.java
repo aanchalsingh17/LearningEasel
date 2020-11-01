@@ -5,13 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.learningeasle.MainActivity;
 import com.example.learningeasle.R;
 import com.example.learningeasle.model.AdapterPost;
 import com.example.learningeasle.model.modelpost;
@@ -45,6 +48,7 @@ public class UserProfile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Id = getIntent().getStringExtra("Id");
         profile = findViewById(R.id.image);
         reference = FirebaseStorage.getInstance().getReference();
@@ -125,6 +129,18 @@ public class UserProfile extends AppCompatActivity {
                   });
             }
         });
+    }
+
+
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        int id = menuItem.getItemId();
+        if (id == android.R.id.home) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return false;
     }
 
     private void setfollower(final String curruid, final String id) {
@@ -209,6 +225,7 @@ public class UserProfile extends AppCompatActivity {
                         userstatus.setText((CharSequence) hashMap.get("status"));
                         String url = (String) hashMap.get("Url");
 
+                        setTitle((String) hashMap.get("Name"));
                         //Setting the profile image from the downloaded url if url is
                         //empty then the default image
                         if(url.equals("empty"))

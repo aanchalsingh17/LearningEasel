@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -41,13 +42,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AdminPostFragment extends Fragment {
+public class AdminPostFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     ProgressDialog progressDialog;
     RecyclerView recyclerView;
     List<modelpost> modelpostList;
     AdapterAdminPost adapteradminPost;
     View view;
     ShimmerFrameLayout shimmerFrameLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     Query query;
     public AdminPostFragment() {
         // Required empty public constructor
@@ -67,6 +69,9 @@ public class AdminPostFragment extends Fragment {
         view =  inflater.inflate(R.layout.fragment_admin_post, container, false);
         recyclerView = view.findViewById(R.id.postsRecyclerview);
         shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
+        swipeRefreshLayout=view.findViewById(R.id.swipeAdmin);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeResources(R.color.tabSelected);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         modelpostList = new ArrayList<>();
@@ -111,6 +116,7 @@ public class AdminPostFragment extends Fragment {
                 recyclerView.setVisibility(View.VISIBLE);
                 shimmerFrameLayout.stopShimmer();
                 shimmerFrameLayout.setVisibility(View.GONE);
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
@@ -118,5 +124,12 @@ public class AdminPostFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        loadPost();
+        swipeRefreshLayout.setRefreshing(false);
     }
 }

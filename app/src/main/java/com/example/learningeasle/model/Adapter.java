@@ -93,12 +93,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         final String pId = postList.get(position).getpId();
         final String pLikes=postList.get(position).getpLikes();
         String pComments=postList.get(position).getpComments();
-         videourl = postList.get(position).getVideourl();
-         audiourl = postList.get(position).getAudiourl();
-         pdfurl = postList.get(position).getPdfurl();
+        videourl = postList.get(position).getVideourl();
+        audiourl = postList.get(position).getAudiourl();
+        pdfurl = postList.get(position).getPdfurl();
         final String[] viewsCount = new String[1];
 
-       DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
         databaseReference.child(pTimeStamp).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -119,29 +119,29 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         });
 
         //If any of the url is non empty make attachement btn visible
-       if(!videourl.equals("empty")||!(audiourl.equals("empty"))||!(pdfurl.equals("empty"))){
-           holder.attachement.setVisibility(View.VISIBLE);
-       }
+        if(!videourl.equals("empty")||!(audiourl.equals("empty"))||!(pdfurl.equals("empty"))){
+            holder.attachement.setVisibility(View.VISIBLE);
+        }
 
-       //when attached floating button is clicked make visible all those floting button whose value is not empty
+        //when attached floating button is clicked make visible all those floting button whose value is not empty
         holder.attachement.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               videourl = postList.get(position).getVideourl();
-               pdfurl = postList.get(position).getPdfurl();
-               audiourl = postList.get(position).getAudiourl();
-               if(!videourl.equals("empty")){
-                   holder.video_btn.setVisibility(View.VISIBLE);
+            @Override
+            public void onClick(View v) {
+                videourl = postList.get(position).getVideourl();
+                pdfurl = postList.get(position).getPdfurl();
+                audiourl = postList.get(position).getAudiourl();
+                if(!videourl.equals("empty")){
+                    holder.video_btn.setVisibility(View.VISIBLE);
 
-               }
-               if(!pdfurl.equals("empty")){
-                   holder.pdf_btn.setVisibility(View.VISIBLE);
-               }
-               if(!audiourl.equals("empty")){
-                   holder.audio_btn.setVisibility(View.VISIBLE);
-               }
-           }
-       });
+                }
+                if(!pdfurl.equals("empty")){
+                    holder.pdf_btn.setVisibility(View.VISIBLE);
+                }
+                if(!audiourl.equals("empty")){
+                    holder.audio_btn.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         //Pass the url of the attached file which user want to view
         holder.video_btn.setOnClickListener(new View.OnClickListener() {
@@ -401,10 +401,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for(DataSnapshot ds:snapshot.getChildren()){
                         HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
-                            if (hashMap.get("pTime").equals(pTimeStamp)) {
-                                ds.getRef().removeValue();
-                                Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_SHORT).show();
-                            }
+                        if (hashMap.get("pTime").equals(pTimeStamp)) {
+                            ds.getRef().removeValue();
+                            Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                        }
 
                     }
 
@@ -435,7 +435,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
                                 HashMap<String,Object> hashMap = (HashMap<String, Object>) ds.getValue();
                                 if(hashMap.get("pTime").equals(pTimeStamp))
                                     ds.getRef().removeValue();
-                               Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context,"Deleted Successfully",Toast.LENGTH_SHORT).show();
                             }
                             pd.dismiss();
                         }
@@ -563,7 +563,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.PostHolder> {
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
         EditClick editClick;
-       FloatingActionButton attachement,audio_btn,video_btn,pdf_btn;
+        FloatingActionButton attachement,audio_btn,video_btn,pdf_btn;
         public PostHolder(@NonNull View itemView, final EditClick editClick) {
             super(itemView);
             url=itemView.findViewById(R.id.uDp);

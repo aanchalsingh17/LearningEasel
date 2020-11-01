@@ -306,7 +306,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
 
                 }
-                System.out.println(commentList + ",.,.,.,..,.,.,.,.");
+                System.out.println(commentList.size() + ",.,.,.,..,.,.,.,.");
                 adapterComments = new AdapterComments(getApplicationContext(), commentList);
                 recyclerView.setAdapter(adapterComments);
             }

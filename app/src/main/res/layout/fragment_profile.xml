@@ -90,7 +90,6 @@
                         android:layout_gravity="center"
                         android:layout_margin="5dp"
                         android:fontFamily="@font/ubuntu"
-                        android:text="100"
                         android:textColor="#000"
                         android:textStyle="bold" />
 
@@ -117,7 +116,6 @@
                         android:layout_gravity="center"
                         android:layout_margin="5dp"
                         android:fontFamily="@font/ubuntu"
-                        android:text="166"
                         android:textColor="#000"
                         android:textStyle="bold" />
 
@@ -144,7 +142,6 @@
                         android:layout_gravity="center"
                         android:layout_margin="5dp"
                         android:fontFamily="@font/ubuntu"
-                        android:text="100"
                         android:textColor="#000"
                         android:textStyle="bold" />
 

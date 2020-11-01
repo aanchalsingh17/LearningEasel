@@ -4,58 +4,69 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/black_gradient"
     android:orientation="vertical"
-    tools:context=".Interests.AddChannel"
-    android:background="@drawable/gradient">
+    tools:context=".Interests.AddChannel">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/text"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/ubuntu"
         android:text="Add Cover Image"
-        android:textStyle="bold"
+        android:textColor="@color/text"
         android:textSize="30sp"
-        android:layout_marginTop="40dp"
-        android:layout_marginStart="60dp"/>
+        android:textStyle="bold" />
+
     <ImageView
         android:id="@+id/coverImage"
         android:layout_width="270dp"
         android:layout_height="270dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginStart="60dp"
-        android:background="@drawable/border_image"
-        />
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/ic_image"
+        android:fontFamily="@font/ubuntu" />
 
     <EditText
         android:id="@+id/title"
         android:layout_width="300dp"
         android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@null"
+        android:fontFamily="@font/ubuntu"
+        android:gravity="center"
         android:hint="@string/channel_name"
-        android:layout_marginTop="30dp"
-        android:layout_marginStart="50dp"
         android:textColor="@color/text"
-        android:textColorHint="@color/text"
-        />
+        android:textColorHint="#989898" />
 
     <EditText
         android:id="@+id/des"
         android:layout_width="340dp"
         android:layout_height="50dp"
-        android:singleLine="false"
-        android:layout_marginTop="30dp"
-        android:layout_marginStart="35dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@null"
+        android:fontFamily="@font/ubuntu"
+        android:gravity="center"
         android:hint="@string/what_it_s_for"
+        android:singleLine="false"
         android:textColor="@color/text"
-        android:textColorHint="@color/text"/>
+        android:textColorHint="#989898" />
+
     <Button
         android:id="@+id/add_channel"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="130dp"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/button_alltabs"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/interest_shaper"
         android:fontFamily="@font/ubuntu"
+        android:padding="10dp"
         android:text="Send Request"
-        android:textColor="@color/text"
+        android:textAllCaps="false"
+        android:textColor="#000"
         android:textSize="19sp" />
 
 </LinearLayout>

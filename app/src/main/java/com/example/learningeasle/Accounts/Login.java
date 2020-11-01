@@ -12,7 +12,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.InetAddresses;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.View;
@@ -51,6 +54,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 
 public class Login extends AppCompatActivity {
@@ -87,6 +92,9 @@ public class Login extends AppCompatActivity {
         signin = findViewById(R.id.googlesignin);
         fStore = FirebaseFirestore.getInstance();
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         //Configuring Google Signin
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).
                 requestIdToken(getString(R.string.default_web_client_id)).
@@ -96,12 +104,17 @@ public class Login extends AppCompatActivity {
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signIn();
+                if(isNetworkConnected() && isInternetAvailable()) {
+                    signIn();
+                }
+                else{
+                    Toast.makeText(Login.this,"Please connect to internet!",Toast.LENGTH_LONG).show();
+                }
             }
         });
 
-        if (fUser != null ) {
-            progressDialog=new ProgressDialog(Login.this);
+        if (fUser != null) {
+            progressDialog = new ProgressDialog(Login.this);
             progressDialog.setMessage("Please Wait... ");
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
@@ -110,15 +123,14 @@ public class Login extends AppCompatActivity {
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("Id");
 
 
-
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if(snapshot.hasChild(fUser.getUid())){
+                    if (snapshot.hasChild(fUser.getUid())) {
                         progressDialog.dismiss();
-                        startActivity(new Intent(getApplicationContext(),AdminMainPage.class));
+                        startActivity(new Intent(getApplicationContext(), AdminMainPage.class));
                         finish();
-                    }else{
+                    } else {
                         progressDialog.dismiss();
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         finish();
@@ -136,10 +148,10 @@ public class Login extends AppCompatActivity {
         admin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     adminlogin = true;
-                }else{
-                   adminlogin = false;
+                } else {
+                    adminlogin = false;
                 }
 
 
@@ -150,26 +162,31 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                if(isNetworkConnected() && isInternetAvailable()) {
+                    final String email = email_login.getText().toString().trim();
+                    final String password = password_login.getText().toString().trim();
 
-                final String email = email_login.getText().toString().trim();
-                final String password = password_login.getText().toString().trim();
 
+                    //Check for error in entered values
+                    if (TextUtils.isEmpty(email)) {
+                        email_login.setError("Email is Required!");
+                        return;
+                    }
+                    if (TextUtils.isEmpty(password)) {
+                        password_login.setError("Password is Required!");
+                        return;
+                    }
 
-                //Check for error in entered values
-                if (TextUtils.isEmpty(email)) {
-                    email_login.setError("Email is Required!");
-                    return;
-                }
-                if (TextUtils.isEmpty(password)) {
-                    password_login.setError("Password is Required!");
-                    return;
-                }
-
-                if (password.length() < 6) {
-                    password_login.setError("Password must be >= 6 characters");
-                    return;
-                }
+                    if (password.length() < 6) {
+                        password_login.setError("Password must be >= 6 characters");
+                        return;
+                    }
                     loginUser(email, password);
+
+                }
+                else{
+                    Toast.makeText(Login.this,"Please connect to internet!",Toast.LENGTH_LONG).show();
+                }
 
             }
 
@@ -193,7 +210,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final EditText resetMail = new EditText(v.getContext());
-                AlertDialog.Builder passwordResetDialog = new AlertDialog.Builder(new ContextThemeWrapper(v.getContext(), R.style.AlertDialogCustom));
+                AlertDialog.Builder passwordResetDialog = new AlertDialog.Builder(v.getContext());
                 passwordResetDialog.setTitle("Reset Password");
                 passwordResetDialog.setMessage("Enter email to receive reset link ");
                 passwordResetDialog.setView(resetMail);
@@ -203,18 +220,22 @@ public class Login extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         //extract email and set reset link
 
-                        String mail = resetMail.getText().toString();
-                        fAuth_login.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(Login.this, "Reset link sent to email", Toast.LENGTH_SHORT).show();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(Login.this, "Error! Reset link not sent", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        String mail = resetMail.getText().toString().trim();
+                        if (mail.isEmpty()) {
+                            Toast.makeText(Login.this, "Please provide an email", Toast.LENGTH_LONG).show();
+                        } else {
+                            fAuth_login.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(Login.this, "Reset link sent to email", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(Login.this, "Error! Reset link not sent", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
                     }
                 });
 
@@ -227,17 +248,24 @@ public class Login extends AppCompatActivity {
 //                passwordResetDialog.create().show();
                 AlertDialog alert = passwordResetDialog.create();
                 alert.show();
-                //    Customising buttons for dialog
-                Button p = alert.getButton(DialogInterface.BUTTON_POSITIVE);
-                p.setBackgroundColor(Color.parseColor("#222831"));
-                p.setTextColor(Color.parseColor("#D90091EA"));
-                Button n = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
-                n.setBackgroundColor(Color.parseColor("#222831"));
-                n.setTextColor(Color.parseColor("#DEFFFFFF"));
             }
         });
 
 
+    }
+
+    public boolean isNetworkConnected(){
+        ConnectivityManager connectivityManager= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return connectivityManager.getActiveNetworkInfo()!=null && connectivityManager.getActiveNetworkInfo().isConnected();
+    }
+
+    public boolean isInternetAvailable(){
+        try{
+            InetAddress inetAddress=InetAddress.getByName("google.com");
+            return !inetAddress.equals("");
+        } catch (UnknownHostException e) {
+            return false;
+        }
     }
 
     //GoogleSignIn
@@ -258,7 +286,7 @@ public class Login extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> task) {
         try {
             GoogleSignInAccount account = task.getResult(ApiException.class);
-            Toast.makeText(Login.this, "Successfully Signed in", Toast.LENGTH_SHORT).show();
+            progressBar_login.setVisibility(View.VISIBLE);
             FirebaseGoogleAuth(account);
         } catch (ApiException ae) {
             Toast.makeText(Login.this, "Failure", Toast.LENGTH_SHORT).show();
@@ -277,6 +305,7 @@ public class Login extends AppCompatActivity {
             }
         });
     }
+
     //After Google SignIn task is Completed and user info in the Database Users Section
     private void addUserInfo(final FirebaseUser user) {
         final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
@@ -287,33 +316,33 @@ public class Login extends AppCompatActivity {
             editor.commit();
             final DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
             final boolean[] start = new boolean[1];
-            start[0]=true;
+            start[0] = true;
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if(!snapshot.hasChild(user.getUid())){
-                        start[0] =false;
+                    if (!snapshot.hasChild(user.getUid())) {
+                        start[0] = false;
                         final HashMap<Object, String> hashMap = new HashMap<>();
-                        hashMap.put("Name",account.getDisplayName());
-                        hashMap.put("Id",user.getUid());
+                        hashMap.put("Name", account.getDisplayName());
+                        hashMap.put("Id", user.getUid());
                         hashMap.put("Url", "empty");
-                        hashMap.put("onlineStatus","online");
-                        hashMap.put("email",account.getEmail());
-                        hashMap.put("typingTo","none");
-                        hashMap.put("phone","");
-                        hashMap.put("status","");
+                        hashMap.put("onlineStatus", "online");
+                        hashMap.put("email", account.getEmail());
+                        hashMap.put("typingTo", "none");
+                        hashMap.put("phone", "");
+                        hashMap.put("status", "");
                         reference.child(user.getUid()).setValue(hashMap);
                         String email = account.getEmail();
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
                         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-                        int j=email.length()-4;
-                        final String username=email.substring(0,j);
-                        final DatabaseReference myRef=database.getReference("Users").child(user.getUid()).child(username);
+                        int j = email.length() - 4;
+                        final String username = email.substring(0, j);
+                        final DatabaseReference myRef = database.getReference("Users").child(user.getUid()).child(username);
                         final DatabaseReference channelRef = database.getReference("admin").child("channel");
                         channelRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for(DataSnapshot channels:snapshot.getChildren()){
+                                for (DataSnapshot channels : snapshot.getChildren()) {
                                     String channel = channels.getKey();
                                     myRef.child(channel).setValue("0");
                                 }
@@ -340,10 +369,9 @@ public class Login extends AppCompatActivity {
                         startActivity(new Intent(Login.this, PickInterests.class));
                         finish();
 
-                    }
-                    else if(start[0] == true){
+                    } else if (start[0] == true) {
                         System.out.println("main");
-                        startActivity(new Intent(Login.this,MainActivity.class));
+                        startActivity(new Intent(Login.this, MainActivity.class));
                         finish();
                     }
                 }
@@ -353,7 +381,6 @@ public class Login extends AppCompatActivity {
 
                 }
             });
-
 
 
         }
@@ -370,58 +397,57 @@ public class Login extends AppCompatActivity {
 
         // authenticate user
 
-               fAuth_login.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                   @Override
-                   public void onComplete(@NonNull Task<AuthResult> task) {
+        fAuth_login.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
 
-                       if (task.isSuccessful()) {
-                              final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-                              DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("admin").child("Id");
-                              reference.addValueEventListener(new ValueEventListener() {
-                                  @Override
-                                  public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                     //If admin login is true means user want to log in as admin
-                                      //check whether user is admin or not and perform accordingly
-                                      //If admin login in false then go to else part
-                                      if (adminlogin) {
-                                          if (snapshot.hasChild(fUser.getUid())) {
-                                              Toast.makeText(Login.this, "Welcome Admin!!", Toast.LENGTH_SHORT).show();
-                                              startActivity(new Intent(getApplicationContext(), AdminMainPage.class));
-                                              overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
-                                              finish();
-                                          } else {
-                                              Toast.makeText(Login.this, "Not Admin Try Logging in as User!!", Toast.LENGTH_SHORT).show();
-                                          }
-                                      } else {
-                                          if (snapshot.hasChild(fUser.getUid())) {
-                                              Toast.makeText(Login.this, "You are Admin!!", Toast.LENGTH_SHORT).show();
-                                          } else {
-                                              Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
-                                              startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                              overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
-                                              finish();
-                                          }
-                                      }
-                                  }
-
-
-                                  @Override
-                                  public void onCancelled(@NonNull DatabaseError error) {
-
-                                  }
-                              });
+                if (task.isSuccessful()) {
+                    final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("admin").child("Id");
+                    reference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            //If admin login is true means user want to log in as admin
+                            //check whether user is admin or not and perform accordingly
+                            //If admin login in false then go to else part
+                            if (adminlogin) {
+                                if (snapshot.hasChild(fUser.getUid())) {
+                                    Toast.makeText(Login.this, "Welcome Admin!!", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(getApplicationContext(), AdminMainPage.class));
+                                    overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+                                    finish();
+                                } else {
+                                    Toast.makeText(Login.this, "Not Admin Try Logging in as User!!", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                if (snapshot.hasChild(fUser.getUid())) {
+                                    Toast.makeText(Login.this, "You are Admin!!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(Login.this, "Welcome User!!", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                    overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+                                    finish();
+                                }
+                            }
+                        }
 
 
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                       } else if (task.getException() != null) {
-                           Toast.makeText(Login.this, "Error !" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-
-                       }
+                        }
+                    });
 
 
-                       progressBar_login.setVisibility(View.GONE);
-                   }
-               });
+                } else if (task.getException() != null) {
+                    Toast.makeText(Login.this, "Error !" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
+
+
+                progressBar_login.setVisibility(View.GONE);
+            }
+        });
 
 
     }

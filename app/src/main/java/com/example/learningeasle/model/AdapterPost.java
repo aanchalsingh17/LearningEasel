@@ -55,13 +55,14 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     View view;
     boolean processLike = false;
     boolean first = true;
+
     public AdapterPost(Context context, List<modelpost> postList) {
         this.context = context;
         this.postList = postList;
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if(user!=null){
-                    myId = user.getUid();
-                }
+        if (user != null) {
+            myId = user.getUid();
+        }
         postsref = FirebaseDatabase.getInstance().getReference().child("Posts");
     }
 
@@ -108,11 +109,11 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.hasChild(myId)){
-                   holder.like_btn.setVisibility(View.GONE);
-                   holder.share_btn.setVisibility(View.GONE);
-                   holder.comment_btn.setText("View Comments");
-                   holder.boookmark.setVisibility(View.GONE);
+                if (snapshot.hasChild(myId)) {
+                    holder.like_btn.setVisibility(View.GONE);
+                    holder.share_btn.setVisibility(View.GONE);
+                    holder.comment_btn.setText("View Comments");
+                    holder.boookmark.setVisibility(View.GONE);
                 }
             }
 
@@ -123,14 +124,14 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         });
 
 
-        if(!videourl.equals("empty")||!(pdfurl.equals("empty"))||!(audiourl.equals("empty"))){
+        if (!videourl.equals("empty") || !(pdfurl.equals("empty")) || !(audiourl.equals("empty"))) {
             holder.attached.setVisibility(View.VISIBLE);
         }
         //when attached floating button is clicked make visible all those floting button whose value is not empty
         holder.attached.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(first) {
+                if (first) {
                     if (!videourl.equals("empty")) {
                         holder.video_btn.setVisibility(View.VISIBLE);
 
@@ -142,7 +143,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                         holder.audio_btn.setVisibility(View.VISIBLE);
                     }
                     first = false;
-                }else{
+                } else {
                     if (!videourl.equals("empty")) {
                         holder.video_btn.setVisibility(View.INVISIBLE);
 
@@ -162,9 +163,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ViewAttachement.class);
-                intent.putExtra("videourl",videourl);
-                intent.putExtra("audiourl","empty");
-                intent.putExtra("pdfurl","empty");
+                intent.putExtra("videourl", videourl);
+                intent.putExtra("audiourl", "empty");
+                intent.putExtra("pdfurl", "empty");
                 context.startActivity(intent);
             }
         });
@@ -172,9 +173,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ViewAttachement.class);
-                intent.putExtra("videourl","empty");
-                intent.putExtra("audiourl",audiourl);
-                intent.putExtra("pdfurl","empty");
+                intent.putExtra("videourl", "empty");
+                intent.putExtra("audiourl", audiourl);
+                intent.putExtra("pdfurl", "empty");
                 context.startActivity(intent);
             }
         });
@@ -182,22 +183,22 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ViewAttachement.class);
-                intent.putExtra("videourl","empty");
-                intent.putExtra("audiourl","empty");
-                intent.putExtra("pdfurl",pdfurl);
+                intent.putExtra("videourl", "empty");
+                intent.putExtra("audiourl", "empty");
+                intent.putExtra("pdfurl", pdfurl);
                 context.startActivity(intent);
             }
         });
 
         final String[] viewsCount = new String[1];
 
-        final DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Views");
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Views");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot ds:snapshot.getChildren()){
-                    if(ds.getKey().equals(pTimeStamp)){
-                        viewsCount[0] =ds.getValue().toString();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    if (ds.getKey().equals(pTimeStamp)) {
+                        viewsCount[0] = ds.getValue().toString();
                         int viewsCnt = Integer.parseInt(viewsCount[0]);
                         viewsCnt++;
 
@@ -262,7 +263,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         FirebaseDatabase.getInstance().getReference("admin").child("Id").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                if (snapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     holder.boookmark.setVisibility(View.GONE);
                     holder.like_btn.setVisibility(View.GONE);
                     holder.comment_btn.setText("View Comments");
@@ -288,7 +289,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             @Override
             public void onClick(View view) {
 //                Toast.makeText(context, "Like", Toast.LENGTH_SHORT).show();
-              final int pLikes;
+                final int pLikes;
                 String likes = postList.get(position).getpLikes();
                 if (likes == null)
                     pLikes = 0;
@@ -301,16 +302,16 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 //
 //                        if (processLike)
-                            if (snapshot.child(stamp).child("Likes").hasChild(myId)) {
-                                postsref.child(stamp).child("pLikes").setValue("" + (pLikes - 1));
-                                postsref.child(stamp).child("Likes").child(myId).removeValue();
-                                processLike = false;
-                            } else {
+                        if (snapshot.child(stamp).child("Likes").hasChild(myId)) {
+                            postsref.child(stamp).child("pLikes").setValue("" + (pLikes - 1));
+                            postsref.child(stamp).child("Likes").child(myId).removeValue();
+                            processLike = false;
+                        } else {
 
-                                postsref.child(stamp).child("pLikes").setValue("" + (pLikes + 1));
-                                postsref.child(stamp).child("Likes").child(myId).setValue("Liked");
-                                processLike = false;
-                            }
+                            postsref.child(stamp).child("pLikes").setValue("" + (pLikes + 1));
+                            postsref.child(stamp).child("Likes").child(myId).setValue("Liked");
+                            processLike = false;
+                        }
                     }
 
 
@@ -386,7 +387,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
 
     }
-   //SetBookmark
+
+    //SetBookmark
     private void setBookmark(final MyHolder holder, String myId, final String pId, final String pTimeStamp) {
         final DatabaseReference Posts = FirebaseDatabase.getInstance().getReference("Posts")
                 .child(pTimeStamp);
@@ -394,9 +396,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.child("Bookmarks").hasChild(pTimeStamp)){
+                if (snapshot.child("Bookmarks").hasChild(pTimeStamp)) {
                     holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.bookmarked));
-                }else{
+                } else {
 
                     holder.boookmark.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
                     //holder.boookmark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_bookmark_border_24));
@@ -412,69 +414,69 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     }
 
     private void shareImageAndText(String pTitle, String pDescription, Bitmap bitmap) {
-        String shareBody=pTitle+"\n"+pDescription;
-        Uri uri=saveImageInCache(bitmap);
-        Intent shareIntent=new Intent(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_STREAM,uri);
-        shareIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT,"Subject Here");
+        String shareBody = pTitle + "\n" + pDescription;
+        Uri uri = saveImageInCache(bitmap);
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
         shareIntent.setType("image/png");
-        context.startActivity(Intent.createChooser(shareIntent,"Share Via"));
+        context.startActivity(Intent.createChooser(shareIntent, "Share Via"));
     }
 
     private Uri saveImageInCache(Bitmap bitmap) {
-        File imageFolder=new File(context.getCacheDir(),"images");
-        Uri uri=null;
-        try{
+        File imageFolder = new File(context.getCacheDir(), "images");
+        Uri uri = null;
+        try {
             imageFolder.mkdirs();
-            File file=new File(imageFolder,"shared_image.png");
-            FileOutputStream stream=new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG,90,stream);
+            File file = new File(imageFolder, "shared_image.png");
+            FileOutputStream stream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
             stream.flush();
             stream.close();
-            uri= FileProvider.getUriForFile(context,"com.example.learningeasle.fileprovider",file);
-        }catch (Exception e){
+            uri = FileProvider.getUriForFile(context, "com.example.learningeasle.fileprovider", file);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return uri;
     }
 
     private void shareTextOnly(String pTitle, String pDescription) {
-        String shareBody=pTitle+"\n"+pDescription;
-        Intent shareIntent=new Intent(Intent.ACTION_SEND);
+        String shareBody = pTitle + "\n" + pDescription;
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT,"Subject Here"); // for sharing via email
-        shareIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
-        context.startActivity(Intent.createChooser(shareIntent,"Share Via"));
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here"); // for sharing via email
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+        context.startActivity(Intent.createChooser(shareIntent, "Share Via"));
     }
 
     //SetLikes
     private void setLikes(final MyHolder holder, final String pTimeStamp) {
-       postsref.addValueEventListener(
-               new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        FirebaseDatabase.getInstance().getReference().child("Posts").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                    if (snapshot.child(pTimeStamp).hasChild("Likes") && snapshot.child(pTimeStamp).child("Likes").hasChild(myId)) {
+                        if (snapshot.child(pTimeStamp).hasChild("Likes") && snapshot.child(pTimeStamp).child("Likes").hasChild(myId)) {
 //                        System.out.println(ds.child("Likes")+".........."+myId);
-                        holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favourite_border, 0, 0,
-                                0);
-                        holder.like_btn.setText("Liked");
+                            holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favourite_border, 0, 0,
+                                    0);
+                            holder.like_btn.setText("Liked");
+                            System.out.println("liked "+ pTimeStamp);
+                        } else {
+                            holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favourite, 0, 0,
+                                    0);
+                            holder.like_btn.setText("Like");
+                            System.out.println("disliked "+pTimeStamp);
+                        }
                     }
 
-                     else {
-                        holder.like_btn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favourite, 0, 0,
-                                0);
-                        holder.like_btn.setText("Like");
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
                     }
-                }
-
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+                });
     }
 
     @Override
@@ -484,11 +486,12 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
     static class MyHolder extends RecyclerView.ViewHolder {
 
-        ImageView uDp,pImage,boookmark;
-        TextView uName, pTime, pTitle, pDesc, pTotalLikes,pTotalComment,pType,views;
+        ImageView uDp, pImage, boookmark;
+        TextView uName, pTime, pTitle, pDesc, pTotalLikes, pTotalComment, pType, views;
         ImageButton morebtn;
         Button like_btn, share_btn, comment_btn;
-        FloatingActionButton attached,audio_btn,video_btn,pdf_btn;
+        FloatingActionButton attached, audio_btn, video_btn, pdf_btn;
+
         public MyHolder(@NonNull View itemView) {
             super(itemView);
             uDp = itemView.findViewById(R.id.uDp);
@@ -502,11 +505,11 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
             like_btn = itemView.findViewById(R.id.like);
             share_btn = itemView.findViewById(R.id.share);
             comment_btn = itemView.findViewById(R.id.comment);
-            pTotalComment=itemView.findViewById(R.id.totalcomments);
+            pTotalComment = itemView.findViewById(R.id.totalcomments);
             boookmark = itemView.findViewById(R.id.bookmarks);
-            pType=itemView.findViewById(R.id.pType);
-            views=itemView.findViewById(R.id.viewCount);
-            attached=itemView.findViewById(R.id.view_attached);
+            pType = itemView.findViewById(R.id.pType);
+            views = itemView.findViewById(R.id.viewCount);
+            attached = itemView.findViewById(R.id.view_attached);
             audio_btn = itemView.findViewById(R.id.audio_upload);
             video_btn = itemView.findViewById(R.id.video_upload);
             pdf_btn = itemView.findViewById(R.id.pdf_upload);

@@ -123,12 +123,10 @@ public class ProfileFragment extends Fragment {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-//                tab.getIcon().setColorFilter(getResources().getColor(R.color.text), PorterDuff.Mode.SRC_IN);
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-//                tab.getIcon().setColorFilter(getResources().getColor(R.color.allTabs), PorterDuff.Mode.SRC_IN);
             }
 
             @Override

@@ -12,6 +12,8 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -47,12 +49,13 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSheetListener {
+public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSheetListener,SwipeRefreshLayout.OnRefreshListener {
 
     FirebaseAuth firebaseAuth;
     RecyclerView recyclerView;
     List<modelpost> modelpostList;
     AdapterPost adapterPost;
+    SwipeRefreshLayout swipeRefreshLayout;
     String email;
     ArrayList<String> interest, following;
     long oldestPost;
@@ -76,6 +79,9 @@ public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSh
                              final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        swipeRefreshLayout=view.findViewById(R.id.homeSwipe);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeResources(R.color.tabSelected);
         firebaseAuth = FirebaseAuth.getInstance();
         recyclerView = view.findViewById(R.id.postsRecyclerview);
         shimmerFrameLayout = view.findViewById(R.id.shimmer_layout);
@@ -91,10 +97,7 @@ public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSh
         //Check for battery optimizations if not enabled than show alert dialog
         checkForBatteryOptimizations();
 
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        String refreshToken = FirebaseInstanceId.getInstance().getToken();
-        Token token = new Token(refreshToken);
-        FirebaseDatabase.getInstance().getReference("Tokens").child(firebaseUser.getUid()).setValue(token);
+
 
         //Order the post according to the timestamp to get the latest  post on top
         query = FirebaseDatabase.getInstance().getReference("Posts")
@@ -128,6 +131,22 @@ public class HomeFragment extends Fragment implements BottomSheetDialog.BottomSh
                 builder.create().show();
             }
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        getStartingPost(new OnDataReceiveCallback() {
+            @Override
+            public void onDataReceived(List<modelpost> postList) {
+                adapterPost = new AdapterPost(getActivity(), modelpostList);
+                recyclerView.setAdapter(adapterPost);
+                recyclerView.setVisibility(View.VISIBLE);
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
+            }
+        });
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     public interface OnDataReceiveCallback {

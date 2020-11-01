@@ -200,7 +200,8 @@ public class AdapterBookmark extends RecyclerView.Adapter<AdapterBookmark.MyHold
         holder.bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(pId).child("Bookmarks");
+                final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").
+                        child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Bookmarks");
                 reference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {

@@ -85,7 +85,7 @@ public class UserBookmarkFragment extends Fragment {
     private void loadBookmarks(final OnDataReceiveCallback callback) {
         String userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userid).child("Bookmarks");
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 bookmarkList.clear();
@@ -96,7 +96,7 @@ public class UserBookmarkFragment extends Fragment {
 
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(timestamp);
 
-                    ref.addValueEventListener(new ValueEventListener() {
+                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
 

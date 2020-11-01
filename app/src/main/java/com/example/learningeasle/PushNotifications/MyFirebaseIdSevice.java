@@ -7,6 +7,9 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 
 public class MyFirebaseIdSevice extends FirebaseMessagingService {
+
+
+//    if the token gets updated
     @Override
     public void onNewToken(String s) {
         super.onNewToken(s);

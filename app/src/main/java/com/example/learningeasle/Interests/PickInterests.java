@@ -67,7 +67,7 @@ public class PickInterests extends AppCompatActivity {
                 //and add this into the list later creater adapter using that list and then set that adapter into our
                 //Recycler view
                 Waiting = new ProgressDialog(PickInterests.this);
-                Waiting.setMessage("Please Wait.....");
+                Waiting.setMessage("Please Wait...");
                 Waiting.setCanceledOnTouchOutside(false);
                 Waiting.show();
                 loadChannels();
@@ -84,7 +84,7 @@ public class PickInterests extends AppCompatActivity {
 
     private void loadChannels() {
         DatabaseReference channel = FirebaseDatabase.getInstance().getReference("Users").child(userId).child(username);
-        channel.addValueEventListener(new ValueEventListener() {
+        channel.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 modelInterestList.clear();

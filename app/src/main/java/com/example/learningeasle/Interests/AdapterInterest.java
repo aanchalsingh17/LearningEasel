@@ -72,7 +72,7 @@ public class AdapterInterest extends RecyclerView.Adapter<AdapterInterest.Intere
                                    reference1.child(name).setValue("1");
                                    holder.followButton.setBackgroundResource(R.drawable.button_shaper_red);
                                    holder.followButton.setText("Unfollow");
-                                   holder.followButton.setTextColor(context.getResources().getColor(R.color.textDark));
+                                   holder.followButton.setTextColor(context.getResources().getColor(R.color.text));
                                } else {
                                    reference1.child(name).setValue("0");
                                    holder.followButton.setBackgroundResource(R.drawable.button_alltabs);
@@ -119,7 +119,7 @@ public class AdapterInterest extends RecyclerView.Adapter<AdapterInterest.Intere
         }else{
             holder.followButton.setBackgroundResource(R.drawable.button_shaper_red);
             holder.followButton.setText("Unfollow");
-            holder.followButton.setTextColor(context.getResources().getColor(R.color.textDark));
+            holder.followButton.setTextColor(context.getResources().getColor(R.color.text));
         }
     }
 

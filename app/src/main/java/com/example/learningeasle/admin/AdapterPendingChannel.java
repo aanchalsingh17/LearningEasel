@@ -1,5 +1,6 @@
 package com.example.learningeasle.admin;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.media.Image;
@@ -45,7 +46,7 @@ public class AdapterPendingChannel extends RecyclerView.Adapter<AdapterPendingCh
     @NonNull
     @Override
     public PendingChannel onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        view =  LayoutInflater.from(parent.getContext()).inflate(R.layout.row_pending_channel, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_pending_channel, parent, false);
         return new PendingChannel(view);
     }
 
@@ -74,53 +75,59 @@ public class AdapterPendingChannel extends RecyclerView.Adapter<AdapterPendingCh
         holder.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final HashMap<Object,Object> channels = new HashMap<>();
-                channels.put("cName",title);
-                channels.put("cDes",des);
-                channels.put("cUrl",url);
-               final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("channel");
-               reference.addValueEventListener(new ValueEventListener() {
-                   @Override
-                   public void onDataChange(@NonNull DataSnapshot snapshot) {
-                       if(snapshot.hasChild(title)){
-                           Toast.makeText(context,"Channel Name Already Exist",Toast.LENGTH_SHORT).show();
-                       }else{
-                           reference.child(title).setValue(channels).addOnSuccessListener(new OnSuccessListener<Void>() {
-                               @Override
-                               public void onSuccess(Void aVoid) {
-                                   Toast.makeText(context,"New Channel Added",Toast.LENGTH_SHORT).show();
-                                   //Whenever Admin Add new Channel  add the channel into the users profile
-                                   final DatabaseReference user_profile = FirebaseDatabase.getInstance().getReference("Users");
-                                   user_profile.addValueEventListener(new ValueEventListener() {
-                                       @Override
-                                       public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                           for(DataSnapshot user:snapshot.getChildren()){
-                                               String user_email = (String) user.child("email").getValue();
-                                               String Id = (String) user.child("Id").getValue();
-                                               int j=user_email.length()-4;
-                                               final String username=user_email.substring(0,j);
-                                               user_profile.child(Id).child(username).child(title).setValue("0");
-                                           }
-                                       }
+                final HashMap<Object, Object> channels = new HashMap<>();
+                channels.put("cName", title);
+                channels.put("cDes", des);
+                channels.put("cUrl", url);
+                final ProgressDialog progressDialog = new ProgressDialog(context);
+                progressDialog.setMessage("Applying Changes...");
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.show();
+                final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("channel");
+                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.hasChild(title)) {
+                            Toast.makeText(context, "Channel Name Already Exists", Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+                        } else {
+                            reference.child(title).setValue(channels).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(context, "New Channel Added", Toast.LENGTH_SHORT).show();
+                                    //Whenever Admin Add new Channel  add the channel into the users profile
+                                    final DatabaseReference user_profile = FirebaseDatabase.getInstance().getReference("Users");
+                                    user_profile.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            for (DataSnapshot user : snapshot.getChildren()) {
+                                                String user_email = (String) user.child("email").getValue();
+                                                String Id = (String) user.child("Id").getValue();
+                                                int j = user_email.length() - 4;
+                                                final String username = user_email.substring(0, j);
+                                                user_profile.child(Id).child(username).child(title).setValue("0");
+                                            }
+                                            progressDialog.dismiss();
+                                        }
 
-                                       @Override
-                                       public void onCancelled(@NonNull DatabaseError error) {
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            progressDialog.dismiss();
+                                        }
+                                    });
+                                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("pendingchannel");
+                                    reference.child(title).removeValue();
+                                }
+                            });
 
-                                       }
-                                   });
-                                   DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("pendingchannel");
-                                   reference.child(title).removeValue();
-                               }
-                           });
+                        }
+                    }
 
-                       }
-                   }
-
-                   @Override
-                   public void onCancelled(@NonNull DatabaseError error) {
-
-                   }
-               });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        progressDialog.dismiss();
+                    }
+                });
 
             }
         });
@@ -128,7 +135,7 @@ public class AdapterPendingChannel extends RecyclerView.Adapter<AdapterPendingCh
             @Override
             public void onClick(View v) {
                 final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("admin").child("pendingchannel").child(title);
-                StorageReference coverRe= FirebaseStorage.getInstance().getReference().child("Channel/"+title);
+                StorageReference coverRe = FirebaseStorage.getInstance().getReference().child("Channel/" + title);
                 coverRe.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -137,7 +144,7 @@ public class AdapterPendingChannel extends RecyclerView.Adapter<AdapterPendingCh
                 });
 
             }
-            });
+        });
 
     }
 
@@ -146,10 +153,11 @@ public class AdapterPendingChannel extends RecyclerView.Adapter<AdapterPendingCh
         return modelPendingChannels.size();
     }
 
-    public static class PendingChannel extends RecyclerView.ViewHolder{
-       TextView channelname,Description;
-       Button add,cancel;
-       ImageView coverImage;
+    public static class PendingChannel extends RecyclerView.ViewHolder {
+        TextView channelname, Description;
+        Button add, cancel;
+        ImageView coverImage;
+
         public PendingChannel(@NonNull View itemView) {
             super(itemView);
             channelname = itemView.findViewById(R.id.name);

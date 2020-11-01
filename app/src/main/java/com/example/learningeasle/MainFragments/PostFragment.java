@@ -74,7 +74,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
     View view;
     UploadTask uploadTask;
-     EditText et_title, et_desc;
+    EditText et_title, et_desc;
     FloatingActionButton post_btn,video_btn,view_attached,pdf_btn,audio_btn,view_btn;
     ImageView img_post;
     String pName, url="empty";
@@ -86,7 +86,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
     Spinner spinner;
     ProgressDialog postDialog;
     String videourl="empty",pdfUrl="empty",audiourrl="empty",imageurl= "empty";
-     String timeStamp;
+    String timeStamp;
     String audio_ref="empty",video_ref = "empty",pdf_ref = "empty";
     ArrayAdapter<String> adapter;
     private static final int CAMERA_REQUEST_CODE = 100;
@@ -157,7 +157,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                 if(!visible) {
                     video_btn.setVisibility(View.VISIBLE);
                     pdf_btn.setVisibility(View.VISIBLE);
-                   view_btn.setVisibility(View.VISIBLE);
+                    view_btn.setVisibility(View.VISIBLE);
                     audio_btn.setVisibility(View.VISIBLE);
                     visible = true;
                 }else{
@@ -274,14 +274,14 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                             startActivity(view_page);
                         }
                         else if(!audio_ref.equals("empty")){
-                              view_page.putExtra("videourl","empty");
-                              view_page.putExtra("audiourl",audio_ref);
-                              view_page.putExtra("pdfurl","empty");
-                              startActivity(view_page);
-                          }else{
-                              Toast.makeText(getContext(),"No Audio File Attached!!",Toast.LENGTH_SHORT).show();
-                          }
-                          break;
+                            view_page.putExtra("videourl","empty");
+                            view_page.putExtra("audiourl",audio_ref);
+                            view_page.putExtra("pdfurl","empty");
+                            startActivity(view_page);
+                        }else{
+                            Toast.makeText(getContext(),"No Audio File Attached!!",Toast.LENGTH_SHORT).show();
+                        }
+                        break;
                     case 1:
                         if(videouri!=null){
                             view_page.putExtra("videourl",videouri.toString());
@@ -325,10 +325,10 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
     //Choose video using intent
     private void chooseVideo(View v) {
-            Intent intent = new Intent();
-            intent.setType("video/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(intent,108);
+        Intent intent = new Intent();
+        intent.setType("video/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent,108);
 
     }
 
@@ -485,7 +485,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             });
         }
     }
-   //When image view is clicked show the image dialog show that user will be able to pick the image either from the camera or gallery
+    //When image view is clicked show the image dialog show that user will be able to pick the image either from the camera or gallery
     private void Image_dialog() {
         String[] options = {"Camera", "Gallery"};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -509,26 +509,26 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         });
         builder.create().show();
         //Getting the person name and udp url to upload on the firebase
-       DatabaseReference db = FirebaseDatabase.getInstance().getReference("Users");
-       db.addValueEventListener(new ValueEventListener() {
-           @Override
-           public void onDataChange(@NonNull DataSnapshot snapshot) {
-               for(DataSnapshot ds:snapshot.getChildren()){
-                   HashMap<String ,Object> hashMap = (HashMap<String, Object>) ds.getValue();
-                   if(hashMap.get("Id").equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                       pName = (String) hashMap.get("Name");
-                       url = (String) hashMap.get("Url");
-                   }
-               }
-           }
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference("Users");
+        db.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds:snapshot.getChildren()){
+                    HashMap<String ,Object> hashMap = (HashMap<String, Object>) ds.getValue();
+                    if(hashMap.get("Id").equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                        pName = (String) hashMap.get("Name");
+                        url = (String) hashMap.get("Url");
+                    }
+                }
+            }
 
-           @Override
-           public void onCancelled(@NonNull DatabaseError error) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-           }
-       });
+            }
+        });
     }
-   //Clicking the image from the camera when camera option is selected from the dialog
+    //Clicking the image from the camera when camera option is selected from the dialog
     private void pickFromCamera() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Images.Media.TITLE, "Temp Pick");
@@ -539,7 +539,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
         //Start activity for result with request code
         startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
     }
-   //Pick image from the gallery with image view in the intent and with request code of the gallery
+    //Pick image from the gallery with image view in the intent and with request code of the gallery
     private void pickFromGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
@@ -650,10 +650,10 @@ public class PostFragment extends Fragment implements View.OnClickListener {
 
     private void uploadAudio(Uri audiouri) {
         //If storage Permission in not given then go for that first
-       if(audiouri==null){
-           audiourrl = "empty";
-           uploadImage(image_rui);
-       }
+        if(audiouri==null){
+            audiourrl = "empty";
+            uploadImage(image_rui);
+        }
         if(audiouri!=null){
             //If post is to be edited then timestamp is going to be the time stamp of the post to be edited not the current timestamp
 
@@ -667,8 +667,8 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                     des.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                             audiourrl= uri.toString();
-                             uploadImage(image_rui);
+                            audiourrl= uri.toString();
+                            uploadImage(image_rui);
                         }
                     });
                 }
@@ -691,8 +691,8 @@ public class PostFragment extends Fragment implements View.OnClickListener {
                     ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                           imageurl = uri.toString();
-                           uploadPdf(pdfuri);
+                            imageurl = uri.toString();
+                            uploadPdf(pdfuri);
                         }
                     });
                 }
@@ -768,7 +768,7 @@ public class PostFragment extends Fragment implements View.OnClickListener {
             case R.id.img:
                 Image_dialog();
                 break;
-                //IF post btn is clicked then post the post in different cases
+            //IF post btn is clicked then post the post in different cases
             case R.id.post_button:
                 postDialog = new ProgressDialog(getActivity());
                 postDialog.setMessage("Please Wait...");

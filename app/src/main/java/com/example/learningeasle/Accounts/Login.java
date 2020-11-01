@@ -346,6 +346,8 @@ public class Login extends AppCompatActivity {
                                     String channel = channels.getKey();
                                     myRef.child(channel).setValue("0");
                                 }
+                                startActivity(new Intent(Login.this, PickInterests.class));
+                                finish();
                             }
 
                             @Override
@@ -366,8 +368,7 @@ public class Login extends AppCompatActivity {
                         System.out.println("pick");
                         //If signing in for the first time using gmail then go to PickInterests Activity otherwise
                         //Skip this and go to main Activity
-                        startActivity(new Intent(Login.this, PickInterests.class));
-                        finish();
+
 
                     } else if (start[0] == true) {
                         System.out.println("main");

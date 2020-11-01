@@ -4,6 +4,7 @@ public class ModelChat {
     String message,receiver,sender,timestamp,isSeen;
 
 
+
     public ModelChat(String message, String receiver, String sender, String timestamp, String isSeen) {
         this.message = message;
         this.receiver = receiver;

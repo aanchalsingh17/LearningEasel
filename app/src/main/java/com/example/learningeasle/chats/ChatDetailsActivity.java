@@ -57,7 +57,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
 
     String hisUid;
-    String myUid,myName;
+    String myUid, myName;
     String hisImage;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference usersDbRef;
@@ -85,7 +85,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
         messageET = findViewById(R.id.messageET);
         sendbtn = findViewById(R.id.send);
 
-        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class); // For notifications
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
@@ -107,9 +107,9 @@ public class ChatDetailsActivity extends AppCompatActivity {
         usersDbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot ds:snapshot.getChildren()){
-                    if(ds.getKey().equals(myUid)){
-                        myName= (String) ds.child("Name").getValue();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    if (ds.getKey().equals(myUid)) {
+                        myName = (String) ds.child("Name").getValue();
                     }
                 }
             }
@@ -121,7 +121,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
         });
 
 
-        usersDbRef.addValueEventListener(new ValueEventListener() {
+        usersDbRef.addValueEventListener(new ValueEventListener() {                                   // To set user's name and image to whom chatting
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
@@ -146,7 +146,6 @@ public class ChatDetailsActivity extends AppCompatActivity {
                         nameTV.setText(name);
 
 
-
                         try {
                             Picasso.get().load(hisImage).placeholder(R.drawable.ic_action_profile).into(profileIV);
                         } catch (Exception e) {
@@ -163,7 +162,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
         });
         sendbtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {                                                                     // When send button is clicked functions for sendnotification and sendmessage called
                 final String message = messageET.getText().toString().trim();
                 if (TextUtils.isEmpty(message)) {
                     Toast.makeText(getApplicationContext(), "Cannot send the empty message", Toast.LENGTH_SHORT
@@ -177,7 +176,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                             String usertoken = dataSnapshot.getValue(String.class);
-                            sendNotifications(usertoken, myName+"+-*/"+myUid, message);//
+                            sendNotifications(usertoken, myName + "+-*/" + myUid, message);//
                         }
 
                         @Override
@@ -251,8 +250,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
         dbRef.updateChildren(hashMap);
     }
 
-    private void seenMessage() {
-        userRefForSeen = FirebaseDatabase.getInstance().getReference("Chats").child(myUid+hisUid);
+    private void seenMessage() {                                                                          // To check whether message is seen by the receiver
+        userRefForSeen = FirebaseDatabase.getInstance().getReference("Chats").child(myUid + hisUid);
         seenListener = userRefForSeen.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -277,8 +276,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
 
     private void readMessages() {
-        chatList = new ArrayList<>();
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats").child(hisUid+myUid);
+        chatList = new ArrayList<>();                                                                 // Reading from firebase and setting in adapter to display
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats").child(hisUid + myUid);
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -330,7 +329,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
 //        });
     }
 
-    private void sendMessage(String message) {
+    private void sendMessage(String message) {                                                             // Setting data on firebase
         String timestamp = String.valueOf(System.currentTimeMillis());
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -339,8 +338,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
         hashMap.put("message", message);
         hashMap.put("timestamp", timestamp);
         hashMap.put("isSeen", "0");
-        databaseReference.child("Chats").child(myUid+hisUid).push().setValue(hashMap);
-        databaseReference.child("Chats").child(hisUid+myUid).push().setValue(hashMap);
+        databaseReference.child("Chats").child(myUid + hisUid).push().setValue(hashMap);
+        databaseReference.child("Chats").child(hisUid + myUid).push().setValue(hashMap);
 
         messageET.setText("");
     }

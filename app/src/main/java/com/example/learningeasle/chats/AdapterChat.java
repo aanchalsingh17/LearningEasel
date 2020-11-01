@@ -38,7 +38,7 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder>{
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if(viewType==MSG_TYPE_LEFT){
+        if(viewType==MSG_TYPE_LEFT){                                                                       // To check whether sender or receiver and accordingly set the display
             View view= LayoutInflater.from(context).inflate(R.layout.row_chat_left,parent,false);
             return new MyHolder(view);
         }

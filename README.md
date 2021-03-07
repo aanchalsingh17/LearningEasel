@@ -21,6 +21,8 @@ Made for Droidrush: Avishkar MNNIT 2k20.
 14. User can char with other users using chat feature provided in the application with feature of last seen, whether message is delivered, and read yet or not.
 15. User will be notified through cloud messaging once he recieved a message from other users.
 
+Demonstration Video <a href = "https://youtu.be/OVXkrWqzFRo"> https://youtu.be/OVXkrWqzFRo </a>
+
 ## App Permissions
 1. Internet Access.
 2. Storage Access(Read and Write).

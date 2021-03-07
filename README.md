@@ -52,5 +52,26 @@ Made for Droidrush: Avishkar MNNIT 2k20.
  3.Open the project in Android Studio
 
 # Screenshots
+![WhatsApp Image 2021-03-07 at 12 25 56(2)](https://user-images.githubusercontent.com/47004131/110232976-2d0a7e00-7f47-11eb-900a-b092168fcbb7.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 55](https://user-images.githubusercontent.com/47004131/110233012-47445c00-7f47-11eb-905a-7edddeb11399.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 56](https://user-images.githubusercontent.com/47004131/110232978-30056e80-7f47-11eb-9f14-92df937917f7.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 56(1)](https://user-images.githubusercontent.com/47004131/110232977-2ed44180-7f47-11eb-81e8-5c6e9ddf0017.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 55(1)](https://user-images.githubusercontent.com/47004131/110232979-31369b80-7f47-11eb-80a7-67d024248b58.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 54(3)](https://user-images.githubusercontent.com/47004131/110232981-3267c880-7f47-11eb-89a8-829140df2deb.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 54(2)](https://user-images.githubusercontent.com/47004131/110232984-3398f580-7f47-11eb-8083-2a0b023250b7.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 54(1)](https://user-images.githubusercontent.com/47004131/110232987-34ca2280-7f47-11eb-9e3e-f1ef33006313.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 54](https://user-images.githubusercontent.com/47004131/110232989-35fb4f80-7f47-11eb-8faf-5bf4931ad116.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 53](https://user-images.githubusercontent.com/47004131/110232991-372c7c80-7f47-11eb-8b50-2c9be19054db.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 52(1)](https://user-images.githubusercontent.com/47004131/110232993-385da980-7f47-11eb-8610-dd79c434863a.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 52](https://user-images.githubusercontent.com/47004131/110232996-398ed680-7f47-11eb-9bc9-b19dd5b83228.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 44(1)](https://user-images.githubusercontent.com/47004131/110232997-3ac00380-7f47-11eb-8050-7ef76826d658.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 44](https://user-images.githubusercontent.com/47004131/110232999-3dbaf400-7f47-11eb-917a-331b3291eb25.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 42](https://user-images.githubusercontent.com/47004131/110233002-3f84b780-7f47-11eb-8b12-890fdfa18408.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 38](https://user-images.githubusercontent.com/47004131/110233004-401d4e00-7f47-11eb-8421-53d2baabea78.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 36](https://user-images.githubusercontent.com/47004131/110233005-427fa800-7f47-11eb-95ae-75f48082f637.jpeg)
+![WhatsApp Image 2021-03-07 at 12 25 31](https://user-images.githubusercontent.com/47004131/110233008-43b0d500-7f47-11eb-85f4-c3a33cc1bae4.jpeg)
+![WhatsApp Image 2021-03-07 at 12 24 50](https://user-images.githubusercontent.com/47004131/110233009-457a9880-7f47-11eb-8061-f37f59569088.jpeg)
+![WhatsApp Image 2021-03-07 at 12 24 49](https://user-images.githubusercontent.com/47004131/110233010-46132f00-7f47-11eb-8635-abbb4cb48012.jpeg)
+![WhatsApp Image 2021-03-07 at 12 24 48](https://user-images.githubusercontent.com/47004131/110233013-48758900-7f47-11eb-82e2-58e860470728.jpeg)
 
 

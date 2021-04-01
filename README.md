@@ -1,4 +1,4 @@
-# LearningEasle - by Game of Threads
+# LearningEasel - by Game of Threads
 
 Made for Droidrush: Avishkar MNNIT 2k20.
 
